@@ -106,6 +106,42 @@ provider later, add one switch case and a class — zero changes to callers.
 
 ---
 
+## 2026-06-11 — Layer 1 keyword + authority enrichment wiring
+
+**Phase / Plan section:** Phase 0 — Foundation
+**Files changed:**
+- `packages/layer1-audit/src/utils/keyword-enrichment.ts` (new)
+- `packages/layer1-audit/src/agents/synthesiser-agent.ts` (accepts enrichment)
+- `packages/layer1-audit/src/index.ts` (calls enrichment before synth)
+
+**What:**
+- New `enrichKeywordsAndAuthority()` utility — deduplicates keywords, calls
+  `KeywordDataProvider.getKeywordMetricsBulk()` + `getDomainAuthorityBulk()`,
+  returns a structured `KeywordEnrichment` object.
+- Failures from the provider are caught and degrade to nulls — never crashes
+  the audit.
+- `runSynthesiserAgent()` accepts an optional `enrichment` field. Before Zod
+  validation, it splices `.metrics` into every matching SerpKeywordData entry
+  and assigns the top-level `.authority` object.
+- `runLayer1()` computes enrichment from `client.seedKeywords` and
+  `client.competitors`, passes it to the synthesiser.
+
+**Why:**
+- Audits now carry per-keyword volume / difficulty / CPC / intent.
+- Audits now carry DA for client and every competitor.
+- Provider is mocked today (deterministic fake data) — swap to a real one
+  (SEMrush / Ahrefs / DataForSEO) via env var without touching this code.
+- Closes the loop on the "search volume + difficulty everywhere" gap from
+  NOTES.md item #11 + DA tracking from NOTES.md item #9.
+
+**Verification:**
+- `npx tsc -b` exits cleanly
+- A live run will now produce `audit.json` with `authority.client.score`
+  and `serpData.byKeyword[].metrics` populated
+- Provider provenance recorded via `authority.client.provider` field
+
+---
+
 ## Pending entries
 
 Below this line, future entries are added as work completes.

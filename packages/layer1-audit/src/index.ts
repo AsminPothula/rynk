@@ -17,6 +17,7 @@ import { runOffsiteResearchAgent } from "./agents/offsite-research-agent.js";
 import { runSynthesiserAgent } from "./agents/synthesiser-agent.js";
 import { saveAuditFindings, type SaveAuditResult } from "./utils/output-writer.js";
 import { preComputeInventory } from "./utils/crawl-precompute.js";
+import { enrichKeywordsAndAuthority } from "./utils/keyword-enrichment.js";
 
 export { runDataCollectionAgent } from "./agents/data-collection-agent.js";
 export { runOffsiteResearchAgent } from "./agents/offsite-research-agent.js";
@@ -110,11 +111,20 @@ export async function runLayer1(opts: RunLayer1Options): Promise<RunLayer1Result
     contentInventory: preComputed.contentInventory.length,
   });
 
+  // Pre-compute keyword metrics + domain authority from KeywordDataProvider.
+  // Provider is mocked in dev; swap via KEYWORD_DATA_PROVIDER env var without
+  // touching this file.
+  const enrichment = await enrichKeywordsAndAuthority({
+    client,
+    keywords: client.seedKeywords,
+  });
+
   const findings = await runSynthesiserAgent({
     client,
     dataCollectionRaw,
     offsiteResearchRaw,
     preComputed,
+    enrichment,
   });
 
   const paths = saveAuditFindings(findings, {

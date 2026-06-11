@@ -17,6 +17,7 @@ import {
   SYNTHESISER_SYSTEM_PROMPT,
   buildSynthesiserUserMessage,
 } from "../prompts/synthesiser-prompt.js";
+import type { KeywordEnrichment } from "../utils/keyword-enrichment.js";
 
 const log = createLogger("layer1.synthesiser");
 
@@ -29,6 +30,13 @@ export interface SynthesiseOptions {
     sitemapUrls: SitemapUrl[];
     contentInventory: ContentInventoryItem[];
   };
+  /**
+   * Pre-computed keyword metrics + authority from KeywordDataProvider.
+   * Spliced into serpData.byKeyword[].metrics and obj.authority before
+   * Zod validation. Optional during rollout — falls back to schema defaults
+   * if absent.
+   */
+  enrichment?: KeywordEnrichment;
 }
 
 /**
@@ -120,6 +128,26 @@ export async function runSynthesiserAgent(opts: SynthesiseOptions): Promise<Audi
     tc["sitemapUrls"] = opts.preComputed.sitemapUrls;
     obj["technicalCrawl"] = tc;
     obj["contentInventory"] = opts.preComputed.contentInventory;
+  }
+
+  // Inject keyword metrics + authority enrichment BEFORE validation.
+  // - Splice .metrics into every serpData.byKeyword entry whose keyword matches
+  // - Splice .authority at the top level
+  if (opts.enrichment) {
+    const serp = (obj["serpData"] ?? {}) as Record<string, unknown>;
+    const byKeyword = Array.isArray(serp["byKeyword"]) ? (serp["byKeyword"] as Array<Record<string, unknown>>) : [];
+    for (const entry of byKeyword) {
+      const kw = typeof entry["keyword"] === "string" ? (entry["keyword"] as string).trim().toLowerCase() : "";
+      const metrics = opts.enrichment.metricsByKeyword.get(kw);
+      if (metrics) entry["metrics"] = metrics;
+    }
+    serp["byKeyword"] = byKeyword;
+    obj["serpData"] = serp;
+    obj["authority"] = opts.enrichment.authority;
+    log.info("enrichment spliced", {
+      keywordsEnriched: byKeyword.filter((e) => e["metrics"]).length,
+      clientDAScore: opts.enrichment.authority.client.score,
+    });
   }
 
   const result = AuditFindingsSchema.safeParse(obj);
