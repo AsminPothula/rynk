@@ -13,6 +13,9 @@ import {
   saveClientMd,
 } from "./onboarding/client-store.js";
 import { displayClientSummary, promptForConfirmation } from "./onboarding/review.js";
+import { assessCompleteness, summarizeReport } from "./onboarding/completeness.js";
+import { autoFillGaps } from "./onboarding/auto-fill.js";
+import { runQuestionnaire } from "./onboarding/questionnaire.js";
 
 const log = createLogger("orchestrator");
 
@@ -57,7 +60,50 @@ async function resolveClient(
     { domain },
   );
 
-  const ctx = await runOnboardingAgent({ domain });
+  let ctx = await runOnboardingAgent({ domain });
+
+  // ── Gap-filling flow (single pipeline, adapts per site maturity) ─────────
+  // 1. Score what we have. 2. Auto-fill what we can. 3. Ask human for the rest.
+  // Established/optimized sites pass straight through (no questions asked).
+  const initialReport = assessCompleteness(ctx);
+  log.info("completeness assessment", {
+    score: initialReport.overallScore,
+    gaps: initialReport.gaps.length,
+    autoFillable: initialReport.autoFillable.length,
+    needsHuman: initialReport.needsHuman.length,
+  });
+  process.stdout.write(`\n  ${summarizeReport(initialReport)}\n`);
+
+  if (!initialReport.isComplete) {
+    // Auto-fill first (no human friction).
+    if (initialReport.autoFillable.length > 0) {
+      process.stdout.write(
+        `  Attempting to auto-fill ${initialReport.autoFillable.length} gaps before asking…\n`,
+      );
+      const autoResult = await autoFillGaps({ ctx, report: initialReport });
+      ctx = autoResult.enrichedCtx;
+      if (autoResult.filledFields.length > 0) {
+        process.stdout.write(
+          `  ✓ Auto-filled: ${autoResult.filledFields.join(", ")}\n`,
+        );
+      }
+    }
+
+    // Re-assess after auto-fill and ask the human for anything still missing.
+    const postReport = assessCompleteness(ctx);
+    if (postReport.gaps.length > 0) {
+      const qResult = await runQuestionnaire({
+        ctx,
+        remainingGaps: postReport.gaps,
+      });
+      ctx = qResult.ctx;
+      log.info("questionnaire complete", {
+        answered: qResult.answeredFields,
+        skipped: qResult.skippedFields,
+      });
+    }
+  }
+  // ─────────────────────────────────────────────────────────────────────────
 
   const jsonPath = saveClientJson(runsDir, domain, ctx);
   const mdPath = saveClientMd(runsDir, domain, ctx);

@@ -142,6 +142,49 @@ provider later, add one switch case and a class — zero changes to callers.
 
 ---
 
+## 2026-06-11 — Adaptive onboarding: completeness + auto-fill + questionnaire
+
+**Phase / Plan section:** Phase 1 (onboarding adaptation, originally Phase 3)
+**Files changed:**
+- `packages/orchestrator/src/onboarding/completeness.ts` (new)
+- `packages/orchestrator/src/onboarding/auto-fill.ts` (new)
+- `packages/orchestrator/src/onboarding/questionnaire.ts` (new)
+- `packages/orchestrator/src/index.ts` (wires the gap-filling flow)
+
+**What:** Replaced the planned "new-site mode vs existing-site mode" fork
+with a single pipeline that adapts via measurement, not labels.
+
+After onboarding agent extraction, the flow now:
+1. `assessCompleteness(ctx)` scores every ClientContext field and produces a
+   `CompletenessReport` tagging each gap with severity + a fill strategy
+   (auto-keyword-research / auto-serp-research / human-required /
+   human-preferred). Pure function — no I/O.
+2. `autoFillGaps(...)` walks the gaps and fills what it can:
+   - sparse `seedKeywords` → expand using `KeywordDataProvider.getRelatedKeywords`
+     + `getKeywordMetricsBulk`, ranked by volume / (difficulty+1)
+   - competitor inference via SERP left as future work (falls through)
+3. `runQuestionnaire(...)` asks the human ONLY for fields still flagged.
+   - 11 question templates, each with a parser for the right ClientContext patch
+   - Empty answers skip the field (keeps current value)
+   - Handles dotted paths like `canonicalNAP.address`
+
+**Why this matters:**
+- An established + optimized site (itechdata.ai) passes through with
+  `isComplete=true` → zero questions asked. Same UX as before.
+- An unoptimized site with content gets autofill on `seedKeywords` + a
+  short questionnaire for ICP, competitors, etc.
+- A brand-new 1-page site gets the most questions but still uses the same
+  pipeline. No branching, no mode flags, no two-flows-to-maintain.
+- Demo angle: rynk auto-detects what's missing and only asks for the rest.
+
+**Verification:**
+- `npx tsc -b` exits cleanly
+- Pure function (`assessCompleteness`) trivial to unit test once we wire tests
+- Live test: run `npm run pipeline -- somethin-greenfield.com --force-onboard`
+  to see the questionnaire fire; itechdata.ai should pass with no questions
+
+---
+
 ## Pending entries
 
 Below this line, future entries are added as work completes.
