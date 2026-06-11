@@ -4,6 +4,8 @@ import {
   EffortSchema,
   OwnerSchema,
   SeveritySchema,
+  KeywordMetricsEnrichmentSchema,
+  DomainAuthorityRecordSchema,
   coerceBool,
   coerceNonnegInt,
   coerceNumber,
@@ -30,6 +32,14 @@ export const TopicClusterSchema = z.object({
   priorityScore: coerceNumber,
   clientStatus: z.enum(["owned", "gap", "partial"]),
   competitorUrls: z.array(coerceString),
+  /**
+   * Pre-computed pillar keyword metrics — populated by Layer 2 enrichment
+   * step, NOT by the LLM. Lets Layer 3 generators make data-driven choices
+   * (e.g. expand word count for high-volume keywords).
+   */
+  pillarKeywordMetrics: KeywordMetricsEnrichmentSchema.optional(),
+  /** Same enrichment for each spoke. Same index as spokeKeywords. */
+  spokeKeywordMetrics: z.array(KeywordMetricsEnrichmentSchema).default([]),
 });
 
 export const InternalLinkSchema = z.object({
@@ -87,6 +97,10 @@ export const ContentBriefSchema = z.object({
   geoRequirements: GEORequirementsSchema,
   ctaInstruction: coerceString,
   publishPriority: WhenSchema,
+  /** Pre-computed target keyword metrics — populated by Layer 2 enrichment. */
+  targetKeywordMetrics: KeywordMetricsEnrichmentSchema.optional(),
+  /** Pre-computed metrics for each secondary keyword (same order). */
+  secondaryKeywordMetrics: z.array(KeywordMetricsEnrichmentSchema).default([]),
 });
 
 export const CannibalFixPlanSchema = z.object({
@@ -170,6 +184,18 @@ export const StrategyOutputSchema = z.object({
   sprintPlan: z.object({ sprints: z.array(SprintSchema) }),
   contentInventory: z.array(ContentInventoryActionSchema),
   doNotModify: z.array(DoNotModifyItemSchema),
+
+  /**
+   * Authority snapshot carried forward from the audit so Layer 3 generators
+   * + the dashboard can show DA gaps without re-fetching. Populated by Layer 2
+   * enrichment step.
+   */
+  authority: z
+    .object({
+      client: DomainAuthorityRecordSchema,
+      competitors: z.record(z.string(), DomainAuthorityRecordSchema).default({}),
+    })
+    .optional(),
 });
 
 export type SearchIntent = z.infer<typeof SearchIntentSchema>;

@@ -302,6 +302,29 @@ export const CannibalizationClusterSchema = z.object({
   suggestedCanonical: coerceString,
 });
 
+// ── Keyword metrics enrichment ───────────────────────────────────────────────
+// These fields are populated by the KeywordDataProvider pre-compute step (NOT
+// by the LLM). They mirror the @rynk/core KeywordMetrics type but are kept in
+// the audit schema as optional + nullable so the LLM can omit them entirely
+// and the pre-computer fills them in before validation.
+
+export const KeywordIntentSchema = z.enum([
+  "informational",
+  "commercial",
+  "transactional",
+  "navigational",
+  "unknown",
+]);
+
+export const KeywordMetricsEnrichmentSchema = z.object({
+  searchVolume: coerceNumberOrNull,
+  difficulty: coerceNumberOrNull,
+  cpc: coerceNumberOrNull,
+  intent: KeywordIntentSchema.default("unknown"),
+  /** ISO-3166 country code the metrics apply to. */
+  country: coerceString.default("US"),
+}).partial().default({});
+
 export const SerpKeywordDataSchema = z.object({
   keyword: coerceString,
   aiOverviewPresent: coerceBool,
@@ -313,6 +336,25 @@ export const SerpKeywordDataSchema = z.object({
   }),
   topRankingUrls: z.array(z.string()).default([]),
   serpFeatures: z.array(z.string()).default([]),
+  /** Enriched by KeywordDataProvider. Optional so LLM can omit. */
+  metrics: KeywordMetricsEnrichmentSchema.optional(),
+});
+
+// ── Domain authority ─────────────────────────────────────────────────────────
+// Populated by the KeywordDataProvider's getDomainAuthorityBulk() call. Carried
+// for the client and every named competitor so strategy can do gap analysis.
+
+export const DomainAuthorityRecordSchema = z.object({
+  domain: coerceString,
+  score: coerceNumberOrNull.describe("0-100 normalized authority score"),
+  backlinks: coerceNumberOrNull,
+  referringDomains: coerceNumberOrNull,
+  provider: coerceString.default("unknown"),
+});
+
+export const AuthoritySectionSchema = z.object({
+  client: DomainAuthorityRecordSchema,
+  competitors: z.record(z.string(), DomainAuthorityRecordSchema).default({}),
 });
 
 export const CompetitorAnalysisSchema = z.object({
@@ -384,6 +426,17 @@ export const AuditFindingsSchema = z.object({
 
   entitySummary: EntitySummarySchema,
   prioritizedIssues: PrioritizedIssuesSchema,
+
+  /**
+   * Authority section — pre-computed from the KeywordDataProvider.
+   * Optional during transition; will become required once Layer 1 pre-compute
+   * step is wired and all clients have a value. Default = empty competitor map
+   * and a zero-score client record so legacy fixtures keep parsing.
+   */
+  authority: AuthoritySectionSchema.default({
+    client: { domain: "", score: null, backlinks: null, referringDomains: null, provider: "unknown" },
+    competitors: {},
+  }),
 });
 
 export type AuditFindings = z.infer<typeof AuditFindingsSchema>;
@@ -396,6 +449,10 @@ export type AuditIssue = z.infer<typeof AuditIssueSchema>;
 export type ContentInventoryItem = z.infer<typeof ContentInventoryItemSchema>;
 export type CannibalizationCluster = z.infer<typeof CannibalizationClusterSchema>;
 export type SerpKeywordData = z.infer<typeof SerpKeywordDataSchema>;
+export type KeywordIntent = z.infer<typeof KeywordIntentSchema>;
+export type KeywordMetricsEnrichment = z.infer<typeof KeywordMetricsEnrichmentSchema>;
+export type DomainAuthorityRecord = z.infer<typeof DomainAuthorityRecordSchema>;
+export type AuthoritySection = z.infer<typeof AuthoritySectionSchema>;
 export type Severity = z.infer<typeof SeveritySchema>;
 export type Category = z.infer<typeof CategorySchema>;
 export type Owner = z.infer<typeof OwnerSchema>;

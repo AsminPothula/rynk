@@ -19,13 +19,12 @@
  * keywords or low-traffic domains.
  */
 
-/** Search intent classification for a keyword. */
-export type KeywordIntent =
-  | "informational"
-  | "commercial"
-  | "transactional"
-  | "navigational"
-  | "unknown";
+// KeywordIntent is defined once in the schemas package (it's a Zod enum used
+// for both audit and strategy validation). We re-use that definition here to
+// guarantee provider implementations and pipeline outputs use the exact same
+// value set. Single source of truth.
+import type { KeywordIntent } from "../../schemas/audit-findings.js";
+export type { KeywordIntent };
 
 /** Per-keyword metrics. Volume is monthly searches in the target country. */
 export interface KeywordMetrics {

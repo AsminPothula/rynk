@@ -76,6 +76,36 @@ provider later, add one switch case and a class — zero changes to callers.
 
 ---
 
+## 2026-06-11 — Schema enrichment: keyword metrics + domain authority
+
+**Phase / Plan section:** Phase 0 — Foundation
+**Files changed:**
+- `packages/core/src/schemas/audit-findings.ts`
+- `packages/core/src/schemas/strategy-output.ts`
+- `packages/core/src/clients/keyword-data/types.ts` (use schema's KeywordIntent)
+
+**What:**
+- `audit-findings.ts`: added `KeywordIntentSchema` (Zod enum), `KeywordMetricsEnrichmentSchema` (volume/difficulty/cpc/intent/country), `DomainAuthorityRecordSchema`, and `AuthoritySectionSchema`. Extended `SerpKeywordDataSchema` with optional `metrics` field. Added top-level `authority` field on `AuditFindingsSchema` with safe defaults so legacy fixtures still parse.
+- `strategy-output.ts`: extended `TopicClusterSchema` with `pillarKeywordMetrics` + `spokeKeywordMetrics`. Extended `ContentBriefSchema` with `targetKeywordMetrics` + `secondaryKeywordMetrics`. Added top-level `authority` field on `StrategyOutputSchema`.
+- `keyword-data/types.ts`: `KeywordIntent` now imports from the schema instead of redefining it — single source of truth for the enum.
+
+**Why:**
+- Carries volume/difficulty/CPC data through every layer, addressing the gap
+  noted in NOTES.md item #11 (search vol + difficulty everywhere).
+- Carries DA for client + competitors through audit and strategy so the
+  dashboard and Layer 3 generators can do gap analysis without re-fetching.
+- All new fields are optional + nullable so the LLM can keep producing the
+  same JSON it does today; pre-compute step populates them.
+- Following the standing engineering rule: "No magic strings, single source
+  of truth" — KeywordIntent now lives in exactly one place.
+
+**Verification:**
+- `npx tsc -b` exits cleanly
+- Existing fixtures still parse (legacy audits with no authority/metrics
+  fields use the schema defaults)
+
+---
+
 ## Pending entries
 
 Below this line, future entries are added as work completes.
