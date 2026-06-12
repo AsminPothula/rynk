@@ -27,6 +27,9 @@ import { generateNapBlockActions } from "./nap-block.js";
 import { generateContentSkeletonActions } from "./content-skeleton.js";
 import { generateOutreachActions } from "./outreach.js";
 import { generateBrandPostActions } from "./brand-posts.js";
+import { generateImageActions } from "./images.js";
+import { generateCodePRActions } from "./code-prs.js";
+import { generateDocumentActions } from "./documents.js";
 
 const log = createLogger("layer3.compose");
 
@@ -48,11 +51,20 @@ export type GeneratorName =
   | "nap-block"
   | "content-skeleton"
   | "outreach"
-  | "brand-posts";
+  | "brand-posts"
+  | "images"
+  | "code-prs"
+  | "documents";
 
+/**
+ * Each generator receives the opts plus the running list of actions
+ * produced by generators that ran BEFORE it. Most generators ignore the
+ * running list. Linking generators (e.g. images) use it to find upstream
+ * actions and patch their payloads.
+ */
 interface RegisteredGenerator {
   name: GeneratorName;
-  run: (opts: ComposeManifestOptions) => ExecutionAction[];
+  run: (opts: ComposeManifestOptions, priorActions: ExecutionAction[]) => ExecutionAction[];
 }
 
 /**
@@ -141,6 +153,40 @@ const REGISTRY: RegisteredGenerator[] = [
         idPrefix: "post",
       }),
   },
+  // Images run LAST among generators that emit linked actions. It walks the
+  // accumulated priorActions list, finds create_page actions, and patches
+  // their imageActionIds while emitting create_image actions of its own.
+  {
+    name: "images",
+    run: (opts, priorActions) =>
+      generateImageActions({
+        audit: opts.audit,
+        strategy: opts.strategy,
+        client: opts.client,
+        priorActions,
+        idPrefix: "img",
+      }),
+  },
+  {
+    name: "code-prs",
+    run: (opts) =>
+      generateCodePRActions({
+        audit: opts.audit,
+        strategy: opts.strategy,
+        client: opts.client,
+        idPrefix: "pr",
+      }),
+  },
+  {
+    name: "documents",
+    run: (opts) =>
+      generateDocumentActions({
+        audit: opts.audit,
+        strategy: opts.strategy,
+        client: opts.client,
+        idPrefix: "doc",
+      }),
+  },
 ];
 
 /**
@@ -161,7 +207,10 @@ export function composeManifest(opts: ComposeManifestOptions): ExecutionManifest
 
   const actions: ExecutionAction[] = [];
   for (const gen of generators) {
-    const produced = gen.run(opts);
+    // Pass the running actions list so linking generators (images) can find
+    // upstream actions and patch their payloads. Earlier generators receive
+    // an empty array.
+    const produced = gen.run(opts, actions);
     log.info("generator complete", { name: gen.name, actions: produced.length });
     actions.push(...produced);
   }
@@ -184,3 +233,6 @@ export { generateNapBlockActions } from "./nap-block.js";
 export { generateContentSkeletonActions } from "./content-skeleton.js";
 export { generateOutreachActions } from "./outreach.js";
 export { generateBrandPostActions } from "./brand-posts.js";
+export { generateImageActions } from "./images.js";
+export { generateCodePRActions } from "./code-prs.js";
+export { generateDocumentActions } from "./documents.js";

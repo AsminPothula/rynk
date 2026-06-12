@@ -458,6 +458,63 @@ After onboarding agent extraction, the flow now:
 
 ---
 
+## 2026-06-12 — Three more generators: images + code-PRs + documents
+
+**Phase / Plan section:** Phase 1 — Execution layer (full multi-channel coverage)
+**Files changed:**
+- `packages/layer3-generate/src/generators/images.ts` (new)
+- `packages/layer3-generate/src/generators/code-prs.ts` (new)
+- `packages/layer3-generate/src/generators/documents.ts` (new)
+- `packages/layer3-generate/src/generators/index.ts` (registry expanded
+  to 11, composer now passes `priorActions` to enable linking generators)
+
+**What:**
+
+*images generator* — emits `create_image` actions for hero / inline-diagram /
+thumbnail per `create_page` action that already exists in the running
+manifest. Patches each create_page's `payload.imageActionIds` so the WP
+adapter knows which images attach to which page. Heuristics:
+- Every page → hero (1280×640)
+- Pillar/commercial → thumbnail (640×640)
+- Informational ≥1500 words with technical keywords → inline diagram
+
+Composer now passes `priorActions: ExecutionAction[]` to each generator so
+this kind of two-pass linking can happen without a separate post step.
+
+*code-prs generator* — emits `propose_code_change` actions for code-level
+audit findings. Walks P1 + P2 issues, filters to dev-work (owner=dev +
+effort M/L, or category=technical + code-level keywords), produces a PR
+draft with title / description / branch suggestion / test plan. Always
+includes a separate llms.txt action if `audit.technicalCrawl.llmsTxtStatus`
+is missing or 404 (AEO/GEO signal).
+
+*documents generator* — emits `create_document` actions for distributable
+PDFs and PPTs. Per content brief:
+- Commercial "now" + ≥1800 words → whitepaper PDF + sales deck PPTX
+- Informational ≥2000 words → one-pager PDF
+Distribution platforms pre-filled (SlideShare, Scribd, Issuu, etc).
+
+**Verification:**
+- `npx tsc -b` clean
+- `verify-layer3.ts` produces **246 actions** on itechdata.ai 2026-05-18:
+  - 30 meta · 1 schema · 2 redirect · 127 internal-link
+  - 17 create_page · 17 outreach · 11 brand-post
+  - 32 image (hero+diagram+thumbnail per page)
+  - 5 code-PRs (page-speed + llms.txt)
+  - 4 documents (1 whitepaper + 1 deck + 2 one-pagers)
+  - 213 automatable · 33 human approval
+
+**Why:**
+- Rynk's manifest now covers **every channel** in the master plan: cms,
+  outreach, social, image, code-pr, document. No category of work is
+  unrepresented.
+- The two-pass linking pattern (images → create_page.imageActionIds)
+  proves the composer can express dependencies between actions. Same
+  pattern will apply when authors link to posts, redirects link to
+  consolidated URLs, etc.
+
+---
+
 ## Pending entries
 
 Below this line, future entries are added as work completes.
