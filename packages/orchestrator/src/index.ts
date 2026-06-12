@@ -3,6 +3,7 @@ import { createLogger, moduleDir, buildRunPath, readJson, fileExists, type Clien
 import { clientRegistry } from "@rynk/clients";
 import { runLayer1 } from "@rynk/layer1-audit";
 import { runStrategyAgent, saveStrategyOutput } from "@rynk/layer2-strategy";
+import { composeManifest, saveExecutionManifest } from "@rynk/layer3-generate";
 import { runOnboardingAgent } from "./onboarding/onboard-agent.js";
 import {
   clientJsonExists,
@@ -174,6 +175,26 @@ export async function runPipeline(
 
   const l2Paths = saveStrategyOutput(strategy, rootDir);
   log.info("Layer 2 done", { jsonPath: l2Paths.jsonPath });
+
+  // ── Layer 3 — Generate execution manifest ────────────────────────────────
+  // Pure transformation today: takes audit + strategy + client, produces a
+  // typed list of every change rynk plans to make. Future generators slot in
+  // by adding entries to the registry in layer3-generate/src/generators/index.ts.
+  // Skip with SKIP_LAYER3=true if iterating on Layer 1/2 only.
+  if (process.env["SKIP_LAYER3"] !== "true") {
+    const manifest = composeManifest({
+      audit: findings,
+      strategy,
+      client,
+      strategySource: l2Paths.jsonPath,
+    });
+    const l3Paths = saveExecutionManifest(manifest, rootDir);
+    log.info("Layer 3 done", {
+      jsonPath: l3Paths.jsonPath,
+      actions: manifest.summary.totalActions,
+      automatable: manifest.summary.automatable,
+    });
+  }
 
   log.info("pipeline complete");
 }

@@ -9,6 +9,7 @@
     { "path": "../core" },
     { "path": "../clients" },
     { "path": "../layer1-audit" },
-    { "path": "../layer2-strategy" }
+    { "path": "../layer2-strategy" },
+    { "path": "../layer3-generate" }
   ]
 }

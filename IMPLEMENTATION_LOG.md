@@ -288,6 +288,68 @@ After onboarding agent extraction, the flow now:
 
 ---
 
+## 2026-06-12 — Layer 3 wired into pipeline + verifier + 3 new generators
+
+**Phase / Plan section:** Phase 1 — Execution layer
+**Files changed:**
+- `packages/layer3-generate/src/utils/markdown-renderer.ts` (new)
+- `packages/layer3-generate/src/utils/output-writer.ts` (new)
+- `packages/layer3-generate/src/index.ts` (re-exports added)
+- `packages/layer3-generate/src/generators/redirects.ts` (new)
+- `packages/layer3-generate/src/generators/internal-links.ts` (new)
+- `packages/layer3-generate/src/generators/nap-block.ts` (new)
+- `packages/layer3-generate/src/generators/index.ts` (registry expanded)
+- `packages/orchestrator/src/index.ts` (Layer 3 composeManifest call after Layer 2)
+- `packages/orchestrator/package.json` (added @rynk/layer3-generate dep)
+- `packages/orchestrator/tsconfig.json` (added layer3 reference)
+- `scripts/verify-layer3.ts` (new — Docker-free verification)
+
+**What:**
+
+*Move 1 — Layer 3 wired into pipeline:*
+- `executionManifestToMarkdown()` — channel-grouped human renderer, one
+  block per action with target / payload / provenance / notes. Exhaustive
+  switch over action types (compile error if a new type is added without a
+  renderer).
+- `saveExecutionManifest()` — mirrors `saveStrategyOutput()`, writes
+  `execution-manifest.json` + `execution-manifest.md` to
+  `runs/{domain}/{today}/`.
+- Orchestrator now calls `composeManifest()` + `saveExecutionManifest()`
+  after Layer 2. Skip with `SKIP_LAYER3=true` for Layer 1/2-only iteration.
+
+*Move 2 — End-to-end verification (no Docker, no API calls):*
+- `scripts/verify-layer3.ts` loads the existing 2026-05-18 audit + strategy
+  + client.json from disk, calls `composeManifest()`, saves under today's
+  date. Proves the wiring works on real itechdata.ai data without needing
+  Crawl4AI / Anthropic / SerpAPI.
+- Result: 31 actions composed from the 2-generator setup.
+
+*Move 3 — Three new generators (5 total now):*
+- `redirects.ts` — walks `strategy.cannibalizationFixes`, emits
+  `add_redirect` per URL whose action is "301". Risk: medium.
+- `internal-links.ts` — walks `strategy.contentBriefs[].internalLinks`,
+  emits `insert_internal_link` per inbound/outbound suggestion. Risk: medium.
+- `nap-block.ts` — emits `add_nap_block` on the contact page when audit
+  flags incomplete NAP. Uses canonical client NAP, includes LocalBusiness
+  schema flag. Risk: medium.
+- All three registered in the composer's registry.
+
+**Verification:**
+- `npx tsc -b` clean across the monorepo
+- `npx tsx scripts/verify-layer3.ts` produces 160 actions from itechdata.ai
+  real data (30 meta + 1 schema + 2 redirect + 127 internal-links + 0 NAP)
+- `runs/itechdata.ai/2026-06-12/execution-manifest.md` renders correctly
+
+**Why this is the demo win:**
+- For the first time, `npm run pipeline -- itechdata.ai` produces a complete
+  picture: what the audit found, what the strategy recommends, AND the
+  concrete list of every change rynk will make. 160 actions, all typed and
+  validated.
+- The execution manifest is the artifact the dashboard will render, the
+  approval queue will gate, and Layer 4 will apply.
+
+---
+
 ## Pending entries
 
 Below this line, future entries are added as work completes.

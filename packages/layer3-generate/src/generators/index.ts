@@ -21,6 +21,9 @@ import {
 } from "../schema/execution-manifest.js";
 import { generateMetaActions } from "./meta.js";
 import { generateSchemaActions } from "./schema.js";
+import { generateRedirectActions } from "./redirects.js";
+import { generateInternalLinkActions } from "./internal-links.js";
+import { generateNapBlockActions } from "./nap-block.js";
 
 const log = createLogger("layer3.compose");
 
@@ -34,7 +37,7 @@ export interface ComposeManifestOptions {
   only?: GeneratorName[];
 }
 
-export type GeneratorName = "meta" | "schema";
+export type GeneratorName = "meta" | "schema" | "redirects" | "internal-links" | "nap-block";
 
 interface RegisteredGenerator {
   name: GeneratorName;
@@ -65,6 +68,36 @@ const REGISTRY: RegisteredGenerator[] = [
         strategy: opts.strategy,
         client: opts.client,
         idPrefix: "schema",
+      }),
+  },
+  {
+    name: "redirects",
+    run: (opts) =>
+      generateRedirectActions({
+        audit: opts.audit,
+        strategy: opts.strategy,
+        client: opts.client,
+        idPrefix: "redir",
+      }),
+  },
+  {
+    name: "internal-links",
+    run: (opts) =>
+      generateInternalLinkActions({
+        audit: opts.audit,
+        strategy: opts.strategy,
+        client: opts.client,
+        idPrefix: "link",
+      }),
+  },
+  {
+    name: "nap-block",
+    run: (opts) =>
+      generateNapBlockActions({
+        audit: opts.audit,
+        strategy: opts.strategy,
+        client: opts.client,
+        idPrefix: "nap",
       }),
   },
 ];
@@ -104,3 +137,6 @@ export function composeManifest(opts: ComposeManifestOptions): ExecutionManifest
 
 export { generateMetaActions } from "./meta.js";
 export { generateSchemaActions } from "./schema.js";
+export { generateRedirectActions } from "./redirects.js";
+export { generateInternalLinkActions } from "./internal-links.js";
+export { generateNapBlockActions } from "./nap-block.js";

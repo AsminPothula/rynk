@@ -16,3 +16,6 @@
 
 export * from "./schema/execution-manifest.js";
 export * from "./generators/index.js";
+export { saveExecutionManifest } from "./utils/output-writer.js";
+export type { SaveManifestResult } from "./utils/output-writer.js";
+export { executionManifestToMarkdown } from "./utils/markdown-renderer.js";
