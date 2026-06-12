@@ -24,6 +24,9 @@ import { generateSchemaActions } from "./schema.js";
 import { generateRedirectActions } from "./redirects.js";
 import { generateInternalLinkActions } from "./internal-links.js";
 import { generateNapBlockActions } from "./nap-block.js";
+import { generateContentSkeletonActions } from "./content-skeleton.js";
+import { generateOutreachActions } from "./outreach.js";
+import { generateBrandPostActions } from "./brand-posts.js";
 
 const log = createLogger("layer3.compose");
 
@@ -37,7 +40,15 @@ export interface ComposeManifestOptions {
   only?: GeneratorName[];
 }
 
-export type GeneratorName = "meta" | "schema" | "redirects" | "internal-links" | "nap-block";
+export type GeneratorName =
+  | "meta"
+  | "schema"
+  | "redirects"
+  | "internal-links"
+  | "nap-block"
+  | "content-skeleton"
+  | "outreach"
+  | "brand-posts";
 
 interface RegisteredGenerator {
   name: GeneratorName;
@@ -100,6 +111,36 @@ const REGISTRY: RegisteredGenerator[] = [
         idPrefix: "nap",
       }),
   },
+  {
+    name: "content-skeleton",
+    run: (opts) =>
+      generateContentSkeletonActions({
+        audit: opts.audit,
+        strategy: opts.strategy,
+        client: opts.client,
+        idPrefix: "page",
+      }),
+  },
+  {
+    name: "outreach",
+    run: (opts) =>
+      generateOutreachActions({
+        audit: opts.audit,
+        strategy: opts.strategy,
+        client: opts.client,
+        idPrefix: "out",
+      }),
+  },
+  {
+    name: "brand-posts",
+    run: (opts) =>
+      generateBrandPostActions({
+        audit: opts.audit,
+        strategy: opts.strategy,
+        client: opts.client,
+        idPrefix: "post",
+      }),
+  },
 ];
 
 /**
@@ -140,3 +181,6 @@ export { generateSchemaActions } from "./schema.js";
 export { generateRedirectActions } from "./redirects.js";
 export { generateInternalLinkActions } from "./internal-links.js";
 export { generateNapBlockActions } from "./nap-block.js";
+export { generateContentSkeletonActions } from "./content-skeleton.js";
+export { generateOutreachActions } from "./outreach.js";
+export { generateBrandPostActions } from "./brand-posts.js";

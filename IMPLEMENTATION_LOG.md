@@ -350,6 +350,67 @@ After onboarding agent extraction, the flow now:
 
 ---
 
+## 2026-06-12 — Three more generators: content-skeleton + outreach + brand-posts
+
+**Phase / Plan section:** Phase 1 — Execution layer (multi-channel output)
+**Files changed:**
+- `packages/layer3-generate/src/generators/content-skeleton.ts` (new)
+- `packages/layer3-generate/src/generators/outreach.ts` (new)
+- `packages/layer3-generate/src/generators/brand-posts.ts` (new)
+- `packages/layer3-generate/src/generators/index.ts` (registry expanded to 8)
+
+**What:** Three new generators that extend rynk's output beyond CMS-only:
+
+1. **content-skeleton** — for every `ContentBrief`, emits a `create_page`
+   action with title, meta description, suggested slug, page type
+   (pillar/spoke/blog/landing/policy), parent slug, outline array
+   (sections with heading + purpose hint), and the body rendered as the
+   outline markdown. Body-filling pass (LLM) will overwrite the body later.
+   This is the structural pass — cheap, deterministic, every brief = one
+   action.
+
+2. **outreach** — three sub-sources:
+   - Gap report → guest-post pitches per competitor URL (positions client
+     as a contributing voice)
+   - Authority roadmap → press pitches per target publication
+   - Top 5 competitors → backlink-request drafts
+   Each draft has subject + body templates, suggested send dates staggered
+   3 days apart, `automatable=false` (human reviews + sends from their own
+   email).
+
+3. **brand-posts** — three sub-sources:
+   - Top 5 priority clusters → LinkedIn thought-leadership posts (long-form)
+   - Top 3 AI Overview opportunities → Reddit discussions (subreddit picked
+     from client.industry)
+   - Top 3 quick wins → Threads short posts
+   All `automatable=false` — the human posts from the client's own accounts.
+   Rationale field on each ties it back to the SEO/AEO outcome.
+
+**Why:**
+- Rynk now produces output across **3 channels (cms / outreach / social)**
+  in a single run. Demo says "this isn't just an audit — every action is in
+  here, with subject lines, body drafts, and a send schedule."
+- AEO/GEO is finally addressed structurally — the brand-post generator
+  exists specifically because LLM citations come from broad brand presence,
+  not just on-site SEO.
+- Outreach drafts give the SEO team a working queue instead of a TODO list.
+  They open the action, edit the placeholders, send. ~20x faster than
+  writing each one from scratch.
+
+**Verification:**
+- `npx tsc -b` clean
+- `verify-layer3.ts` produces **205 total actions** on itechdata.ai 2026-05-18:
+  - 30 update_meta · 1 inject_schema · 2 add_redirect · 127 insert_internal_link
+  - 17 create_page (skeletons) · 17 draft_outreach · 11 draft_brand_post
+  - 177 automatable (CMS work) · 28 needs human approval (outreach + social)
+
+**Next obvious step:**
+- LLM body-filler generator that walks `create_page` actions and writes
+  real prose into `payload.bodyMarkdown` (opt-in via env var, since it
+  burns Anthropic budget).
+
+---
+
 ## Pending entries
 
 Below this line, future entries are added as work completes.
