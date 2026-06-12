@@ -5,6 +5,8 @@
     { "path": "./packages/clients" },
     { "path": "./packages/layer1-audit" },
     { "path": "./packages/layer2-strategy" },
+    { "path": "./packages/layer3-generate" },
+    { "path": "./packages/layer4-publish" },
     { "path": "./packages/orchestrator" }
   ]
 }

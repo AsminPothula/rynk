@@ -185,6 +185,109 @@ After onboarding agent extraction, the flow now:
 
 ---
 
+## 2026-06-12 — Layer 3 execution manifest + first generators
+
+**Phase / Plan section:** Phase 1 — Execution layer
+**Files changed:**
+- `packages/layer3-generate/package.json` (new)
+- `packages/layer3-generate/tsconfig.json` (new)
+- `packages/layer3-generate/src/index.ts` (new)
+- `packages/layer3-generate/src/schema/execution-manifest.ts` (new)
+- `packages/layer3-generate/src/generators/meta.ts` (new)
+- `packages/layer3-generate/src/generators/schema.ts` (new)
+- `packages/layer3-generate/src/generators/index.ts` (new — composer)
+- `tsconfig.json` (registered layer3 reference)
+
+**What:** New `@rynk/layer3-generate` package containing:
+
+1. **ExecutionManifest schema** — discriminated-union Zod schema covering
+   15 action types: `create_page`, `update_page`, `update_meta`,
+   `add_redirect`, `inject_schema`, `insert_internal_link`, `create_author`,
+   `assign_author`, `add_nap_block`, `create_image`, `create_document`,
+   `draft_brand_post`, `draft_outreach`, `propose_code_change`,
+   `update_offsite_profile`. Each action carries lifecycle status,
+   risk score, channel (cms/code-pr/outreach/social/document/image/offsite),
+   automatable flag, and provenance (audit issue / brief / cluster).
+
+2. **Meta generator** — produces `update_meta` actions for every URL in
+   `audit.technicalCrawl.missingMetas`, `duplicateMetas`, plus pages flagged
+   `update` or `expand` in `strategy.contentInventory`. Heuristic copy today;
+   future swap to LLM-based behind the same function signature.
+
+3. **Schema generator** — produces `inject_schema` actions for:
+   - Organization schema on homepage (sitewide deploy)
+   - Service schema on every `/solutions/` or `/services/` page
+   - Article schema on every blog post URL
+   Skips URLs that already have the right schemaType.
+
+4. **Composer** (`composeManifest`) — walks a generator registry, runs each,
+   concatenates actions, builds the summary block, returns a validated
+   `ExecutionManifest`. Adding a new generator = one entry in the registry.
+
+**Why:**
+- The execution manifest is the **architectural keystone** of the
+  generate→publish pipeline. Without it, Layer 4 has no contract to apply
+  against, and the dashboard has nothing structured to show.
+- Discriminated union means every adapter call site gets a fully-narrowed
+  type — no `as` casts in WP adapter dispatch.
+- Provenance + risk + automatable fields give the dashboard everything it
+  needs to group actions, batch approvals, and route to the right reviewer.
+
+**Verification:**
+- `npx tsc -b` exits cleanly across the whole monorepo
+- Composer produces a manifest with summary counts that match the actions
+  list — verifiable via a quick unit test later
+
+---
+
+## 2026-06-12 — Layer 4 publish foundation + WordPress adapter skeleton
+
+**Phase / Plan section:** Phase 1 — Execution layer
+**Files changed:**
+- `packages/layer4-publish/package.json` (new)
+- `packages/layer4-publish/tsconfig.json` (new)
+- `packages/layer4-publish/src/index.ts` (new)
+- `packages/layer4-publish/src/adapters/types.ts` (new — adapter contract)
+- `packages/layer4-publish/src/adapters/wordpress/index.ts` (new — skeleton)
+- `packages/layer4-publish/src/apply.ts` (new — manifest applier)
+- `tsconfig.json` (registered layer4 reference)
+
+**What:** New `@rynk/layer4-publish` package containing:
+
+1. **ActionAdapter interface** — single shared contract for every adapter
+   family (CMS, code-PR, offsite, outreach). Polymorphic `apply(action)` +
+   `canHandle(action)` filter. CMSAdapter narrows `channel` to "cms" and
+   adds a `cmsName` field.
+
+2. **WordPress adapter** — declares cmsName "wordpress", supports 9 action
+   types via dispatch. **Skeleton today**: live HTTP is gated behind
+   `WORDPRESS_LIVE=true`. Default mode logs the intended call and returns
+   `status="skipped"` so dry-runs are safe. Each handler throws "not
+   implemented" with a precise note for the live build (e.g. "needs
+   Yoast/RankMath detector + REST call").
+
+3. **applyManifest()** — walks every action in a manifest, finds the first
+   adapter that handles it, runs it with a timeout, catches errors, updates
+   action.status in place, recomputes the summary block. Skips terminal
+   states. Approval-gated by default (only `status="approved"` actions run).
+
+**Why:**
+- Decouples generate from publish — Layer 3 doesn't know about WordPress;
+  Layer 4 doesn't know how content was generated.
+- Same dispatch path will eventually serve GitHub PRs, GBP updates,
+  outreach emails, etc. New channels = new adapter file, zero changes
+  anywhere else.
+- Skeleton-with-real-shape pattern keeps `npx tsc -b` honest about the
+  surface area while making it impossible to accidentally fire HTTP calls
+  before credentials are in place.
+
+**Verification:**
+- `npx tsc -b` clean across the monorepo
+- Adapter contract used in WordPress already — confirms shape is workable
+- Live mode is opt-in via env, default is dry-run safe
+
+---
+
 ## Pending entries
 
 Below this line, future entries are added as work completes.

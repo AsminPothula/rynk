@@ -1,0 +1,21 @@
+{
+  "name": "@rynk/layer4-publish",
+  "version": "0.1.0",
+  "private": true,
+  "description": "rynk.ai Layer 4 — Publish. Walks an execution manifest, dispatches actions to CMS / code / offsite adapters.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc -b",
+    "start": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "test": "tsx tests/run.ts"
+  },
+  "dependencies": {
+    "@rynk/core": "*",
+    "@rynk/layer3-generate": "*",
+    "dotenv": "^16.4.5",
+    "zod": "^3.24.1"
+  }
+}
