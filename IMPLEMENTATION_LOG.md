@@ -411,6 +411,53 @@ After onboarding agent extraction, the flow now:
 
 ---
 
+## 2026-06-12 — LLM body-filler for create_page actions
+
+**Phase / Plan section:** Phase 1 — Execution layer (content generation)
+**Files changed:**
+- `packages/layer3-generate/src/prompts/content-body-prompt.ts` (new)
+- `packages/layer3-generate/src/agents/content-body-agent.ts` (new)
+- `packages/layer3-generate/src/post/fill-content-bodies.ts` (new)
+- `packages/layer3-generate/src/index.ts` (re-exports)
+- `packages/orchestrator/src/index.ts` (opt-in wiring)
+
+**What:**
+- New body-filler agent runs one Claude call per `create_page` action.
+  Single-turn, no tools (room to add `web_fetch` for fact-grounding later
+  without changing the surface).
+- System prompt enforces EEAT, AEO/GEO, brand voice, no hype words,
+  hedged-or-flagged numbers (never fabricated stats).
+- User message packs the full ContentBrief + ClientContext + outline +
+  competitor elements + internal-link targets into one structured input.
+- Post-processor `fillContentBodies()` walks every `create_page` action
+  that still has the skeleton marker `**Outline only.**`, finds the matching
+  ContentBrief via `provenance.sourceId`, calls the agent, and overwrites
+  `payload.bodyMarkdown` in place. Idempotent — already-filled actions skip.
+- Supports a `briefIds` whitelist for partial runs ("fill these 3 first,
+  review, then the rest").
+- Parallelism via `parallel=true` + `maxConcurrent=3` (default sequential
+  to stay within per-minute token rate limits).
+- Wired into orchestrator behind `FILL_CONTENT_BODIES=true` env var so the
+  default pipeline run stays free of LLM spend.
+
+**Why:**
+- The biggest gap in Layer 3 was that `create_page` actions carried only
+  outlines. Layer 4 (publish) needs real prose to actually push a page.
+- Body-filler completes the create-page lifecycle: brief → skeleton →
+  prose → publishable action. From here, Layer 4's WP adapter can
+  actually create pages once its REST calls are unstubbed.
+- Opt-in design lets the team review skeleton manifests cheaply, then
+  spend budget only on briefs they want bodies for.
+
+**Verification:**
+- `npx tsc -b` clean across the monorepo
+- Skeleton path still works without the env var — unchanged behaviour for
+  default pipeline runs
+- Live verification deferred to next pipeline run with
+  `FILL_CONTENT_BODIES=true` set
+
+---
+
 ## Pending entries
 
 Below this line, future entries are added as work completes.

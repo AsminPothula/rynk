@@ -3,7 +3,7 @@ import { createLogger, moduleDir, buildRunPath, readJson, fileExists, type Clien
 import { clientRegistry } from "@rynk/clients";
 import { runLayer1 } from "@rynk/layer1-audit";
 import { runStrategyAgent, saveStrategyOutput } from "@rynk/layer2-strategy";
-import { composeManifest, saveExecutionManifest } from "@rynk/layer3-generate";
+import { composeManifest, fillContentBodies, saveExecutionManifest } from "@rynk/layer3-generate";
 import { runOnboardingAgent } from "./onboarding/onboard-agent.js";
 import {
   clientJsonExists,
@@ -188,6 +188,25 @@ export async function runPipeline(
       client,
       strategySource: l2Paths.jsonPath,
     });
+
+    // Opt-in body-filler. Off by default to avoid surprise Anthropic spend.
+    // Enable with FILL_CONTENT_BODIES=true. Set FILL_PARALLEL=true to run
+    // multiple body-fillers concurrently (watch rate limits on lower tiers).
+    if (process.env["FILL_CONTENT_BODIES"] === "true") {
+      const parallel = process.env["FILL_PARALLEL"] === "true";
+      const result = await fillContentBodies({
+        manifest,
+        strategy,
+        client,
+        parallel,
+      });
+      log.info("content bodies filled", {
+        filled: result.filledCount,
+        skipped: result.skippedCount,
+        errors: result.errors.length,
+      });
+    }
+
     const l3Paths = saveExecutionManifest(manifest, rootDir);
     log.info("Layer 3 done", {
       jsonPath: l3Paths.jsonPath,

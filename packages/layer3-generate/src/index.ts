@@ -19,3 +19,9 @@ export * from "./generators/index.js";
 export { saveExecutionManifest } from "./utils/output-writer.js";
 export type { SaveManifestResult } from "./utils/output-writer.js";
 export { executionManifestToMarkdown } from "./utils/markdown-renderer.js";
+export { fillContentBodies } from "./post/fill-content-bodies.js";
+export type {
+  FillContentBodiesOptions,
+  FillContentBodiesResult,
+} from "./post/fill-content-bodies.js";
+export { runContentBodyAgent } from "./agents/content-body-agent.js";
