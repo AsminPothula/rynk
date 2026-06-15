@@ -515,6 +515,53 @@ Distribution platforms pre-filled (SlideShare, Scribd, Issuu, etc).
 
 ---
 
+## 2026-06-15 — ImageGenerationProvider + Layer 4 image adapter
+
+**Phase / Plan section:** Phase 1 — Execution layer (image lifecycle complete)
+**Files changed:**
+- `packages/core/src/clients/image-generation/types.ts` (new)
+- `packages/core/src/clients/image-generation/mock.ts` (new)
+- `packages/core/src/clients/image-generation/index.ts` (new — factory)
+- `packages/core/src/clients/index.ts` (re-export)
+- `packages/layer4-publish/src/adapters/image/index.ts` (new)
+- `packages/layer4-publish/src/index.ts` (re-export)
+- `scripts/verify-image-adapter.ts` (new — end-to-end verifier)
+
+**What:**
+- `ImageGenerationProvider` interface — same swap pattern as
+  KeywordDataProvider / OwnedDomainDataProvider. Single `generate(opts)`
+  method returns a normalised `GeneratedImage` shape (url, dimensions,
+  externalId, provider name, cost cents).
+- `MockImageGenerationProvider` — deterministic placehold.co URLs sized
+  to the requested dimensions, with the first words of the prompt
+  rendered as text. Real reachable URLs, free.
+- Factory in `@rynk/core` reads `IMAGE_GENERATION_PROVIDER` env (defaults
+  to "mock"). Swap to real provider = one new class + one switch case.
+- Layer 4 `makeImageAdapter()` — handles `create_image` actions. Maps
+  the action's purpose to a style hint, calls the provider, writes the
+  URL back into `action.payload.resultUrl` so downstream adapters can
+  reference it.
+- Verifier script proves the full chain works on real itechdata data:
+  composes manifest → marks 32 create_image as approved → applyManifest
+  with image adapter → all 32 applied, each with a real URL.
+
+**Why:**
+- Closes the `create_image` action lifecycle. Generators produced specs
+  before; now the specs can be executed end-to-end. The Layer 4 image
+  adapter fits the same `ActionAdapter` contract as the WordPress
+  adapter, so the manifest applier dispatches images automatically.
+- Mock URLs are real (placehold.co), so the dashboard or downstream
+  adapters can fetch + display them today.
+- Real provider implementations (DALL-E, Flux, Imagen) drop in with one
+  switch case. Intern task documented in `rynk-files/NOTES.md`.
+
+**Verification:**
+- `npx tsc -b` clean
+- `npx tsx scripts/verify-image-adapter.ts 2026-05-18` shows 32 actions
+  applied, 0 failed, every action has `resultUrl` populated
+
+---
+
 ## Pending entries
 
 Below this line, future entries are added as work completes.

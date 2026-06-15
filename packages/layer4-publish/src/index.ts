@@ -13,3 +13,5 @@ export * from "./adapters/types.js";
 export * from "./apply.js";
 export { makeWordPressAdapter } from "./adapters/wordpress/index.js";
 export type { WordPressAdapterConfig } from "./adapters/wordpress/index.js";
+export { makeImageAdapter } from "./adapters/image/index.js";
+export type { ImageAdapterConfig } from "./adapters/image/index.js";
