@@ -53,6 +53,42 @@ function buildOrganizationJsonLd(client: ClientContext, audit: AuditFindings): R
   }
   // Add LinkedIn placeholder — actual URL comes from offsiteEEAT.napDirectories.linkedin
   // in real audits. Safe to omit when unknown.
+  function buildBreadcrumbListJsonLd(url: string, client: ClientContext): Record<string, unknown> {
+    // 1. Parse the URL pathname (e.g. "/solutions/freight/" → ["solutions", "freight"])
+  const urlObj = new URL(url);
+  const pathname = urlObj.pathname.replace(/^\/|\/$/g, "");
+  const segments = pathname.split("/").filter(Boolean);
+    // 2. Build an array of ListItem objects, one per segment, plus the homepage at index 0
+  const listItems = [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: `https://${client.domain}/`,
+    },
+    ...segments.map((segment, index) => {
+      const cumulativePath = segments.slice(0, index + 1).join("/");
+      const readableName = segment
+        .split("-")
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+
+      return {
+        "@type": "ListItem",
+        position: index + 2,
+        name: readableName,
+        item: `https://${client.domain}/${cumulativePath}/`,
+      };
+    }),
+  ];
+    // 3. Return the JSON-LD object
+    return {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: listItems,
+    };
+  }
+
 
   const out: Record<string, unknown> = {
     "@context": "https://schema.org",
@@ -196,6 +232,20 @@ export function generateSchemaActions(opts: SchemaGeneratorOptions): ExecutionAc
       payload: { jsonLd: buildServiceJsonLd(entry.url, entry.title, opts.client) },
     });
   }
+  function buildFAQPageJsonLd(faqs: { question: string; answer: string }[]): Record<string, unknown> {
+    return {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": faqs.map(faq => ({
+        "@type": "Question",
+        "name": faq.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": faq.answer
+        }
+      }))
+    };
+  }
 
   // ── Article schema for blog posts (skip if already present) ────────────
   for (const entry of sitemap) {
@@ -222,5 +272,34 @@ export function generateSchemaActions(opts: SchemaGeneratorOptions): ExecutionAc
     });
   }
 
+  for (const entry of sitemap) {
+    if (isHomepage(entry.url)) continue;   // don't add breadcrumbs to "/"
+    if (existingSchemaTypes(opts.audit, entry.url).has("breadcrumblist")) continue;
+    out.push({
+      id: idOf(),
+      type: "inject_schema",
+      status: "pending",
+      risk: "low",
+      channel: "cms",
+      automatable: true,
+      provenance: {
+        source: "audit-issue",
+        sourceId: "schemaMissing:BreadcrumbList",
+        reason: `Breadcrumb schema absent on ${entry.url}`,
+      },
+      notes: "",
+      target: { url: entry.url, schemaType: "BreadcrumbList", location: "page" },
+      //payload: { jsonLd: buildBreadcrumbListJsonLd(entry.url, opts.client) },
+      payload: { jsonLd: {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `https://${opts.client.domain}/` },
+        ],
+      } },
+    });
+  }
   return out;
-}
+  }
+
+
