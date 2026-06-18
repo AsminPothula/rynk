@@ -32,7 +32,7 @@ export interface SchemaGeneratorOptions {
   /** Action ID prefix. */
   idPrefix?: string;
 }
-
+ 
 // ─── JSON-LD builders — pure, deterministic ──────────────────────────────────
 
 /**
@@ -141,6 +141,7 @@ function buildArticleJsonLd(url: string, title: string | null, client: ClientCon
       name: client.legalEntity,
       url: `https://${client.domain}/`,
     },
+
     author: {
       "@type": "Organization",
       name: client.legalEntity,
@@ -150,6 +151,31 @@ function buildArticleJsonLd(url: string, title: string | null, client: ClientCon
   };
 }
 
+/*
+for (const brief of opts.strategy.contentBriefs)
+  {
+    const placeholderFaqs = [
+      { question: `What is ${brief.targetKeyword}?`, answer: "[TO FILL] One-paragraph definition." },
+      { question: `How does ${brief.targetKeyword} work?`, answer: "[TO FILL] Process explanation." },
+      { question: `What are the benefits of ${brief.targetKeyword}?`, answer: "[TO FILL] List 3-5 benefits." },
+    ];
+    out.push({
+      id:idOf()
+      type: "inject_scheme",
+      status: "pending"
+      channel: "cms",
+automatable: true,
+provenance: {
+  source: "audit-issue",
+  sourceId: "schemaMissing:FAQPage",
+  reason: `FAQ schema for "${brief.targetKeyword}" missing`,
+},
+notes: "Replace placeholder Q&A before publishing.",
+target: { url: brief.url, schemaType: "FAQPage", location: "page" },
+payload: { jsonLd: buildFAQPageJsonLd(faqs) },
+});
+  }
+*/
 // ─── URL classification ──────────────────────────────────────────────────────
 
 function isHomepage(url: string): boolean {
@@ -167,6 +193,21 @@ function isServicePage(url: string): boolean {
 
 function isBlogPost(url: string): boolean {
   return /\/(blog|insights|articles|posts?|resources)\//i.test(url);
+}
+
+/** Matches content-skeleton.ts slugify — briefs have no canonical URL yet. */
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[''`]/g, "")
+    .replace(/\b(a|the|and|or|of|in|on|for|to|with)\b/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60);
+}
+
+function briefExpectedUrl(client: ClientContext, targetKeyword: string): string {
+  return `https://${client.domain}/${slugify(targetKeyword)}/`;
 }
 
 /**
@@ -189,6 +230,46 @@ export function generateSchemaActions(opts: SchemaGeneratorOptions): ExecutionAc
   const idOf = () => `${prefix}-${String(counter++).padStart(3, "0")}`;
 
   const sitemap = opts.audit.technicalCrawl.sitemapUrls;
+  for (const brief of opts.strategy.contentBriefs) {
+    if (!brief.geoRequirements.needsFAQBlock) continue;
+
+    const faqs = [
+      { question: `What is ${brief.targetKeyword}?`, answer: "[TO FILL] One-paragraph definition." },
+      { question: `How does ${brief.targetKeyword} work?`, answer: "[TO FILL] Process explanation." },
+      { question: `What are the benefits of ${brief.targetKeyword}?`, answer: "[TO FILL] List 3-5 benefits." },
+    ];
+    function buildFAQPageJsonLd(faqs: { question: string; answer: string }[]): Record<string, unknown> {
+      return {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": faqs.map(faq => ({
+          "@type": "Question",
+          "name": faq.question,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": faq.answer
+          }
+        }))
+      };
+    }
+    out.push({
+      id: idOf(),
+      type: "inject_schema",
+      status: "pending",
+      risk: "low",
+      channel: "cms",
+      automatable: true,
+      provenance: {
+        source: "audit-issue",
+        sourceId: "schemaMissing:FAQPage",
+        reason: `FAQ schema for "${brief.targetKeyword}" missing`,
+      },
+      notes: "Replace placeholder Q&A before publishing.",
+      target: { url: briefExpectedUrl(opts.client, brief.targetKeyword), schemaType: "FAQPage", location: "page" },
+      payload: { jsonLd: buildFAQPageJsonLd(faqs) },
+    });
+  }
+
 
   // ── Organization (sitewide via homepage) ────────────────────────────────
   const homepage = sitemap.find((s) => isHomepage(s.url));
@@ -232,6 +313,7 @@ export function generateSchemaActions(opts: SchemaGeneratorOptions): ExecutionAc
       payload: { jsonLd: buildServiceJsonLd(entry.url, entry.title, opts.client) },
     });
   }
+/*
   function buildFAQPageJsonLd(faqs: { question: string; answer: string }[]): Record<string, unknown> {
     return {
       "@context": "https://schema.org",
@@ -246,6 +328,9 @@ export function generateSchemaActions(opts: SchemaGeneratorOptions): ExecutionAc
       }))
     };
   }
+*/
+
+
 
   // ── Article schema for blog posts (skip if already present) ────────────
   for (const entry of sitemap) {
