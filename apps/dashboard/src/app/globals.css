@@ -96,4 +96,13 @@
     background-image: radial-gradient(circle, hsl(var(--border)) 1px, transparent 1px);
     background-size: 24px 24px;
   }
+
+  /* Hide scrollbar visually while keeping scroll behavior */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }

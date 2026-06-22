@@ -45,17 +45,14 @@ export default async function ClientOverviewPage({
 
   return (
     <div className="space-y-8">
-      {/* Breadcrumb + title */}
+      {/* Page header — client identity is shown by the sticky context bar */}
       <div>
-        <Link href="/app" className="font-mono text-[11px] text-muted-foreground hover:text-foreground">
-          ← clients
-        </Link>
-        <div className="mt-3 flex items-baseline gap-3">
-          <h1 className="text-3xl font-medium tracking-tight">
-            {context.legalEntity || context.domain}
-          </h1>
-          <span className="font-mono text-xs text-muted-foreground">{context.domain}</span>
-        </div>
+        <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+          Overview
+        </p>
+        <h1 className="mt-1 text-3xl font-medium tracking-tight">
+          {context.legalEntity || context.domain}
+        </h1>
         <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
           {context.industry && <span>{context.industry}</span>}
           {latestRunDate && (
@@ -145,7 +142,7 @@ export default async function ClientOverviewPage({
               <h2 className="mt-0.5 text-base font-medium">Planned actions by output channel</h2>
             </div>
             <Link
-              href={`/app/execution?domain=${context.domain}`}
+              href={`/app/clients/${context.domain}/execution`}
               className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
             >
               View manifest
@@ -186,19 +183,19 @@ export default async function ClientOverviewPage({
           label="Audit"
           title="Findings & issues"
           value={`${totalIssues} issues`}
-          href={`/app/audit?domain=${context.domain}`}
+          href={`/app/clients/${context.domain}/audit`}
         />
         <SectionLink
           label="Strategy"
           title="Clusters & briefs"
           value={`${latestStrategy?.topicClusterMap.length ?? 0} clusters · ${latestStrategy?.contentBriefs.length ?? 0} briefs`}
-          href={`/app/strategy?domain=${context.domain}`}
+          href={`/app/clients/${context.domain}/strategy`}
         />
         <SectionLink
           label="Execution"
           title="Action queue"
           value={`${latestManifest?.summary.totalActions ?? 0} actions`}
-          href={`/app/execution?domain=${context.domain}`}
+          href={`/app/clients/${context.domain}/execution`}
         />
       </div>
     </div>

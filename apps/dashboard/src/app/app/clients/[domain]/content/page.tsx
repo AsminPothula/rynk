@@ -9,7 +9,7 @@
  * Page-type filter pills in the URL search params.
  */
 
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getDataStore } from "@/lib/data-store";
 import { cn, formatCount } from "@/lib/utils";
@@ -24,12 +24,13 @@ const PAGE_TYPES = ["pillar", "spoke", "blog", "landing", "policy", "author"] as
 type PageType = (typeof PAGE_TYPES)[number] | "all";
 
 interface PageProps {
-  searchParams: Promise<{ domain?: string; type?: string }>;
+  params: Promise<{ domain: string }>;
+  searchParams: Promise<{ type?: string }>;
 }
 
-export default async function ContentPage({ searchParams }: PageProps): Promise<React.JSX.Element> {
-  const { domain, type } = await searchParams;
-  if (!domain) redirect("/app");
+export default async function ContentPage({ params, searchParams }: PageProps): Promise<React.JSX.Element> {
+  const { domain } = await params;
+  const { type } = await searchParams;
 
   const store = getDataStore();
   const overview = await store.getClientOverview(domain);
@@ -43,18 +44,14 @@ export default async function ContentPage({ searchParams }: PageProps): Promise<
   return (
     <div className="space-y-8">
       <div>
-        <Link
-          href={`/app/clients/${domain}`}
-          className="font-mono text-[11px] text-muted-foreground hover:text-foreground"
-        >
-          ← {domain}
-        </Link>
-        <div className="mt-3 flex items-baseline gap-3">
-          <h1 className="text-3xl font-medium tracking-tight">Content</h1>
-          <span className="font-mono text-xs text-muted-foreground">drafts</span>
-        </div>
+        <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+          Content
+        </p>
+        <h1 className="mt-1 text-3xl font-medium tracking-tight">
+          {formatCount(pages.length)} pages planned
+        </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          {formatCount(pages.length)} pages planned · ready for review before publishing.
+          Ready for review before publishing.
         </p>
       </div>
 
@@ -116,8 +113,8 @@ function TypeTab({
 }): React.JSX.Element {
   const href =
     type === "all"
-      ? `/app/content?domain=${domain}`
-      : `/app/content?domain=${domain}&type=${type}`;
+      ? `/app/clients/${domain}/content`
+      : `/app/clients/${domain}/content?type=${type}`;
   return (
     <Link
       href={href}

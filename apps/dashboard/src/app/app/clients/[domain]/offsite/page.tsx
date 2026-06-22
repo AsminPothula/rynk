@@ -9,7 +9,7 @@
  * Server-rendered; tab state in URL search params.
  */
 
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getDataStore } from "@/lib/data-store";
 import { cn, formatCount } from "@/lib/utils";
@@ -24,12 +24,13 @@ export const dynamic = "force-dynamic";
 type View = "outreach" | "social";
 
 interface PageProps {
-  searchParams: Promise<{ domain?: string; view?: View }>;
+  params: Promise<{ domain: string }>;
+  searchParams: Promise<{ view?: View }>;
 }
 
-export default async function OffsitePage({ searchParams }: PageProps): Promise<React.JSX.Element> {
-  const { domain, view } = await searchParams;
-  if (!domain) redirect("/app");
+export default async function OffsitePage({ params, searchParams }: PageProps): Promise<React.JSX.Element> {
+  const { domain } = await params;
+  const { view } = await searchParams;
 
   const store = getDataStore();
   const overview = await store.getClientOverview(domain);
@@ -42,20 +43,15 @@ export default async function OffsitePage({ searchParams }: PageProps): Promise<
 
   return (
     <div className="space-y-8">
-      {/* Breadcrumb + title */}
       <div>
-        <Link
-          href={`/app/clients/${domain}`}
-          className="font-mono text-[11px] text-muted-foreground hover:text-foreground"
-        >
-          ← {domain}
-        </Link>
-        <div className="mt-3 flex items-baseline gap-3">
-          <h1 className="text-3xl font-medium tracking-tight">Offsite</h1>
-          <span className="font-mono text-xs text-muted-foreground">queue</span>
-        </div>
+        <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+          Offsite
+        </p>
+        <h1 className="mt-1 text-3xl font-medium tracking-tight">
+          {formatCount(outreach.length + social.length)} drafts in queue
+        </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Drafts ready for the team to review, personalize, and send.
+          Ready for the team to review, personalize, and send.
         </p>
       </div>
 
@@ -119,8 +115,8 @@ function Tab({
 }): React.JSX.Element {
   const href =
     view === "outreach"
-      ? `/app/offsite?domain=${domain}`
-      : `/app/offsite?domain=${domain}&view=${view}`;
+      ? `/app/clients/${domain}/offsite`
+      : `/app/clients/${domain}/offsite?view=${view}`;
   return (
     <Link
       href={href}

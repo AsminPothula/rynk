@@ -11,7 +11,7 @@
  *   - type (optional)    — filter to a specific action type, e.g. "update_meta"
  */
 
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getDataStore } from "@/lib/data-store";
 import { CHANNEL_META, CHANNEL_ORDER } from "@/lib/channels";
@@ -33,13 +33,13 @@ const CHANNEL_DOT_BG: Record<string, string> = {
 };
 
 interface PageProps {
-  searchParams: Promise<{ domain?: string; channel?: string }>;
+  params: Promise<{ domain: string }>;
+  searchParams: Promise<{ channel?: string }>;
 }
 
-export default async function ExecutionPage({ searchParams }: PageProps): Promise<React.JSX.Element> {
-  const { domain, channel } = await searchParams;
-
-  if (!domain) redirect("/app");
+export default async function ExecutionPage({ params, searchParams }: PageProps): Promise<React.JSX.Element> {
+  const { domain } = await params;
+  const { channel } = await searchParams;
 
   const store = getDataStore();
   const overview = await store.getClientOverview(domain);
@@ -57,20 +57,15 @@ export default async function ExecutionPage({ searchParams }: PageProps): Promis
 
   return (
     <div className="space-y-8">
-      {/* Breadcrumb + title */}
+      {/* Page header — breadcrumb is provided by the client context bar */}
       <div>
-        <Link
-          href={`/app/clients/${domain}`}
-          className="font-mono text-[11px] text-muted-foreground hover:text-foreground"
-        >
-          ← {domain}
-        </Link>
-        <div className="mt-3 flex items-baseline gap-3">
-          <h1 className="text-3xl font-medium tracking-tight">Execution</h1>
-          <span className="font-mono text-xs text-muted-foreground">manifest</span>
-        </div>
+        <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+          Execution
+        </p>
+        <h1 className="mt-1 text-3xl font-medium tracking-tight">
+          {formatCount(summary.totalActions)} planned actions
+        </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          {formatCount(summary.totalActions)} planned actions ·{" "}
           <span className="text-foreground">{formatCount(summary.automatable)} automatable</span> ·{" "}
           {formatCount(summary.requiresHumanApproval)} need approval
         </p>
@@ -136,8 +131,8 @@ function ChannelTab({
 }): React.JSX.Element {
   const href =
     channel === "all"
-      ? `/app/execution?domain=${domain}`
-      : `/app/execution?domain=${domain}&channel=${channel}`;
+      ? `/app/clients/${domain}/execution`
+      : `/app/clients/${domain}/execution?channel=${channel}`;
   return (
     <Link
       href={href}
