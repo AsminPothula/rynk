@@ -18,6 +18,7 @@
 import type {
   AuditFindings,
   ClientContext,
+  ContentBrief,
   StrategyOutput,
 } from "@rynk/core";
 import type {
@@ -40,6 +41,7 @@ export interface SchemaGeneratorOptions {
  * a field is unknown — schema.org accepts partial Organization records.
  */
 function buildOrganizationJsonLd(client: ClientContext, audit: AuditFindings): Record<string, unknown> {
+  //It builds the Organization JSON-LD object.
   const nap = client.canonicalNAP.address || audit.entitySummary.canonicalNAP.address;
   const phone = client.canonicalNAP.phone || audit.entitySummary.canonicalNAP.phone;
   const email = client.canonicalNAP.email || audit.entitySummary.canonicalNAP.email;
@@ -53,42 +55,6 @@ function buildOrganizationJsonLd(client: ClientContext, audit: AuditFindings): R
   }
   // Add LinkedIn placeholder — actual URL comes from offsiteEEAT.napDirectories.linkedin
   // in real audits. Safe to omit when unknown.
-  function buildBreadcrumbListJsonLd(url: string, client: ClientContext): Record<string, unknown> {
-    // 1. Parse the URL pathname (e.g. "/solutions/freight/" → ["solutions", "freight"])
-  const urlObj = new URL(url);
-  const pathname = urlObj.pathname.replace(/^\/|\/$/g, "");
-  const segments = pathname.split("/").filter(Boolean);
-    // 2. Build an array of ListItem objects, one per segment, plus the homepage at index 0
-  const listItems = [
-    {
-      "@type": "ListItem",
-      position: 1,
-      name: "Home",
-      item: `https://${client.domain}/`,
-    },
-    ...segments.map((segment, index) => {
-      const cumulativePath = segments.slice(0, index + 1).join("/");
-      const readableName = segment
-        .split("-")
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
-
-      return {
-        "@type": "ListItem",
-        position: index + 2,
-        name: readableName,
-        item: `https://${client.domain}/${cumulativePath}/`,
-      };
-    }),
-  ];
-    // 3. Return the JSON-LD object
-    return {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      itemListElement: listItems,
-    };
-  }
-
 
   const out: Record<string, unknown> = {
     "@context": "https://schema.org",
@@ -151,31 +117,58 @@ function buildArticleJsonLd(url: string, title: string | null, client: ClientCon
   };
 }
 
-/*
-for (const brief of opts.strategy.contentBriefs)
-  {
-    const placeholderFaqs = [
-      { question: `What is ${brief.targetKeyword}?`, answer: "[TO FILL] One-paragraph definition." },
-      { question: `How does ${brief.targetKeyword} work?`, answer: "[TO FILL] Process explanation." },
-      { question: `What are the benefits of ${brief.targetKeyword}?`, answer: "[TO FILL] List 3-5 benefits." },
-    ];
-    out.push({
-      id:idOf()
-      type: "inject_scheme",
-      status: "pending"
-      channel: "cms",
-automatable: true,
-provenance: {
-  source: "audit-issue",
-  sourceId: "schemaMissing:FAQPage",
-  reason: `FAQ schema for "${brief.targetKeyword}" missing`,
-},
-notes: "Replace placeholder Q&A before publishing.",
-target: { url: brief.url, schemaType: "FAQPage", location: "page" },
-payload: { jsonLd: buildFAQPageJsonLd(faqs) },
-});
-  }
-*/
+function buildBreadcrumbListJsonLd(url: string, client: ClientContext): Record<string, unknown> {
+  const urlObj = new URL(url);
+  const pathname = urlObj.pathname.replace(/^\/|\/$/g, "");
+  const segments = pathname.split("/").filter(Boolean);
+
+  const listItems = [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: `https://${client.domain}/`,
+    },
+    ...segments.map((segment, index) => {
+      const cumulativePath = segments.slice(0, index + 1).join("/");
+      const readableName = segment
+        .split("-")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+
+      return {
+        "@type": "ListItem",
+        position: index + 2,
+        name: readableName,
+        item: `https://${client.domain}/${cumulativePath}/`,
+      };
+    }),
+  ];
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: listItems,
+  };
+}
+
+function buildPersonJsonLd(
+  person: { name: string; credentials: string[] },
+  client: ClientContext,
+): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: person.name,
+    worksFor: {
+      "@type": "Organization",
+      name: client.legalEntity,
+      url: `https://${client.domain}/`,
+    },
+    ...(person.credentials.length > 0 ? { knowsAbout: person.credentials } : {}),
+  };
+}
+
 // ─── URL classification ──────────────────────────────────────────────────────
 
 function isHomepage(url: string): boolean {
@@ -208,6 +201,27 @@ function slugify(text: string): string {
 
 function briefExpectedUrl(client: ClientContext, targetKeyword: string): string {
   return `https://${client.domain}/${slugify(targetKeyword)}/`;
+}
+
+/** Pick /about/ or /team/{founder-slug}/ from the sitemap, else default to /about/. */
+function pickPersonTargetUrl(
+  sitemap: AuditFindings["technicalCrawl"]["sitemapUrls"],
+  client: ClientContext,
+): string {
+  const founderSlug = slugify(client.founder!.name);
+  const defaultUrl = `https://${client.domain}/about/`;
+
+  for (const entry of sitemap) {
+    try {
+      const normalized = new URL(entry.url).pathname.replace(/\/$/, "") || "/";
+      if (normalized === "/about" || normalized === "/about-us") return entry.url;
+      if (normalized === `/team/${founderSlug}`) return entry.url;
+    } catch {
+      continue;
+    }
+  }
+
+  return defaultUrl;
 }
 
 /**
@@ -252,6 +266,33 @@ export function generateSchemaActions(opts: SchemaGeneratorOptions): ExecutionAc
         }))
       };
     }
+
+    //Task 3 Loop
+    function buildHowToJsonLd(
+      name: string,
+      description: string,
+      steps: { name: string; text: string }[],
+    ): Record<string, unknown> {
+      return {
+        "@context": "https://schema.org",
+        "@type": "HowTo",
+        "name": name,
+        "description": description,
+        "step": steps.map((step, i) => ({
+          "@type": "HowToStep",
+          "position": i + 1,
+          "name": step.name,
+          "text": step.text,
+        })),
+      };
+    }
+
+    const isHowTo = (brief: ContentBrief): boolean => {
+      return /\b(guide|tutorial|how\s*to|step.?by.?step|walkthrough)\b/i.test(
+        brief.recommendedFormat + " " + brief.h1Suggestion,
+      );
+    };
+    
     out.push({
       id: idOf(),
       type: "inject_schema",
@@ -291,11 +332,12 @@ export function generateSchemaActions(opts: SchemaGeneratorOptions): ExecutionAc
       payload: { jsonLd: buildOrganizationJsonLd(opts.client, opts.audit) },
     });
   }
-
   // ── Service schema for each service page ───────────────────────────────
   for (const entry of sitemap) {
+    //It checks if the URL is a service page and if the schema type is already present. If not, it adds the schema type to the URL.
     if (!isServicePage(entry.url)) continue;
     if (existingSchemaTypes(opts.audit, entry.url).has("service")) continue;
+    //If its not present, it adds the schema type to the URL. The schema will then state it does not have a service schema.
     out.push({
       id: idOf(),
       type: "inject_schema",
@@ -333,10 +375,16 @@ export function generateSchemaActions(opts: SchemaGeneratorOptions): ExecutionAc
 
 
   // ── Article schema for blog posts (skip if already present) ────────────
+  //Explantion: Checks if the URL is a blog post and if the schema type is already present. If not, it adds the schema type to the URL.
+  //Example: If the URL is https://www.example.com/blog/my-post, it will add the schema type to the URL.
+  //Example: If the URL is https://www.example.com/blog/my-post, it will not add the schema type to the URL.
+  //Example: If the URL is https://www.example.com/blog/my-post, it will not add the schema type to the URL.
   for (const entry of sitemap) {
     if (!isBlogPost(entry.url)) continue;
+  //Adds the schema type to the URL if it is not present.
     const existing = existingSchemaTypes(opts.audit, entry.url);
     if (existing.has("article")) continue;
+    //If its not present, it adds the schema type to the URL. The schema will then state it does not have an article schema.
     out.push({
       id: idOf(),
       type: "inject_schema",
@@ -358,6 +406,7 @@ export function generateSchemaActions(opts: SchemaGeneratorOptions): ExecutionAc
   }
 
   for (const entry of sitemap) {
+    //It checks if the URL is the homepage and if the schema type is already present. If not, it adds the schema type to the URL.
     if (isHomepage(entry.url)) continue;   // don't add breadcrumbs to "/"
     if (existingSchemaTypes(opts.audit, entry.url).has("breadcrumblist")) continue;
     out.push({
@@ -374,17 +423,37 @@ export function generateSchemaActions(opts: SchemaGeneratorOptions): ExecutionAc
       },
       notes: "",
       target: { url: entry.url, schemaType: "BreadcrumbList", location: "page" },
-      //payload: { jsonLd: buildBreadcrumbListJsonLd(entry.url, opts.client) },
-      payload: { jsonLd: {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: `https://${opts.client.domain}/` },
-        ],
-      } },
+      payload: { jsonLd: buildBreadcrumbListJsonLd(entry.url, opts.client) },
     });
   }
-  return out;
+
+  // ── Person schema for founder (when known) ──────────────────────────────
+  if (opts.client.founder) {
+    const personUrl = pickPersonTargetUrl(sitemap, opts.client);
+    if (!existingSchemaTypes(opts.audit, personUrl).has("person")) {
+      out.push({
+        id: idOf(),
+        type: "inject_schema",
+        status: "pending",
+        risk: "low",
+        channel: "cms",
+        automatable: true,
+        provenance: {
+          source: "audit-issue",
+          sourceId: "schemaMissing:Person",
+          reason: `Person schema for founder "${opts.client.founder.name}" absent on ${personUrl}`,
+        },
+        notes: "",
+        target: { url: personUrl, schemaType: "Person", location: "page" },
+        payload: {
+          jsonLd: buildPersonJsonLd(
+            { name: opts.client.founder.name, credentials: opts.client.founder.credentials },
+            opts.client,
+          ),
+        },
+      });
+    }
   }
 
-
+  return out;
+}
