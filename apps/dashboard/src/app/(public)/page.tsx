@@ -1,85 +1,179 @@
 /**
- * Landing page — public-facing homepage.
+ * Landing page.
  *
- * Tone: confident, data-forward, no fluff. Echoes Vercel's hero
- * structure (big claim → short subhead → CTA) with Stripe-style
- * generous spacing.
+ * Design moves away from the generic 3-feature-card pattern:
+ *   - Hero is asymmetric — headline left, status panel right
+ *   - Pipeline visualization shows the 5 layers as named stages
+ *   - "What it produces" is a bento-grid of action types, not feature cards
+ *   - Buttons are ghost / outline / minimal-fill — no saturated colors
  */
 
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
-import { ArrowRight, BarChart3, FileText, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
+
+const PIPELINE_STAGES = [
+  { label: "Onboard", note: "Capture client" },
+  { label: "Audit", note: "Crawl + research" },
+  { label: "Strategy", note: "Decide priorities" },
+  { label: "Generate", note: "Plan every change" },
+  { label: "Publish", note: "Push to CMS" },
+];
+
+/** Static channel-to-dot-class map. Tailwind needs literal class names. */
+const CHANNEL_DOT: Record<string, string> = {
+  cms: "bg-channel-cms",
+  image: "bg-channel-image",
+  outreach: "bg-channel-outreach",
+  social: "bg-channel-social",
+  "code-pr": "bg-channel-code-pr",
+  document: "bg-channel-document",
+  offsite: "bg-channel-offsite",
+};
+
+const ACTION_TYPES = [
+  { label: "Meta rewrites", count: "30+", channel: "cms" },
+  { label: "Schema markup", count: "12+", channel: "cms" },
+  { label: "301 redirects", count: "any", channel: "cms" },
+  { label: "Internal links", count: "100s", channel: "cms" },
+  { label: "New pages", count: "17+", channel: "cms" },
+  { label: "Hero images", count: "all", channel: "image" },
+  { label: "Outreach emails", count: "guests + press", channel: "outreach" },
+  { label: "Brand posts", count: "LinkedIn / Reddit", channel: "social" },
+  { label: "Whitepapers", count: "PDF + PPT", channel: "document" },
+  { label: "GitHub PRs", count: "if code", channel: "code-pr" },
+];
 
 export default function LandingPage(): React.JSX.Element {
   return (
     <>
-      {/* Hero */}
-      <section className="bg-dotted relative">
-        <div className="container py-24 sm:py-32 lg:py-40 text-center">
-          <p className="mb-4 inline-flex items-center gap-1.5 rounded-full border bg-background px-3 py-1 text-xs font-medium text-muted-foreground">
-            <Sparkles className="h-3 w-3" />
-            AI-powered SEO, AEO &amp; GEO
-          </p>
-          <h1 className="mx-auto max-w-3xl text-4xl font-semibold tracking-tight sm:text-6xl">
-            SEO, automated end to end.
-          </h1>
-          <p className="mx-auto mt-6 max-w-xl text-base text-muted-foreground sm:text-lg">
-            Rynk audits your site, plans the strategy, generates the content
-            and metadata, and pushes it live. One pipeline, every change
-            tracked.
-          </p>
-          <div className="mt-10 flex items-center justify-center gap-3">
-            <Link href="/app" className={buttonVariants({ size: "lg" })}>
-              Open the dashboard
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link href="/features" className={buttonVariants({ size: "lg", variant: "outline" })}>
-              See features
-            </Link>
+      {/* HERO — asymmetric, big claim left, signal panel right */}
+      <section className="border-b border-border/60">
+        <div className="container py-20 lg:py-28 grid gap-12 lg:grid-cols-[1.4fr_1fr] items-end">
+          <div>
+            <p className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/40 px-3 py-1 text-xs font-mono text-muted-foreground">
+              <span className="h-1.5 w-1.5 rounded-full bg-status-success" />
+              Pipeline running for itechdata.ai
+            </p>
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-medium tracking-tighter leading-[1.05]">
+              SEO that runs itself.
+            </h1>
+            <p className="mt-6 max-w-md text-base text-muted-foreground leading-relaxed">
+              Rynk audits your site, plans the strategy, writes the content,
+              and pushes it live. Every change tracked, every decision
+              traced.
+            </p>
+            <div className="mt-10 flex items-center gap-5">
+              <Link
+                href="/app"
+                className="inline-flex h-10 items-center gap-2 rounded-md bg-foreground px-5 text-sm font-medium text-background transition-opacity hover:opacity-90"
+              >
+                Open dashboard
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+              <Link
+                href="/how-it-works"
+                className="inline-flex h-10 items-center gap-1.5 text-sm font-medium text-foreground transition-colors hover:text-muted-foreground"
+              >
+                How it works
+                <ArrowUpRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Signal panel — terminal-aesthetic snapshot */}
+          <div className="rounded-lg border border-border/60 bg-card overflow-hidden">
+            <div className="flex items-center justify-between border-b border-border/60 px-4 py-2.5">
+              <span className="font-mono text-[11px] text-muted-foreground">
+                rynk pipeline · live
+              </span>
+              <div className="flex gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-status-success" />
+                <span className="h-2 w-2 rounded-full bg-status-pending" />
+                <span className="h-2 w-2 rounded-full bg-border" />
+              </div>
+            </div>
+            <div className="divide-y divide-border/60 font-mono text-xs">
+              {PIPELINE_STAGES.map((stage, i) => (
+                <div key={stage.label} className="flex items-center justify-between px-4 py-2.5">
+                  <div className="flex items-center gap-3">
+                    <span className="text-muted-foreground">0{i + 1}</span>
+                    <span className="text-foreground">{stage.label}</span>
+                  </div>
+                  <span className="text-muted-foreground">{stage.note}</span>
+                </div>
+              ))}
+              <div className="flex items-center justify-between bg-muted/30 px-4 py-2.5">
+                <span className="text-muted-foreground">Output</span>
+                <span className="text-foreground">246 actions</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Three feature blocks */}
-      <section className="border-t">
-        <div className="container py-20 grid gap-12 md:grid-cols-3">
-          <FeatureBlock
-            icon={<BarChart3 className="h-5 w-5" />}
-            title="Audit + Strategy"
-            text="Every page crawled, every keyword scored. Rynk identifies what's broken and prioritises what to fix."
-          />
-          <FeatureBlock
-            icon={<FileText className="h-5 w-5" />}
-            title="Generate Everything"
-            text="Pages, metadata, schema, redirects, outreach drafts, social posts, even hero images — produced as a single execution plan."
-          />
-          <FeatureBlock
-            icon={<Sparkles className="h-5 w-5" />}
-            title="Publish & Monitor"
-            text="Rynk pushes the changes to your CMS automatically, then keeps watching how the SERP shifts."
-          />
+      {/* WHAT IT PRODUCES — bento grid of action types */}
+      <section>
+        <div className="container py-20">
+          <div className="mb-10 flex items-end justify-between">
+            <div>
+              <p className="font-mono text-xs text-muted-foreground uppercase tracking-wider">
+                What rynk produces
+              </p>
+              <h2 className="mt-2 text-3xl font-medium tracking-tight">
+                Every change, written and tracked
+              </h2>
+            </div>
+            <p className="hidden md:block max-w-xs text-sm text-muted-foreground text-right">
+              From a single domain, rynk plans hundreds of specific changes
+              across six output channels.
+            </p>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            {ACTION_TYPES.map((item, idx) => (
+              <div
+                key={item.label}
+                className={`group rounded-md border border-border/60 bg-card p-4 transition-colors hover:border-foreground/20 ${
+                  // Make the first two and one in the middle wider for asymmetry
+                  idx === 0 || idx === 3 ? "lg:col-span-2" : ""
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className={`h-1.5 w-1.5 rounded-full ${CHANNEL_DOT[item.channel]}`} />
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                    {item.channel}
+                  </span>
+                </div>
+                <div className="mt-3 flex items-baseline justify-between">
+                  <span className="text-sm font-medium">{item.label}</span>
+                  <span className="font-mono text-xs text-muted-foreground">{item.count}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA strip */}
+      <section className="border-t border-border/60 bg-muted/20">
+        <div className="container py-16 flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div>
+            <h3 className="text-2xl font-medium tracking-tight">
+              See it on a real site.
+            </h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Open the dashboard and explore the live itechdata.ai pipeline output.
+            </p>
+          </div>
+          <Link
+            href="/app"
+            className="inline-flex h-10 items-center gap-2 rounded-md bg-foreground px-5 text-sm font-medium text-background transition-opacity hover:opacity-90"
+          >
+            Open the dashboard
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
         </div>
       </section>
     </>
-  );
-}
-
-function FeatureBlock({
-  icon,
-  title,
-  text,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  text: string;
-}): React.JSX.Element {
-  return (
-    <div>
-      <div className="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-md border bg-card text-foreground">
-        {icon}
-      </div>
-      <h3 className="text-base font-semibold">{title}</h3>
-      <p className="mt-2 text-sm text-muted-foreground">{text}</p>
-    </div>
   );
 }

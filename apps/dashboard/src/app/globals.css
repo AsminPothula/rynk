@@ -9,46 +9,46 @@
  */
 @layer base {
   :root {
-    /* Neutral base — Vercel-clean */
+    /* Neutral base — high contrast, tight borders */
     --background: 0 0% 100%;
-    --foreground: 0 0% 9%;
+    --foreground: 0 0% 6%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 9%;
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
-    --border: 0 0% 92%;
-    --input: 0 0% 92%;
-    --ring: 220 91% 50%;
+    --card-foreground: 0 0% 6%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 245 40% 65%;
 
-    /* Primary accent — Stripe blue. Easy to swap to purple/teal later. */
-    --primary: 220 91% 50%;
+    /* Pastel primary — muted indigo. Stripe-ish without being saturated. */
+    --primary: 245 35% 60%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 9%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 0 0% 6%;
 
-    --accent: 0 0% 96%;
-    --accent-foreground: 0 0% 9%;
+    --accent: 220 14% 96%;
+    --accent-foreground: 0 0% 6%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 65% 65%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Status colors (badges, dots) */
-    --status-success: 142 71% 45%;
-    --status-pending: 38 92% 50%;
-    --status-failed: 0 84% 60%;
-    --status-skipped: 0 0% 55%;
+    /* Status colors — all pastel, washed-out versions of the standard signals */
+    --status-success: 142 40% 55%;
+    --status-pending: 35 75% 65%;
+    --status-failed: 355 65% 70%;
+    --status-skipped: 220 10% 65%;
 
-    /* Channel colors (chips, indicators) */
-    --channel-cms: 220 91% 50%;
-    --channel-image: 280 65% 60%;
-    --channel-outreach: 142 71% 45%;
-    --channel-social: 333 71% 51%;
-    --channel-code-pr: 199 89% 48%;
-    --channel-document: 27 96% 61%;
-    --channel-offsite: 240 4% 46%;
+    /* Channel colors — each a distinct pastel hue */
+    --channel-cms: 215 45% 65%;
+    --channel-image: 280 35% 70%;
+    --channel-outreach: 150 35% 60%;
+    --channel-social: 330 50% 72%;
+    --channel-code-pr: 195 45% 65%;
+    --channel-document: 30 65% 72%;
+    --channel-offsite: 220 10% 60%;
 
-    --radius: 0.625rem;
+    --radius: 0.5rem;
   }
 
   .dark {
