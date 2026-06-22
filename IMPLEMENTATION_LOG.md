@@ -562,6 +562,95 @@ Distribution platforms pre-filled (SlideShare, Scribd, Issuu, etc).
 
 ---
 
+## 2026-06-20 — Dashboard scaffold: Next.js + Tailwind + first three pages
+
+**Phase / Plan section:** Web dashboard — Day 1 scaffold
+**Files changed:**
+- `package.json` (added `apps/*` to workspaces, `dashboard` script)
+- `apps/dashboard/package.json` (new — Next.js 15 + React 19 + Tailwind)
+- `apps/dashboard/tsconfig.json` (new)
+- `apps/dashboard/next.config.mjs` (new — transpilePackages for @rynk/*)
+- `apps/dashboard/postcss.config.mjs` (new)
+- `apps/dashboard/tailwind.config.ts` (new — full token palette: base,
+  status, channel colors as CSS variables)
+- `apps/dashboard/src/app/globals.css` (new — design tokens for light + dark)
+- `apps/dashboard/src/app/layout.tsx` (new — root shell)
+- `apps/dashboard/src/app/(public)/layout.tsx` + `page.tsx` (new — landing)
+- `apps/dashboard/src/app/app/layout.tsx` (new — sidebar layout for /app/*)
+- `apps/dashboard/src/app/app/page.tsx` (new — clients list)
+- `apps/dashboard/src/app/app/clients/[domain]/page.tsx` (new — overview)
+- `apps/dashboard/src/components/ui/{button,card,badge,separator}.tsx` (new)
+- `apps/dashboard/src/lib/{utils,channels}.ts` (new)
+- `apps/dashboard/src/lib/data-store/{types,json-store,index}.ts` (new)
+
+**What:**
+
+*Tech stack chosen:*
+- Next.js 15 (App Router) + React 19 + TypeScript
+- Tailwind CSS + shadcn/ui patterns
+- lucide-react for icons
+- Direct imports of `@rynk/core` + `@rynk/layer3-generate` via
+  `transpilePackages` — same monorepo, full type safety, no
+  duplication.
+
+*DataStore interface — DB-agnostic from day 1:*
+- `DataStore` interface declares `listClients()` and
+  `getClientOverview(domain)` returning normalized types
+- `JsonDataStore` is the first implementation — reads `runs/` JSON
+  artifacts, validates with our existing Zod schemas
+- `getDataStore()` factory reads `RYNK_DATA_STORE` env (defaults to
+  "json"); future SQLite / Supabase swap = one switch case
+- Every dashboard component imports from `@/lib/data-store`, never
+  filesystem APIs directly
+
+*Color system (Vercel + Stripe aesthetic):*
+- Neutral white base, generous whitespace
+- Status colors (success/pending/failed/skipped) and channel colors
+  (cms/image/outreach/social/code-pr/document/offsite) exposed as
+  CSS variables so the entire palette can be re-skinned when business
+  interns deliver brand colors — no component changes needed
+- Geist Sans + Geist Mono planned (currently system fallback fonts)
+- Dark mode tokens already defined; toggle UI deferred to Phase 2
+
+*First three pages live:*
+- `/` — landing page (hero + 3 feature blocks, public layout with
+  header + footer)
+- `/app` — clients list (Card per client, shows domain, legal name,
+  industry, latest run date, action count, DA score)
+- `/app/clients/[domain]` — overview page (4 metric cards, channel
+  breakdown of the manifest, 3 section links to audit/strategy/execution)
+
+**Route structure (multi-tier auth ready):**
+- `(public)/...` — marketing pages (no auth, public layout)
+- `app/...` — logged-in user view (sidebar layout)
+- `admin/...` — admin view (placeholder for super-admin/team-admin tiers)
+- Real auth + tier protection added when DB layer lands
+
+**Verification:**
+- `npm install` clean
+- `npm run dashboard` starts dev server on :3000
+- All three pages return HTTP 200, render real itechdata.ai data:
+  - `/` shows landing
+  - `/app` shows 1 client (itechdata.ai)
+  - `/app/clients/itechdata.ai` shows DA, P1 count (~10), 17 briefs, 246
+    actions, channel breakdown across cms/image/outreach/social/code-pr/document
+
+**Standing engineering rules applied:**
+- Type-safe data layer via @rynk/core Zod schemas (single source of truth)
+- DB-agnostic data store interface (swappable implementation)
+- Centralized channel display metadata (CHANNEL_META map — never duplicate)
+- All colors via CSS variables (one place to re-skin)
+- Components consume normalized types (no raw JSON or DB rows leaking up)
+
+**Next steps:**
+- Build dedicated audit / strategy / execution pages
+- Add filtering + sorting on the manifest actions table
+- Wire approval UI (visual only first)
+- Mobile responsive polish + dark mode toggle
+- Deploy when boss confirms URL + hosting choice
+
+---
+
 ## Pending entries
 
 Below this line, future entries are added as work completes.

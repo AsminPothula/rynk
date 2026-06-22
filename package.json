@@ -5,7 +5,8 @@
   "description": "rynk.ai — AI-powered SEO platform (5-layer agent pipeline)",
   "type": "module",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",
@@ -14,6 +15,7 @@
     "pipeline": "tsx packages/orchestrator/src/index.ts",
     "layer1": "npm run start --workspace=@rynk/layer1-audit",
     "layer2": "npm run start --workspace=@rynk/layer2-strategy",
+    "dashboard": "npm run dev --workspace=@rynk/dashboard",
     "test": "npm run test --workspaces --if-present"
   },
   "devDependencies": {

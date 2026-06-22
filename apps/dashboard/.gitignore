@@ -1,0 +1,17 @@
+# Next.js build output
+.next/
+out/
+build/
+
+# Dependencies (hoisted to root node_modules)
+node_modules/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Local env
+.env*.local
+
+# Logs
+*.log
