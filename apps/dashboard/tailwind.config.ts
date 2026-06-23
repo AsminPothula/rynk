@@ -58,6 +58,10 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Warm-neutral accent surfaces — use sparingly for visual rhythm
+        cream: "hsl(var(--cream))",
+        tan: "hsl(var(--tan))",
+        "brown-soft": "hsl(var(--brown-soft))",
         // Status colors — used on badges + dots.
         status: {
           success: "hsl(var(--status-success))",

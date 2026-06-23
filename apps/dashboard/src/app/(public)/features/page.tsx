@@ -114,7 +114,7 @@ const PILLARS = [
 export default function FeaturesPage(): React.JSX.Element {
   return (
     <>
-      <section className="border-b border-border/60">
+      <section className="border-b border-border/60 bg-warm-wash">
         <div className="container py-20 lg:py-24">
           <p className="font-mono text-xs text-muted-foreground uppercase tracking-wider">
             Features
@@ -130,8 +130,11 @@ export default function FeaturesPage(): React.JSX.Element {
         </div>
       </section>
 
-      {PILLARS.map((pillar) => (
-        <section key={pillar.n} className="border-b border-border/60">
+      {PILLARS.map((pillar, idx) => (
+        <section
+          key={pillar.n}
+          className={`border-b border-border/60 ${idx % 2 === 1 ? "bg-cream/40" : ""}`}
+        >
           <div className="container py-16 lg:py-20">
             <div className="flex items-center gap-4 mb-10">
               <div className="relative flex h-10 w-10 items-center justify-center rounded-md border border-border bg-background">
@@ -168,7 +171,7 @@ export default function FeaturesPage(): React.JSX.Element {
       ))}
 
       {/* CTA */}
-      <section className="bg-muted/20">
+      <section className="bg-tan/30">
         <div className="container py-16 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div>
             <h3 className="text-2xl font-medium tracking-tight">Want the deep tour?</h3>

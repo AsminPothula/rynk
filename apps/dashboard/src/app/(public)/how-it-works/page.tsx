@@ -116,7 +116,7 @@ export default function HowItWorksPage(): React.JSX.Element {
   return (
     <>
       {/* Hero */}
-      <section className="border-b border-border/60">
+      <section className="border-b border-border/60 bg-warm-wash">
         <div className="container py-20 lg:py-24">
           <p className="font-mono text-xs text-muted-foreground uppercase tracking-wider">
             How it works
@@ -178,7 +178,7 @@ export default function HowItWorksPage(): React.JSX.Element {
                   </ul>
 
                   {/* Outputs */}
-                  <div className="mt-6 inline-flex flex-wrap items-center gap-2 rounded-md border border-border/60 bg-muted/30 px-3 py-2">
+                  <div className="mt-6 inline-flex flex-wrap items-center gap-2 rounded-md border border-border/60 bg-cream/60 px-3 py-2">
                     <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
                       Outputs
                     </span>
@@ -198,7 +198,7 @@ export default function HowItWorksPage(): React.JSX.Element {
       </section>
 
       {/* CTA strip */}
-      <section className="border-t border-border/60 bg-muted/20">
+      <section className="border-t border-border/60 bg-tan/30">
         <div className="container py-16 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div>
             <h3 className="text-2xl font-medium tracking-tight">See it on a real site.</h3>

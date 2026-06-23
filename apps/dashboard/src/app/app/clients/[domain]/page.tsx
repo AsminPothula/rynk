@@ -66,8 +66,8 @@ export default async function ClientOverviewPage({
 
       {/* BENTO GRID — asymmetric */}
       <div className="grid gap-3 lg:grid-cols-4 lg:grid-rows-2">
-        {/* Big DA card — top-left, spans 2 cols x 1 row */}
-        <div className="lg:col-span-2 lg:row-span-1 rounded-lg border border-border/60 bg-card p-6">
+        {/* Big DA card — top-left, spans 2 cols x 1 row, soft cream wash */}
+        <div className="lg:col-span-2 lg:row-span-1 rounded-lg border border-border/60 bg-cream/60 p-6">
           <div className="flex items-start justify-between">
             <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
               Domain Authority

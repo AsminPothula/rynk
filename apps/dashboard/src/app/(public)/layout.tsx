@@ -61,7 +61,7 @@ export default function PublicLayout({
 
       <main className="flex-1">{children}</main>
 
-      <footer className="border-t border-border/60">
+      <footer className="border-t border-border/60 bg-cream/30">
         <div className="container flex h-14 items-center justify-between text-xs text-muted-foreground">
           <span>© rynk 2026</span>
           <span className="font-mono">AI-powered SEO</span>

@@ -30,6 +30,17 @@ const CHANNEL_DOT: Record<string, string> = {
   offsite: "bg-channel-offsite",
 };
 
+/** Soft channel-tinted background for action cards. */
+const CHANNEL_SOFT: Record<string, string> = {
+  cms: "bg-channel-cms-soft",
+  image: "bg-channel-image-soft",
+  outreach: "bg-channel-outreach-soft",
+  social: "bg-channel-social-soft",
+  "code-pr": "bg-channel-code-pr-soft",
+  document: "bg-channel-document-soft",
+  offsite: "bg-channel-offsite-soft",
+};
+
 const ACTION_TYPES = [
   { label: "Meta rewrites", count: "30+", channel: "cms" },
   { label: "Schema markup", count: "12+", channel: "cms" },
@@ -47,7 +58,7 @@ export default function LandingPage(): React.JSX.Element {
   return (
     <>
       {/* HERO — asymmetric, big claim left, signal panel right */}
-      <section className="border-b border-border/60">
+      <section className="border-b border-border/60 bg-warm-wash">
         <div className="container py-20 lg:py-28 grid gap-12 lg:grid-cols-[1.4fr_1fr] items-end">
           <div>
             <p className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/40 px-3 py-1 text-xs font-mono text-muted-foreground">
@@ -112,7 +123,7 @@ export default function LandingPage(): React.JSX.Element {
       </section>
 
       {/* WHAT IT PRODUCES — bento grid of action types */}
-      <section>
+      <section className="bg-cream/40">
         <div className="container py-20">
           <div className="mb-10 flex items-end justify-between">
             <div>
@@ -133,7 +144,7 @@ export default function LandingPage(): React.JSX.Element {
             {ACTION_TYPES.map((item, idx) => (
               <div
                 key={item.label}
-                className={`group rounded-md border border-border/60 bg-card p-4 transition-colors hover:border-foreground/20 ${
+                className={`group rounded-md border border-border/60 ${CHANNEL_SOFT[item.channel]} p-4 transition-all hover:border-foreground/20 hover:shadow-sm ${
                   // Make the first two and one in the middle wider for asymmetry
                   idx === 0 || idx === 3 ? "lg:col-span-2" : ""
                 }`}
@@ -155,7 +166,7 @@ export default function LandingPage(): React.JSX.Element {
       </section>
 
       {/* CTA strip */}
-      <section className="border-t border-border/60 bg-muted/20">
+      <section className="border-t border-border/60 bg-tan/30">
         <div className="container py-16 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div>
             <h3 className="text-2xl font-medium tracking-tight">
