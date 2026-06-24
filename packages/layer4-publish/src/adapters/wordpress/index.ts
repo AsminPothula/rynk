@@ -1,28 +1,23 @@
 /**
  * WordPress CMS adapter — applies manifest actions via the WP REST API.
  *
- * Status: **skeleton**. Method shapes + dispatch are real; HTTP calls are
- * stubbed pending live test environment + credentials. Switch
- * `WORDPRESS_LIVE=true` in `.env` to enable real calls once ready (will throw
- * "not implemented" today — the stubs prevent accidental side effects).
+ * Live mode is gated by WORDPRESS_LIVE=true. Two handlers are real today:
+ *   - applyUpdateMeta — sets title + meta description on a post/page,
+ *     using whichever SEO plugin is detected (Yoast / RankMath / SEOPress
+ *     / none) for the meta_description field.
+ *   - applyInjectSchema — appends a <script type="application/ld+json">
+ *     block to the post content, idempotent (replaces an existing block
+ *     of the same @type if one is already there).
  *
- * What this skeleton already does correctly:
- *   - Declares the right channel + cmsName
- *   - Dispatches every CMS-channel action type via canHandle / apply
- *   - Logs each call exactly as the live version will
- *   - Returns a structured ApplyResult (skipped + message) so the manifest
- *     applier records progress consistently
- *
- * What live mode adds (when wired):
- *   - WP REST API auth via application password (per-client .env file)
- *   - Yoast / RankMath / SEOPress detection for meta + schema fields
- *   - Page-builder detector (Elementor/Divi/Gutenberg) for safe content edits
- *   - Redirect plugin selection (Yoast Premium / Redirection / .htaccess)
+ * The other handlers still throw "not implemented" — coming soon.
  */
 
 import { createLogger, optionalEnv } from "@rynk/core";
 import type { ExecutionAction } from "@rynk/layer3-generate";
 import type { ApplyResult, CMSAdapter } from "../types.js";
+import { WordPressClient, WordPressApiError } from "./client.js";
+import { applyUpdateMeta } from "./handlers/update-meta.js";
+import { applyInjectSchema } from "./handlers/inject-schema.js";
 
 const log = createLogger("layer4.wordpress");
 
@@ -56,6 +51,14 @@ export function makeWordPressAdapter(config: WordPressAdapterConfig): CMSAdapter
   const live = optionalEnv("WORDPRESS_LIVE", "false").toLowerCase() === "true";
   const siteUrl = config.siteUrl.replace(/\/$/, "");
 
+  // Client is constructed lazily on first apply so skeleton mode never
+  // touches the network even by accident.
+  let client: WordPressClient | null = null;
+  const getClient = (): WordPressClient => {
+    if (!client) client = new WordPressClient({ ...config, siteUrl });
+    return client;
+  };
+
   return {
     adapterName: "wordpress",
     channel: "cms",
@@ -82,18 +85,16 @@ export function makeWordPressAdapter(config: WordPressAdapterConfig): CMSAdapter
         };
       }
 
-      // Live dispatch — implementations to come. Throws clearly so a misconfigured
-      // env doesn't silently do nothing.
       try {
         switch (action.type) {
           case "update_meta":
-            return await applyUpdateMeta(siteUrl, action, config);
+            return await applyUpdateMeta(getClient(), action);
+          case "inject_schema":
+            return await applyInjectSchema(getClient(), action);
           case "create_page":
             return await applyCreatePage(siteUrl, action, config);
           case "update_page":
             return await applyUpdatePage(siteUrl, action, config);
-          case "inject_schema":
-            return await applyInjectSchema(siteUrl, action, config);
           case "add_redirect":
             return await applyAddRedirect(siteUrl, action, config);
           case "insert_internal_link":
@@ -111,6 +112,12 @@ export function makeWordPressAdapter(config: WordPressAdapterConfig): CMSAdapter
             };
         }
       } catch (err) {
+        // Map WordPressApiError to a structured failure for the dashboard to surface.
+        if (err instanceof WordPressApiError) {
+          const msg = `WP REST ${err.status} on ${err.endpoint}`;
+          log.error("apply failed", { actionId: action.id, status: err.status, endpoint: err.endpoint });
+          return { status: "failed", error: msg };
+        }
         const msg = err instanceof Error ? err.message : String(err);
         log.error("apply failed", { actionId: action.id, error: msg });
         return { status: "failed", error: msg };
@@ -119,17 +126,8 @@ export function makeWordPressAdapter(config: WordPressAdapterConfig): CMSAdapter
   };
 }
 
-// ── Per-action handlers — typed but unimplemented ────────────────────────────
-// Each method receives a narrowed action type via the discriminator. Live
-// implementations will call WP REST endpoints and return ApplyResult.
+// ── Stubs for handlers still pending (throw clearly) ────────────────────────
 
-async function applyUpdateMeta(
-  _siteUrl: string,
-  _action: ExecutionAction,
-  _config: WordPressAdapterConfig,
-): Promise<ApplyResult> {
-  throw new Error("update_meta not yet implemented (needs Yoast/RankMath detector + REST call)");
-}
 async function applyCreatePage(
   _siteUrl: string,
   _action: ExecutionAction,
@@ -143,13 +141,6 @@ async function applyUpdatePage(
   _config: WordPressAdapterConfig,
 ): Promise<ApplyResult> {
   throw new Error("update_page not yet implemented (needs page-builder detector)");
-}
-async function applyInjectSchema(
-  _siteUrl: string,
-  _action: ExecutionAction,
-  _config: WordPressAdapterConfig,
-): Promise<ApplyResult> {
-  throw new Error("inject_schema not yet implemented (route: Yoast schema graph or page body <script>)");
 }
 async function applyAddRedirect(
   _siteUrl: string,

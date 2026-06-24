@@ -20,3 +20,4 @@ archive/
 # macOS
 .DS_Store
 .claude/
+local-wp/
