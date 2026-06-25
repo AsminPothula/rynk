@@ -169,6 +169,25 @@ function buildPersonJsonLd(
   };
 }
 
+function buildHowToJsonLd(
+  name: string,
+  description: string,
+  steps: { name: string; text: string }[],
+): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name,
+    description,
+    step: steps.map((step, i) => ({
+      "@type": "HowToStep",
+      position: i + 1,
+      name: step.name,
+      text: step.text,
+    })),
+  };
+}
+
 // ─── URL classification ──────────────────────────────────────────────────────
 
 function isHomepage(url: string): boolean {
@@ -202,6 +221,12 @@ function slugify(text: string): string {
 function briefExpectedUrl(client: ClientContext, targetKeyword: string): string {
   return `https://${client.domain}/${slugify(targetKeyword)}/`;
 }
+
+const isHowTo = (brief: ContentBrief): boolean => {
+  return /\b(guide|tutorial|how\s*to|step.?by.?step|walkthrough)\b/i.test(
+    brief.recommendedFormat + " " + brief.h1Suggestion,
+  );
+};
 
 /** Pick /about/ or /team/{founder-slug}/ from the sitemap, else default to /about/. */
 function pickPersonTargetUrl(
@@ -267,31 +292,23 @@ export function generateSchemaActions(opts: SchemaGeneratorOptions): ExecutionAc
       };
     }
 
-    //Task 3 Loop
-    function buildHowToJsonLd(
-      name: string,
-      description: string,
-      steps: { name: string; text: string }[],
-    ): Record<string, unknown> {
+   
+
+    function buildPersonJsonLd(person: { name: string; credentials: string[] }, client: ClientContext): Record<string, unknown> {
       return {
         "@context": "https://schema.org",
-        "@type": "HowTo",
-        "name": name,
-        "description": description,
-        "step": steps.map((step, i) => ({
-          "@type": "HowToStep",
-          "position": i + 1,
-          "name": step.name,
-          "text": step.text,
-        })),
+        "@type": "Person",
+        "name": person.name,
+        "worksFor": {
+          "@type": "Organization",
+          "name": client.legalEntity,
+          "url": `https://${client.domain}/`,
+        },
+        // Add credentials if present
+        ...(person.credentials.length > 0 ? { "knowsAbout": person.credentials } : {}),
       };
     }
-
-    const isHowTo = (brief: ContentBrief): boolean => {
-      return /\b(guide|tutorial|how\s*to|step.?by.?step|walkthrough)\b/i.test(
-        brief.recommendedFormat + " " + brief.h1Suggestion,
-      );
-    };
+    
     
     out.push({
       id: idOf(),
@@ -311,7 +328,41 @@ export function generateSchemaActions(opts: SchemaGeneratorOptions): ExecutionAc
     });
   }
 
-
+  for (const brief of opts.strategy.contentBriefs) {
+    if (!isHowTo(brief)) continue;
+  
+    const steps = brief.h2Suggestions.map((h2) => ({
+      name: h2,
+      text: "[TO FILL] Step instructions.",
+    }));
+  
+    out.push({
+      id: idOf(),
+      type: "inject_schema",
+      status: "pending",
+      risk: "low",
+      channel: "cms",
+      automatable: true,
+      provenance: {
+        source: "audit-issue",
+        sourceId: "schemaMissing:HowTo",
+        reason: `HowTo schema for "${brief.targetKeyword}" missing`,
+      },
+      notes: "Replace placeholder step text before publishing.",
+      target: {
+        url: briefExpectedUrl(opts.client, brief.targetKeyword),
+        schemaType: "HowTo",
+        location: "page",
+      },
+      payload: {
+        jsonLd: buildHowToJsonLd(
+          brief.h1Suggestion,
+          `[TO FILL] Step-by-step guide to ${brief.targetKeyword}.`,
+          steps,
+        ),
+      },
+    });
+  }
   // ── Organization (sitewide via homepage) ────────────────────────────────
   const homepage = sitemap.find((s) => isHomepage(s.url));
   if (homepage && !existingSchemaTypes(opts.audit, homepage.url).has("organization")) {
