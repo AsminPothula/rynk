@@ -1,15 +1,21 @@
 /**
- * WordPress CMS adapter — applies manifest actions via the WP REST API.
+ * WordPress CMS adapter - applies manifest actions via the WP REST API.
  *
- * Live mode is gated by WORDPRESS_LIVE=true. Two handlers are real today:
- *   - applyUpdateMeta — sets title + meta description on a post/page,
- *     using whichever SEO plugin is detected (Yoast / RankMath / SEOPress
- *     / none) for the meta_description field.
- *   - applyInjectSchema — appends a <script type="application/ld+json">
- *     block to the post content, idempotent (replaces an existing block
- *     of the same @type if one is already there).
+ * Live mode is gated by WORDPRESS_LIVE=true. Five handlers are real today:
+ *   - applyUpdateMeta    - sets title + meta description via the active
+ *     SEO plugin's meta keys (Yoast / RankMath / SEOPress / none fallback)
+ *   - applyInjectSchema  - appends a <script type="application/ld+json">
+ *     block to the post content (idempotent via rynk:schema:Type markers)
+ *   - applyCreatePage    - POSTs a new page or post from markdown body,
+ *     idempotent on re-runs by slug lookup, defaults to draft status
+ *   - applyAddNapBlock   - injects a NAP block (+ optional LocalBusiness
+ *     JSON-LD), idempotent via rynk:nap markers
+ *   - applyUpdatePage    - 4 operations: rewrite / expand / consolidate /
+ *     refresh, each with its own idempotency strategy
  *
- * The other handlers still throw "not implemented" — coming soon.
+ * Still pending (intern handlers, smaller scope):
+ *   - applyAddRedirect, applyInsertInternalLink, applyCreateAuthor,
+ *     applyAssignAuthor
  */
 
 import { createLogger, optionalEnv } from "@rynk/core";
@@ -18,6 +24,9 @@ import type { ApplyResult, CMSAdapter } from "../types.js";
 import { WordPressClient, WordPressApiError } from "./client.js";
 import { applyUpdateMeta } from "./handlers/update-meta.js";
 import { applyInjectSchema } from "./handlers/inject-schema.js";
+import { applyCreatePage } from "./handlers/create-page.js";
+import { applyAddNapBlock } from "./handlers/add-nap-block.js";
+import { applyUpdatePage } from "./handlers/update-page.js";
 
 const log = createLogger("layer4.wordpress");
 
@@ -92,9 +101,11 @@ export function makeWordPressAdapter(config: WordPressAdapterConfig): CMSAdapter
           case "inject_schema":
             return await applyInjectSchema(getClient(), action);
           case "create_page":
-            return await applyCreatePage(siteUrl, action, config);
+            return await applyCreatePage(getClient(), action);
           case "update_page":
-            return await applyUpdatePage(siteUrl, action, config);
+            return await applyUpdatePage(getClient(), action);
+          case "add_nap_block":
+            return await applyAddNapBlock(getClient(), action);
           case "add_redirect":
             return await applyAddRedirect(siteUrl, action, config);
           case "insert_internal_link":
@@ -103,8 +114,6 @@ export function makeWordPressAdapter(config: WordPressAdapterConfig): CMSAdapter
             return await applyCreateAuthor(siteUrl, action, config);
           case "assign_author":
             return await applyAssignAuthor(siteUrl, action, config);
-          case "add_nap_block":
-            return await applyAddNapBlock(siteUrl, action, config);
           default:
             return {
               status: "skipped",
@@ -126,22 +135,8 @@ export function makeWordPressAdapter(config: WordPressAdapterConfig): CMSAdapter
   };
 }
 
-// ── Stubs for handlers still pending (throw clearly) ────────────────────────
+// ── Stubs for handlers still pending (intern work) ──────────────────────────
 
-async function applyCreatePage(
-  _siteUrl: string,
-  _action: ExecutionAction,
-  _config: WordPressAdapterConfig,
-): Promise<ApplyResult> {
-  throw new Error("create_page not yet implemented (needs POST /wp-json/wp/v2/pages or /posts)");
-}
-async function applyUpdatePage(
-  _siteUrl: string,
-  _action: ExecutionAction,
-  _config: WordPressAdapterConfig,
-): Promise<ApplyResult> {
-  throw new Error("update_page not yet implemented (needs page-builder detector)");
-}
 async function applyAddRedirect(
   _siteUrl: string,
   _action: ExecutionAction,
@@ -169,11 +164,4 @@ async function applyAssignAuthor(
   _config: WordPressAdapterConfig,
 ): Promise<ApplyResult> {
   throw new Error("assign_author not yet implemented (PUT post.author)");
-}
-async function applyAddNapBlock(
-  _siteUrl: string,
-  _action: ExecutionAction,
-  _config: WordPressAdapterConfig,
-): Promise<ApplyResult> {
-  throw new Error("add_nap_block not yet implemented (modify page content + LocalBusiness schema)");
 }
