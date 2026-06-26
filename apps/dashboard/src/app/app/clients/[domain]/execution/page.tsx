@@ -1,191 +1,387 @@
 /**
- * Execution manifest viewer — /app/execution
+ * Execution manifest viewer - /app/clients/[domain]/execution
  *
- * Renders every action rynk has planned for the selected client, grouped
- * by channel, with channel filter tabs in the URL search params (so the
- * page stays server-rendered and shareable).
+ * Direct category navigation:
  *
- * Search params:
- *   - domain (required) — which client's manifest to render
- *   - channel (optional) — filter to a specific channel, e.g. "cms"
- *   - type (optional)    — filter to a specific action type, e.g. "update_meta"
+ *   All . CMS . Content . Outreach . Social . Code . Documents
+ *
+ * Each category is purpose-based (not channel-based) so the team can
+ * jump straight to the work that matters to their role:
+ *
+ *   - CMS        - schema, redirects, NAP, authors, profiles
+ *   - Content    - new pages, page rewrites, images
+ *   - Outreach   - email outreach (backlink, guest, HARO, etc.)
+ *   - Social     - brand posts on LinkedIn / Reddit / Threads / etc.
+ *   - Code       - GitHub pull requests for code-level fixes
+ *   - Documents  - PDF / PPTX whitepapers and decks
+ *
+ * Inside each category, a sidebar sub-filter narrows to specific action
+ * types (e.g. inside Content: New pages / Page rewrites / Images).
+ *
+ * Server-rendered. URL search params drive state:
+ *   - view   = category (default "all")
+ *   - filter = sub-type within view (default "all")
  */
 
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getDataStore } from "@/lib/data-store";
-import { CHANNEL_META, CHANNEL_ORDER } from "@/lib/channels";
-import { formatCount, cn } from "@/lib/utils";
+import { cn, formatCount } from "@/lib/utils";
 import { ActionRow } from "./action-row";
-import type { ActionChannel, ExecutionAction } from "@rynk/layer3-generate";
+import type { ExecutionAction } from "@rynk/layer3-generate";
 
 export const dynamic = "force-dynamic";
 
-/** Static channel-to-class lookup. Tailwind needs literal class names. */
-const CHANNEL_DOT_BG: Record<string, string> = {
+// ── Category model ──────────────────────────────────────────────────────
+
+type Category = "all" | "cms" | "content" | "outreach" | "social" | "code" | "documents";
+
+interface CategoryDef {
+  value: Category;
+  label: string;
+  /** Returns true if this action belongs in the category. */
+  match: (a: ExecutionAction) => boolean;
+  /** Sub-filters shown in the sidebar when this category is active. */
+  subFilters: Array<{
+    value: string;
+    label: string;
+    match: (a: ExecutionAction) => boolean;
+  }>;
+}
+
+const CATEGORIES: CategoryDef[] = [
+  {
+    value: "all",
+    label: "All",
+    match: () => true,
+    subFilters: [],
+  },
+  {
+    value: "cms",
+    label: "CMS",
+    match: (a) =>
+      a.type === "inject_schema" ||
+      a.type === "add_redirect" ||
+      a.type === "add_nap_block" ||
+      a.type === "create_author" ||
+      a.type === "assign_author" ||
+      a.type === "update_offsite_profile",
+    subFilters: [
+      { value: "schema", label: "Schema", match: (a) => a.type === "inject_schema" },
+      { value: "redirects", label: "Redirects", match: (a) => a.type === "add_redirect" },
+      { value: "nap", label: "NAP", match: (a) => a.type === "add_nap_block" },
+      {
+        value: "authors",
+        label: "Authors",
+        match: (a) => a.type === "create_author" || a.type === "assign_author",
+      },
+      { value: "profiles", label: "Profiles", match: (a) => a.type === "update_offsite_profile" },
+    ],
+  },
+  {
+    value: "content",
+    label: "Content",
+    match: (a) =>
+      a.type === "create_page" ||
+      a.type === "update_page" ||
+      a.type === "update_meta" ||
+      a.type === "insert_internal_link" ||
+      a.type === "create_image",
+    subFilters: [
+      {
+        value: "new-pages",
+        label: "New pages",
+        match: (a) => a.type === "create_page" || a.type === "update_page",
+      },
+      {
+        value: "rewrites",
+        label: "Page rewrites",
+        match: (a) => a.type === "update_meta" || a.type === "insert_internal_link",
+      },
+      { value: "images", label: "Images", match: (a) => a.type === "create_image" },
+    ],
+  },
+  {
+    value: "outreach",
+    label: "Outreach",
+    match: (a) => a.type === "draft_outreach",
+    subFilters: [
+      {
+        value: "backlink",
+        label: "Backlink",
+        match: (a) => a.type === "draft_outreach" && a.target.outreachType === "backlink-request",
+      },
+      {
+        value: "guest",
+        label: "Guest pitch",
+        match: (a) => a.type === "draft_outreach" && a.target.outreachType === "guest-post-pitch",
+      },
+      {
+        value: "haro",
+        label: "HARO",
+        match: (a) => a.type === "draft_outreach" && a.target.outreachType === "haro-response",
+      },
+      {
+        value: "podcast",
+        label: "Podcast",
+        match: (a) => a.type === "draft_outreach" && a.target.outreachType === "podcast-pitch",
+      },
+      {
+        value: "press",
+        label: "Press",
+        match: (a) => a.type === "draft_outreach" && a.target.outreachType === "press-pitch",
+      },
+      {
+        value: "partnership",
+        label: "Partnership",
+        match: (a) => a.type === "draft_outreach" && a.target.outreachType === "partnership",
+      },
+    ],
+  },
+  {
+    value: "social",
+    label: "Social",
+    match: (a) => a.type === "draft_brand_post",
+    subFilters: [
+      {
+        value: "linkedin",
+        label: "LinkedIn",
+        match: (a) => a.type === "draft_brand_post" && a.target.platform === "linkedin",
+      },
+      {
+        value: "reddit",
+        label: "Reddit",
+        match: (a) => a.type === "draft_brand_post" && a.target.platform === "reddit",
+      },
+      {
+        value: "threads",
+        label: "Threads",
+        match: (a) => a.type === "draft_brand_post" && a.target.platform === "threads",
+      },
+      {
+        value: "twitter",
+        label: "Twitter",
+        match: (a) => a.type === "draft_brand_post" && a.target.platform === "twitter",
+      },
+      {
+        value: "blog",
+        label: "Blog",
+        match: (a) => a.type === "draft_brand_post" && a.target.platform === "blog",
+      },
+    ],
+  },
+  {
+    value: "code",
+    label: "Code",
+    match: (a) => a.type === "propose_code_change",
+    subFilters: [],
+  },
+  {
+    value: "documents",
+    label: "Documents",
+    match: (a) => a.type === "create_document",
+    subFilters: [
+      {
+        value: "pdf",
+        label: "PDF",
+        match: (a) => a.type === "create_document" && a.target.format === "pdf",
+      },
+      {
+        value: "pptx",
+        label: "PPTX",
+        match: (a) => a.type === "create_document" && a.target.format === "pptx",
+      },
+    ],
+  },
+];
+
+/** Dot color per category - matches the existing channel palette. */
+const CATEGORY_DOT: Record<Exclude<Category, "all">, string> = {
   cms: "bg-channel-cms",
-  image: "bg-channel-image",
+  content: "bg-channel-image",
   outreach: "bg-channel-outreach",
   social: "bg-channel-social",
-  "code-pr": "bg-channel-code-pr",
-  document: "bg-channel-document",
-  offsite: "bg-channel-offsite",
+  code: "bg-channel-code-pr",
+  documents: "bg-channel-document",
 };
+
+// ── Page ────────────────────────────────────────────────────────────────
 
 interface PageProps {
   params: Promise<{ domain: string }>;
-  searchParams: Promise<{ channel?: string }>;
+  searchParams: Promise<{ view?: string; filter?: string }>;
 }
 
-export default async function ExecutionPage({ params, searchParams }: PageProps): Promise<React.JSX.Element> {
+export default async function ExecutionPage({
+  params,
+  searchParams,
+}: PageProps): Promise<React.JSX.Element> {
   const { domain } = await params;
-  const { channel } = await searchParams;
+  const { view, filter } = await searchParams;
 
   const store = getDataStore();
   const overview = await store.getClientOverview(domain);
   if (!overview || !overview.latestManifest) return notFound();
 
   const manifest = overview.latestManifest;
-  const summary = manifest.summary;
+  const allActions = manifest.actions;
 
-  // Filter actions by channel if requested.
-  const filterChannel = (channel ?? "all") as ActionChannel | "all";
+  // Resolve active category.
+  const activeView = (view as Category | undefined) ?? "all";
+  const category = CATEGORIES.find((c) => c.value === activeView) ?? CATEGORIES[0]!;
+
+  // Resolve active sub-filter.
+  const activeFilter = filter ?? "all";
+  const subFilter = category.subFilters.find((f) => f.value === activeFilter);
+
+  // Filter actions.
+  const categoryActions = allActions.filter(category.match);
   const visibleActions =
-    filterChannel === "all"
-      ? manifest.actions
-      : manifest.actions.filter((a) => a.channel === filterChannel);
+    activeFilter === "all" || !subFilter
+      ? categoryActions
+      : categoryActions.filter(subFilter.match);
 
   return (
-    <div className="space-y-8">
-      {/* Page header — breadcrumb is provided by the client context bar */}
+    <div className="space-y-6 pt-4">
+      {/* Header */}
       <div>
-        <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-          Execution
-        </p>
-        <h1 className="mt-1 text-3xl font-medium tracking-tight">
-          {formatCount(summary.totalActions)} planned actions
+        <h1 className="text-3xl font-medium tracking-tight">
+          {formatCount(manifest.summary.totalActions)} planned actions
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          <span className="text-foreground">{formatCount(summary.automatable)} automatable</span> ·{" "}
-          {formatCount(summary.requiresHumanApproval)} need approval
+        <p className="mt-2 text-xs text-muted-foreground font-mono">
+          {manifest.summary.automatable} automatable · {manifest.summary.totalActions - manifest.summary.automatable} need approval
         </p>
       </div>
 
-      {/* Channel filter tabs */}
-      <div className="flex flex-wrap items-center gap-1.5 -mt-2">
-        <ChannelTab
-          domain={domain}
-          channel="all"
-          label="All"
-          count={summary.totalActions}
-          isActive={filterChannel === "all"}
-        />
-        {CHANNEL_ORDER.map((ch) => {
-          const count = summary.byChannel[ch] ?? 0;
-          if (count === 0) return null;
+      {/* Top category tabs - colored pills */}
+      <div className="flex flex-wrap items-center gap-1.5">
+        {CATEGORIES.map((cat) => {
+          const count = allActions.filter(cat.match).length;
+          const isActive = cat.value === activeView;
+          const href =
+            cat.value === "all"
+              ? `/app/clients/${domain}/execution`
+              : `/app/clients/${domain}/execution?view=${cat.value}`;
           return (
-            <ChannelTab
-              key={ch}
-              domain={domain}
-              channel={ch}
-              label={CHANNEL_META[ch].label}
-              count={count}
-              isActive={filterChannel === ch}
-              dotClass={CHANNEL_DOT_BG[ch]}
-            />
+            <Link
+              key={cat.value}
+              href={href}
+              className={cn(
+                "inline-flex h-8 items-center gap-2 rounded-md border px-3 text-sm transition-colors",
+                isActive
+                  ? "border-foreground bg-foreground text-background"
+                  : "border-border bg-background text-muted-foreground hover:border-foreground/30 hover:text-foreground",
+              )}
+            >
+              {cat.value !== "all" && (
+                <span className={cn("h-1.5 w-1.5 rounded-full", CATEGORY_DOT[cat.value as Exclude<Category, "all">])} />
+              )}
+              {cat.label}
+              <span
+                className={cn(
+                  "font-mono text-xs",
+                  isActive ? "opacity-80" : "text-muted-foreground/70",
+                )}
+              >
+                {formatCount(count)}
+              </span>
+            </Link>
           );
         })}
       </div>
 
-      {/* Actions list — grouped by type for visual rhythm */}
-      <div className="space-y-2">
-        {groupByType(visibleActions).map(([type, actions]) => (
-          <TypeGroup key={type} type={type} actions={actions} />
-        ))}
-        {visibleActions.length === 0 && (
-          <div className="rounded-lg border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-            No actions in this channel.
-          </div>
+      {/* Two-column layout: sidebar filter + action list */}
+      <div className={cn(
+        "grid gap-6",
+        category.subFilters.length > 0 ? "grid-cols-[180px_1fr]" : "grid-cols-1",
+      )}>
+        {/* Sidebar - only when category has sub-filters */}
+        {category.subFilters.length > 0 && (
+          <aside>
+            <p className="mb-2 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+              Filter
+            </p>
+            <nav className="flex flex-col gap-0.5">
+              <SidebarLink
+                domain={domain}
+                view={category.value}
+                filter="all"
+                label="All"
+                count={categoryActions.length}
+                isActive={activeFilter === "all"}
+              />
+              {category.subFilters.map((sf) => {
+                const count = categoryActions.filter(sf.match).length;
+                return (
+                  <SidebarLink
+                    key={sf.value}
+                    domain={domain}
+                    view={category.value}
+                    filter={sf.value}
+                    label={sf.label}
+                    count={count}
+                    isActive={activeFilter === sf.value}
+                  />
+                );
+              })}
+            </nav>
+          </aside>
         )}
+
+        {/* Action list */}
+        <section>
+          {visibleActions.length === 0 ? (
+            <div className="rounded-lg border border-dashed border-border bg-muted/20 p-12 text-center text-sm text-muted-foreground">
+              No actions match the current filter.
+            </div>
+          ) : (
+            <div className="rounded-lg border border-border/60 bg-card divide-y divide-border/60">
+              {visibleActions.map((action) => (
+                <ActionRow key={action.id} action={action} />
+              ))}
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );
 }
 
-// ── Channel filter pill ─────────────────────────────────────────────────
+// ── Sidebar link ────────────────────────────────────────────────────────
 
-function ChannelTab({
+function SidebarLink({
   domain,
-  channel,
+  view,
+  filter,
   label,
   count,
   isActive,
-  dotClass,
 }: {
   domain: string;
-  channel: ActionChannel | "all";
+  view: Category;
+  filter: string;
   label: string;
   count: number;
   isActive: boolean;
-  dotClass?: string;
 }): React.JSX.Element {
   const href =
-    channel === "all"
-      ? `/app/clients/${domain}/execution`
-      : `/app/clients/${domain}/execution?channel=${channel}`;
+    filter === "all"
+      ? view === "all"
+        ? `/app/clients/${domain}/execution`
+        : `/app/clients/${domain}/execution?view=${view}`
+      : `/app/clients/${domain}/execution?view=${view}&filter=${filter}`;
   return (
     <Link
       href={href}
       className={cn(
-        "inline-flex h-8 items-center gap-2 rounded-md border px-3 text-sm transition-colors",
+        "flex items-center justify-between rounded-md px-2.5 py-1.5 text-[13px] transition-colors",
         isActive
-          ? "border-foreground bg-foreground text-background"
-          : "border-border bg-background text-muted-foreground hover:border-foreground/30 hover:text-foreground",
+          ? "bg-accent text-foreground font-medium"
+          : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
       )}
     >
-      {dotClass && <span className={cn("h-1.5 w-1.5 rounded-full", dotClass)} />}
-      {label}
-      <span className={cn("font-mono text-xs", isActive ? "opacity-80" : "text-muted-foreground/70")}>
-        {formatCount(count)}
-      </span>
+      <span>{label}</span>
+      <span className="font-mono text-[11px] text-muted-foreground">{formatCount(count)}</span>
     </Link>
   );
-}
-
-// ── Type-grouped block ──────────────────────────────────────────────────
-
-function TypeGroup({
-  type,
-  actions,
-}: {
-  type: string;
-  actions: ExecutionAction[];
-}): React.JSX.Element {
-  return (
-    <div className="rounded-lg border border-border/60 overflow-hidden">
-      <div className="flex items-center justify-between bg-muted/30 px-4 py-2 border-b border-border/60">
-        <span className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
-          {type.replace(/_/g, " ")}
-        </span>
-        <span className="font-mono text-xs text-muted-foreground">{formatCount(actions.length)}</span>
-      </div>
-      <div className="divide-y divide-border/60">
-        {actions.map((action) => (
-          <ActionRow key={action.id} action={action} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ── Helpers ──────────────────────────────────────────────────────────────
-
-function groupByType(actions: ExecutionAction[]): Array<[string, ExecutionAction[]]> {
-  const groups = new Map<string, ExecutionAction[]>();
-  for (const a of actions) {
-    const list = groups.get(a.type) ?? [];
-    list.push(a);
-    groups.set(a.type, list);
-  }
-  return Array.from(groups.entries()).sort((a, b) => b[1].length - a[1].length);
 }

@@ -25,8 +25,6 @@ const SUB_NAV = [
   { slug: "audit", label: "Audit" },
   { slug: "strategy", label: "Strategy" },
   { slug: "execution", label: "Execution" },
-  { slug: "content", label: "Content" },
-  { slug: "offsite", label: "Offsite" },
   { slug: "monitor", label: "Monitor" },
 ];
 

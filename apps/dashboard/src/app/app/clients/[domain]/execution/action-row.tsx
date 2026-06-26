@@ -12,6 +12,7 @@
 
 import type { ExecutionAction } from "@rynk/layer3-generate";
 import { cn } from "@/lib/utils";
+import { ActionRationale } from "@/components/app/action-rationale";
 
 const STATUS_CLASS: Record<string, string> = {
   pending: "bg-status-skipped/15 text-status-skipped",
@@ -61,11 +62,14 @@ export function ActionRow({ action }: { action: ExecutionAction }): React.JSX.El
       </summary>
 
       {/* Expanded detail panel */}
-      <div className="border-t border-border/60 bg-muted/20 px-4 py-4 space-y-3 font-mono text-xs">
-        <KV label="Source" value={`${action.provenance.source} · ${action.provenance.sourceId}`} />
-        <KV label="Reason" value={action.provenance.reason} />
-        {action.notes && <KV label="Notes" value={action.notes} />}
-        <PayloadPreview action={action} />
+      <div className="border-t border-border/60 bg-muted/20 px-4 py-4 space-y-3">
+        <ActionRationale action={action} compact />
+        <div className="space-y-3 font-mono text-xs">
+          <KV label="Source" value={`${action.provenance.source} · ${action.provenance.sourceId}`} />
+          <KV label="Reason" value={action.provenance.reason} />
+          {action.notes && <KV label="Notes" value={action.notes} />}
+          <PayloadPreview action={action} />
+        </div>
       </div>
     </details>
   );

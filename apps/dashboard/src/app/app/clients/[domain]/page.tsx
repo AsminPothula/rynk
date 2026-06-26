@@ -12,6 +12,7 @@ import { getDataStore } from "@/lib/data-store";
 import { CHANNEL_META, CHANNEL_ORDER } from "@/lib/channels";
 import { formatCount, formatDate } from "@/lib/utils";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { RunPipelineButton } from "@/components/app/pipeline-run";
 
 export const dynamic = "force-dynamic";
 
@@ -45,23 +46,26 @@ export default async function ClientOverviewPage({
 
   return (
     <div className="space-y-8">
-      {/* Page header — client identity is shown by the sticky context bar */}
-      <div>
-        <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-          Overview
-        </p>
-        <h1 className="mt-1 text-3xl font-medium tracking-tight">
-          {context.legalEntity || context.domain}
-        </h1>
-        <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
-          {context.industry && <span>{context.industry}</span>}
-          {latestRunDate && (
-            <>
-              <span>·</span>
-              <span className="font-mono">last run {formatDate(latestRunDate)}</span>
-            </>
-          )}
+      {/* Page header - client identity is shown by the sticky context bar */}
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+            Overview
+          </p>
+          <h1 className="mt-1 text-3xl font-medium tracking-tight">
+            {context.legalEntity || context.domain}
+          </h1>
+          <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+            {context.industry && <span>{context.industry}</span>}
+            {latestRunDate && (
+              <>
+                <span>·</span>
+                <span className="font-mono">last run {formatDate(latestRunDate)}</span>
+              </>
+            )}
+          </div>
         </div>
+        <RunPipelineButton />
       </div>
 
       {/* BENTO GRID — asymmetric */}
