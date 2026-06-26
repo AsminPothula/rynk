@@ -184,6 +184,7 @@ export const StrategyOutputSchema = z.object({
   sprintPlan: z.object({ sprints: z.array(SprintSchema) }),
   contentInventory: z.array(ContentInventoryActionSchema),
   doNotModify: z.array(DoNotModifyItemSchema),
+//for (const brief of opts.strategy.contentBriefs) {
 
   /**
    * Authority snapshot carried forward from the audit so Layer 3 generators
