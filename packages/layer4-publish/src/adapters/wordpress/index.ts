@@ -1,21 +1,25 @@
 /**
  * WordPress CMS adapter - applies manifest actions via the WP REST API.
  *
- * Live mode is gated by WORDPRESS_LIVE=true. Five handlers are real today:
- *   - applyUpdateMeta    - sets title + meta description via the active
- *     SEO plugin's meta keys (Yoast / RankMath / SEOPress / none fallback)
- *   - applyInjectSchema  - appends a <script type="application/ld+json">
- *     block to the post content (idempotent via rynk:schema:Type markers)
- *   - applyCreatePage    - POSTs a new page or post from markdown body,
- *     idempotent on re-runs by slug lookup, defaults to draft status
- *   - applyAddNapBlock   - injects a NAP block (+ optional LocalBusiness
- *     JSON-LD), idempotent via rynk:nap markers
- *   - applyUpdatePage    - 4 operations: rewrite / expand / consolidate /
- *     refresh, each with its own idempotency strategy
+ * Live mode is gated by WORDPRESS_LIVE=true. Seven handlers are real today:
+ *   - applyUpdateMeta          sets title + meta description via the
+ *                              active SEO plugin's meta keys
+ *   - applyInjectSchema        appends a <script type="application/ld+json">
+ *                              block (idempotent via rynk:schema markers)
+ *   - applyCreatePage          POSTs a new page/post from markdown,
+ *                              idempotent on re-runs by slug lookup
+ *   - applyAddNapBlock         injects NAP + optional LocalBusiness JSON-LD
+ *                              (idempotent via rynk:nap markers)
+ *   - applyUpdatePage          4 ops: rewrite / expand / consolidate /
+ *                              refresh, each with its own idempotency
+ *   - applyInsertInternalLink  wraps in-text phrase with an <a> to the
+ *                              target URL, falls back to a Related block
+ *                              if the phrase isn't found in content
+ *   - applyCreateAuthor        creates a WP user with role=author, custom
+ *                              meta for credentials + LinkedIn + headshot
  *
- * Still pending (intern handlers, smaller scope):
- *   - applyAddRedirect, applyInsertInternalLink, applyCreateAuthor,
- *     applyAssignAuthor
+ * Still pending (intern follow-up, smallest scope):
+ *   - applyAddRedirect, applyAssignAuthor
  */
 
 import { createLogger, optionalEnv } from "@rynk/core";
@@ -27,6 +31,8 @@ import { applyInjectSchema } from "./handlers/inject-schema.js";
 import { applyCreatePage } from "./handlers/create-page.js";
 import { applyAddNapBlock } from "./handlers/add-nap-block.js";
 import { applyUpdatePage } from "./handlers/update-page.js";
+import { applyInsertInternalLink } from "./handlers/insert-internal-link.js";
+import { applyCreateAuthor } from "./handlers/create-author.js";
 
 const log = createLogger("layer4.wordpress");
 
@@ -106,12 +112,12 @@ export function makeWordPressAdapter(config: WordPressAdapterConfig): CMSAdapter
             return await applyUpdatePage(getClient(), action);
           case "add_nap_block":
             return await applyAddNapBlock(getClient(), action);
+          case "insert_internal_link":
+            return await applyInsertInternalLink(getClient(), action);
+          case "create_author":
+            return await applyCreateAuthor(getClient(), siteUrl, action);
           case "add_redirect":
             return await applyAddRedirect(siteUrl, action, config);
-          case "insert_internal_link":
-            return await applyInsertInternalLink(siteUrl, action, config);
-          case "create_author":
-            return await applyCreateAuthor(siteUrl, action, config);
           case "assign_author":
             return await applyAssignAuthor(siteUrl, action, config);
           default:
@@ -143,20 +149,6 @@ async function applyAddRedirect(
   _config: WordPressAdapterConfig,
 ): Promise<ApplyResult> {
   throw new Error("add_redirect not yet implemented (route: Yoast Premium API / Redirection plugin)");
-}
-async function applyInsertInternalLink(
-  _siteUrl: string,
-  _action: ExecutionAction,
-  _config: WordPressAdapterConfig,
-): Promise<ApplyResult> {
-  throw new Error("insert_internal_link not yet implemented (fetch post body, anchor insert, PUT back)");
-}
-async function applyCreateAuthor(
-  _siteUrl: string,
-  _action: ExecutionAction,
-  _config: WordPressAdapterConfig,
-): Promise<ApplyResult> {
-  throw new Error("create_author not yet implemented (POST /wp-json/wp/v2/users)");
 }
 async function applyAssignAuthor(
   _siteUrl: string,

@@ -225,6 +225,45 @@ const actions: ExecutionAction[] = [
       consolidateFromUrls: [],
     },
   },
+
+  // 7. insert_internal_link - link a phrase in the new page back to the test page.
+  {
+    id: "link-001",
+    type: "insert_internal_link",
+    status: "approved",
+    risk: "low",
+    channel: "cms",
+    automatable: true,
+    provenance: baseProv("verify:link", "Verify applyInsertInternalLink wraps phrase with anchor"),
+    notes: "verify-wp-handlers.ts",
+    target: { sourceUrl: newPageUrl, targetUrl: testPageUrl },
+    payload: {
+      // "rynk" appears in the rewritten + expanded body, so this should
+      // hit the in-text wrapping path, not the Related fallback.
+      anchorText: "rynk",
+    },
+  },
+
+  // 8. create_author - new author user for byline purposes.
+  {
+    id: "author-001",
+    type: "create_author",
+    status: "approved",
+    risk: "low",
+    channel: "cms",
+    automatable: true,
+    provenance: baseProv("verify:create-author", "Verify applyCreateAuthor creates WP user with role=author"),
+    notes: "verify-wp-handlers.ts",
+    target: { username: "rynk-verify-author" },
+    payload: {
+      displayName: "Rynk Verify Author",
+      bio: "Created by rynk's applyCreateAuthor verifier. Acts as a byline for blog posts so they carry proper EEAT signals.",
+      role: "Lead SEO Strategist",
+      credentials: ["MBA", "Google Analytics Certified"],
+      linkedinUrl: "https://www.linkedin.com/in/rynk-verify-author",
+      headshotImageActionId: null,
+    },
+  },
 ];
 
 // ── Run apply ───────────────────────────────────────────────────────────────
@@ -280,6 +319,22 @@ async function main(): Promise<void> {
     label: "nap-001     LocalBusiness JSON-LD present",
     url: results["nap-001"]?.url || testPageUrl,
     needle: '"@type": "LocalBusiness"',
+  });
+
+  // Internal link - the new page should now have an <a href={testPageUrl}>
+  // wrapping "rynk" somewhere in the body.
+  checks.push({
+    label: "link-001    anchor pointing to test page present on new page",
+    url: results["link-001"]?.url || newPageUrl,
+    needle: `data-rynk="link"`,
+  });
+
+  // Create author - GET /users/?slug=rynk-verify-author should succeed
+  // (we check by hitting the WP author archive URL).
+  checks.push({
+    label: "author-001  author archive page reachable",
+    url: `${WP_URL}/?author_name=rynk-verify-author`,
+    needle: "Rynk Verify Author",
   });
 
   let allPass = true;
