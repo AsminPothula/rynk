@@ -41,7 +41,6 @@ export interface SchemaGeneratorOptions {
  * a field is unknown — schema.org accepts partial Organization records.
  */
 function buildOrganizationJsonLd(client: ClientContext, audit: AuditFindings): Record<string, unknown> {
-  //It builds the Organization JSON-LD object.
   const nap = client.canonicalNAP.address || audit.entitySummary.canonicalNAP.address;
   const phone = client.canonicalNAP.phone || audit.entitySummary.canonicalNAP.phone;
   const email = client.canonicalNAP.email || audit.entitySummary.canonicalNAP.email;
@@ -188,6 +187,21 @@ function buildHowToJsonLd(
   };
 }
 
+function buildFAQPageJsonLd(faqs: { question: string; answer: string }[]): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  };
+}
+
 // ─── URL classification ──────────────────────────────────────────────────────
 
 function isHomepage(url: string): boolean {
@@ -277,39 +291,7 @@ export function generateSchemaActions(opts: SchemaGeneratorOptions): ExecutionAc
       { question: `How does ${brief.targetKeyword} work?`, answer: "[TO FILL] Process explanation." },
       { question: `What are the benefits of ${brief.targetKeyword}?`, answer: "[TO FILL] List 3-5 benefits." },
     ];
-    function buildFAQPageJsonLd(faqs: { question: string; answer: string }[]): Record<string, unknown> {
-      return {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": faqs.map(faq => ({
-          "@type": "Question",
-          "name": faq.question,
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": faq.answer
-          }
-        }))
-      };
-    }
 
-   
-
-    function buildPersonJsonLd(person: { name: string; credentials: string[] }, client: ClientContext): Record<string, unknown> {
-      return {
-        "@context": "https://schema.org",
-        "@type": "Person",
-        "name": person.name,
-        "worksFor": {
-          "@type": "Organization",
-          "name": client.legalEntity,
-          "url": `https://${client.domain}/`,
-        },
-        // Add credentials if present
-        ...(person.credentials.length > 0 ? { "knowsAbout": person.credentials } : {}),
-      };
-    }
-    
-    
     out.push({
       id: idOf(),
       type: "inject_schema",
@@ -385,10 +367,8 @@ export function generateSchemaActions(opts: SchemaGeneratorOptions): ExecutionAc
   }
   // ── Service schema for each service page ───────────────────────────────
   for (const entry of sitemap) {
-    //It checks if the URL is a service page and if the schema type is already present. If not, it adds the schema type to the URL.
     if (!isServicePage(entry.url)) continue;
     if (existingSchemaTypes(opts.audit, entry.url).has("service")) continue;
-    //If its not present, it adds the schema type to the URL. The schema will then state it does not have a service schema.
     out.push({
       id: idOf(),
       type: "inject_schema",
@@ -406,36 +386,12 @@ export function generateSchemaActions(opts: SchemaGeneratorOptions): ExecutionAc
       payload: { jsonLd: buildServiceJsonLd(entry.url, entry.title, opts.client) },
     });
   }
-/*
-  function buildFAQPageJsonLd(faqs: { question: string; answer: string }[]): Record<string, unknown> {
-    return {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": faqs.map(faq => ({
-        "@type": "Question",
-        "name": faq.question,
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": faq.answer
-        }
-      }))
-    };
-  }
-*/
-
-
 
   // ── Article schema for blog posts (skip if already present) ────────────
-  //Explantion: Checks if the URL is a blog post and if the schema type is already present. If not, it adds the schema type to the URL.
-  //Example: If the URL is https://www.example.com/blog/my-post, it will add the schema type to the URL.
-  //Example: If the URL is https://www.example.com/blog/my-post, it will not add the schema type to the URL.
-  //Example: If the URL is https://www.example.com/blog/my-post, it will not add the schema type to the URL.
   for (const entry of sitemap) {
     if (!isBlogPost(entry.url)) continue;
-  //Adds the schema type to the URL if it is not present.
     const existing = existingSchemaTypes(opts.audit, entry.url);
     if (existing.has("article")) continue;
-    //If its not present, it adds the schema type to the URL. The schema will then state it does not have an article schema.
     out.push({
       id: idOf(),
       type: "inject_schema",
@@ -457,8 +413,7 @@ export function generateSchemaActions(opts: SchemaGeneratorOptions): ExecutionAc
   }
 
   for (const entry of sitemap) {
-    //It checks if the URL is the homepage and if the schema type is already present. If not, it adds the schema type to the URL.
-    if (isHomepage(entry.url)) continue;   // don't add breadcrumbs to "/"
+    if (isHomepage(entry.url)) continue; // don't add breadcrumbs to "/"
     if (existingSchemaTypes(opts.audit, entry.url).has("breadcrumblist")) continue;
     out.push({
       id: idOf(),
