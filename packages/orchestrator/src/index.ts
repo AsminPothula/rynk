@@ -1,4 +1,5 @@
 import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 import { createLogger, moduleDir, buildRunPath, readJson, fileExists, type ClientContext } from "@rynk/core";
 import { clientRegistry } from "@rynk/clients";
 import { runLayer1 } from "@rynk/layer1-audit";
@@ -220,7 +221,13 @@ export async function runPipeline(
 
 // ── CLI entry ─────────────────────────────────────────────────────────────────
 
-const invokedDirectly = import.meta.url === `file://${process.argv[1]}`;
+// Use pathToFileURL so the comparison works on Windows too - concatenating
+// "file://" + process.argv[1] produces a broken URL on Windows because
+// process.argv uses backslashes while import.meta.url uses forward slashes
+// with a triple-slash prefix. pathToFileURL normalizes both sides.
+const invokedDirectly = process.argv[1]
+  ? import.meta.url === pathToFileURL(process.argv[1]).href
+  : false;
 if (invokedDirectly) {
   const domain = process.argv[2];
   if (!domain) {
