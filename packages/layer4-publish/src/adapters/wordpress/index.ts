@@ -1,7 +1,7 @@
 /**
  * WordPress CMS adapter - applies manifest actions via the WP REST API.
  *
- * Live mode is gated by WORDPRESS_LIVE=true. Seven handlers are real today:
+ * Live mode is gated by WORDPRESS_LIVE=true. All nine handlers are live:
  *   - applyUpdateMeta          sets title + meta description via the
  *                              active SEO plugin's meta keys
  *   - applyInjectSchema        appends a <script type="application/ld+json">
@@ -17,9 +17,9 @@
  *                              if the phrase isn't found in content
  *   - applyCreateAuthor        creates a WP user with role=author, custom
  *                              meta for credentials + LinkedIn + headshot
- *
- * Still pending (intern follow-up, smallest scope):
- *   - applyAddRedirect, applyAssignAuthor
+ *   - applyAddRedirect         creates/updates redirects via the
+ *                              Redirection plugin REST API
+ *   - applyAssignAuthor        sets post.author to attach a byline user
  */
 
 import { createLogger, optionalEnv } from "@rynk/core";
@@ -33,6 +33,8 @@ import { applyAddNapBlock } from "./handlers/add-nap-block.js";
 import { applyUpdatePage } from "./handlers/update-page.js";
 import { applyInsertInternalLink } from "./handlers/insert-internal-link.js";
 import { applyCreateAuthor } from "./handlers/create-author.js";
+import { applyAddRedirect } from "./handlers/add-redirect.js";
+import { applyAssignAuthor } from "./handlers/assign-author.js";
 
 const log = createLogger("layer4.wordpress");
 
@@ -117,9 +119,9 @@ export function makeWordPressAdapter(config: WordPressAdapterConfig): CMSAdapter
           case "create_author":
             return await applyCreateAuthor(getClient(), siteUrl, action);
           case "add_redirect":
-            return await applyAddRedirect(siteUrl, action, config);
+            return await applyAddRedirect(getClient(), action);
           case "assign_author":
-            return await applyAssignAuthor(siteUrl, action, config);
+            return await applyAssignAuthor(getClient(), action);
           default:
             return {
               status: "skipped",
@@ -141,19 +143,3 @@ export function makeWordPressAdapter(config: WordPressAdapterConfig): CMSAdapter
   };
 }
 
-// ── Stubs for handlers still pending (intern work) ──────────────────────────
-
-async function applyAddRedirect(
-  _siteUrl: string,
-  _action: ExecutionAction,
-  _config: WordPressAdapterConfig,
-): Promise<ApplyResult> {
-  throw new Error("add_redirect not yet implemented (route: Yoast Premium API / Redirection plugin)");
-}
-async function applyAssignAuthor(
-  _siteUrl: string,
-  _action: ExecutionAction,
-  _config: WordPressAdapterConfig,
-): Promise<ApplyResult> {
-  throw new Error("assign_author not yet implemented (PUT post.author)");
-}
