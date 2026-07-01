@@ -126,7 +126,21 @@ export async function applyInsertInternalLink(
   }
   const postType = summary.type === "page" ? "page" : "post";
 
-  // 2. Fetch full content.
+  // 2. Page-builder guard - inline link insertion in post_content won't
+  //    take effect on Elementor/Divi/WPBakery pages.
+  const builder = await client.detectPageBuilder(postType, summary.id);
+  if (builder) {
+    const label = builder === "elementor" ? "Elementor" : builder === "divi" ? "Divi Builder" : "WPBakery";
+    return {
+      status: "skipped",
+      externalRef: String(summary.id),
+      externalUrl: summary.link,
+      message: `Skipped - ${label} page. Add the link "${anchorText}" -> ${targetUrl} manually via the ${label} editor.`,
+      edgeCase: `page-builder-${builder}` as const,
+    };
+  }
+
+  // 3. Fetch full content.
   const full = await client.getPost(postType, summary.id);
   const existing = full.content.raw ?? full.content.rendered ?? "";
 

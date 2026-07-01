@@ -85,7 +85,24 @@ export async function applyInjectSchema(
   }
   const postType = summary.type === "page" ? "page" : "post";
 
-  // 2. Fetch full post to get the raw content.
+  // 2. Page-builder guard - page builders render from their own storage
+  //    and skip post_content entirely, so our <script> block wouldn't
+  //    appear in the rendered HTML. Structured data must land in the
+  //    theme header or via the SEO plugin's schema graph instead - a
+  //    future upgrade. For now, skip and note the reason.
+  const builder = await client.detectPageBuilder(postType, summary.id);
+  if (builder) {
+    const label = builder === "elementor" ? "Elementor" : builder === "divi" ? "Divi Builder" : "WPBakery";
+    return {
+      status: "skipped",
+      externalRef: String(summary.id),
+      externalUrl: summary.link,
+      message: `Skipped - ${label} page. Schema markup injected into WP's post_content is ignored by the page builder. Add ${inject.target.schemaType} schema via the ${label} custom-code widget or the site's theme header instead.`,
+      edgeCase: `page-builder-${builder}` as const,
+    };
+  }
+
+  // 3. Fetch full post to get the raw content.
   const full = await client.getPost(postType, summary.id);
   const existingContent = full.content.raw ?? full.content.rendered ?? "";
 

@@ -73,7 +73,21 @@ export async function applyUpdatePage(
   }
   const postType = summary.type === "page" ? "page" : "post";
 
-  // 2. Fetch the current content.
+  // 2. Page-builder guard - if the page is managed by Elementor / Divi /
+  //    WPBakery, modifying post_content won't affect what visitors see.
+  //    Skip with a clear reason so the team can apply manually.
+  const builder = await client.detectPageBuilder(postType, summary.id);
+  if (builder) {
+    return {
+      status: "skipped",
+      externalRef: String(summary.id),
+      externalUrl: summary.link,
+      message: `Skipped - this page is built with ${builderLabel(builder)}, which stores content in its own format. Modifying WordPress's raw content field won't affect the rendered page. Apply this change manually via the ${builderLabel(builder)} editor.`,
+      edgeCase: `page-builder-${builder}` as const,
+    };
+  }
+
+  // 3. Fetch the current content.
   const full = await client.getPost(postType, summary.id);
   const existing = full.content.raw ?? full.content.rendered ?? "";
 
@@ -175,4 +189,12 @@ function escapeHtml(s: string): string {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
+}
+
+function builderLabel(builder: "elementor" | "divi" | "wpbakery"): string {
+  switch (builder) {
+    case "elementor": return "Elementor";
+    case "divi": return "Divi Builder";
+    case "wpbakery": return "WPBakery Page Builder";
+  }
 }

@@ -204,6 +204,53 @@ export class WordPressClient {
       return "none";
     }
   }
+
+  /**
+   * Detect whether a specific post is managed by a page builder plugin.
+   *
+   * Page builders (Elementor, Divi, WPBakery, etc.) don't store their
+   * content in the standard `post_content` field. Elementor stores its
+   * data in a JSON blob under `_elementor_data` post meta; Divi wraps
+   * everything in shortcodes; WPBakery uses `[vc_row]` shortcodes.
+   *
+   * If we modify `post_content` on a page-builder-managed post, the
+   * database gets updated but the rendered page is unchanged - the
+   * builder ignores post_content and renders from its own storage.
+   * That's the "silent failure" we're guarding against.
+   *
+   * Detection strategy:
+   *   - Elementor  : post_meta._elementor_edit_mode = "builder"
+   *   - Divi       : post_meta._et_pb_use_builder = "on"
+   *   - WPBakery   : post_meta._wpb_vc_js_status = "true"
+   *
+   * Returns the builder name if one is detected, or null if the post is
+   * managed by the standard editor and safe for content modifications.
+   */
+  async detectPageBuilder(
+    type: "post" | "page",
+    id: number,
+  ): Promise<"elementor" | "divi" | "wpbakery" | null> {
+    try {
+      const post = await this.getPost(type, id);
+      const meta = (post.meta ?? {}) as Record<string, unknown>;
+
+      // Elementor - the most common one by far
+      if (meta["_elementor_edit_mode"] === "builder") return "elementor";
+
+      // Divi Builder
+      if (meta["_et_pb_use_builder"] === "on") return "divi";
+
+      // WPBakery (formerly Visual Composer)
+      if (meta["_wpb_vc_js_status"] === "true") return "wpbakery";
+
+      return null;
+    } catch {
+      // If we can't read the post's meta for any reason, assume it's a
+      // standard editor post. This favors "try to apply" over "skip" -
+      // if the apply itself later fails, that's a different error path.
+      return null;
+    }
+  }
 }
 
 // ── Utility: extract the URL slug for a post lookup ─────────────────────────

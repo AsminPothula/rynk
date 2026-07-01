@@ -88,7 +88,23 @@ export async function applyAddNapBlock(
   }
   const postType = summary.type === "page" ? "page" : "post";
 
-  // 2. Fetch full content.
+  // 2. Page-builder guard - injecting HTML into post_content won't
+  //    show on Elementor/Divi/WPBakery pages. The LocalBusiness schema
+  //    would still work but the visible NAP wouldn't - inconsistent
+  //    result. Safer to skip entirely.
+  const builder = await client.detectPageBuilder(postType, summary.id);
+  if (builder) {
+    const label = builder === "elementor" ? "Elementor" : builder === "divi" ? "Divi Builder" : "WPBakery";
+    return {
+      status: "skipped",
+      externalRef: String(summary.id),
+      externalUrl: summary.link,
+      message: `Skipped - ${label} page. Add the NAP block manually via the ${label} editor to keep the visible NAP + LocalBusiness schema in sync.`,
+      edgeCase: `page-builder-${builder}` as const,
+    };
+  }
+
+  // 3. Fetch full content.
   const full = await client.getPost(postType, summary.id);
   const existingContent = full.content.raw ?? full.content.rendered ?? "";
 
