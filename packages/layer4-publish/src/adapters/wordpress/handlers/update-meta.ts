@@ -16,7 +16,9 @@
 import { createLogger } from "@rynk/core";
 import type { ExecutionAction, UpdateMetaAction } from "@rynk/layer3-generate";
 import type { ApplyResult } from "../../types.js";
+import type { FileApplyStateStore } from "../../../state/apply-state.js";
 import { WordPressClient } from "../client.js";
+import { checkHumanTouched, recordApply } from "./_human-touched-guard.js";
 
 const log = createLogger("layer4.wp.update-meta");
 
@@ -41,6 +43,7 @@ const META_TITLE_FIELD: Record<string, string> = {
 export async function applyUpdateMeta(
   client: WordPressClient,
   action: ExecutionAction,
+  stateStore?: FileApplyStateStore,
 ): Promise<ApplyResult> {
   if (action.type !== "update_meta") {
     return { status: "skipped", message: "Not an update_meta action" };
@@ -56,6 +59,17 @@ export async function applyUpdateMeta(
     };
   }
   const postType = summary.type === "page" ? "page" : "post";
+
+  // Human-touched guard: skip if the client edited this page in wp-admin
+  // after rynk's last apply, or if the URL is on the human-only allowlist.
+  const touched = await checkHumanTouched({
+    client,
+    postType,
+    postSummary: summary,
+    targetUrl: update.target.url,
+    stateStore,
+  });
+  if (touched.skip) return touched.result;
 
   // 2. Detect SEO plugin.
   const plugin = await client.detectSeoPlugin();
@@ -86,6 +100,10 @@ export async function applyUpdateMeta(
 
   // 4. PUT the update.
   const updated = await client.updatePost(postType, summary.id, updateBody);
+
+  // Record the successful apply so the human-touched guard has a baseline
+  // for next time.
+  recordApply({ postType, postId: summary.id, actionId: action.id, stateStore });
 
   return {
     status: "applied",

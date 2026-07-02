@@ -24,7 +24,9 @@
 import { createLogger } from "@rynk/core";
 import type { ExecutionAction, InsertInternalLinkAction } from "@rynk/layer3-generate";
 import type { ApplyResult } from "../../types.js";
+import type { FileApplyStateStore } from "../../../state/apply-state.js";
 import { WordPressClient } from "../client.js";
+import { checkHumanTouched, recordApply } from "./_human-touched-guard.js";
 
 const log = createLogger("layer4.wp.insert-internal-link");
 
@@ -111,6 +113,7 @@ function stripRelatedBlock(content: string): string {
 export async function applyInsertInternalLink(
   client: WordPressClient,
   action: ExecutionAction,
+  stateStore?: FileApplyStateStore,
 ): Promise<ApplyResult> {
   if (action.type !== "insert_internal_link") {
     return { status: "skipped", message: "Not an insert_internal_link action" };
@@ -125,6 +128,16 @@ export async function applyInsertInternalLink(
     return { status: "failed", error: `No post found at sourceUrl ${insert.target.sourceUrl}` };
   }
   const postType = summary.type === "page" ? "page" : "post";
+
+  // Human-touched guard.
+  const touched = await checkHumanTouched({
+    client,
+    postType,
+    postSummary: summary,
+    targetUrl: insert.target.sourceUrl,
+    stateStore,
+  });
+  if (touched.skip) return touched.result;
 
   // 2. Page-builder guard - inline link insertion in post_content won't
   //    take effect on Elementor/Divi/WPBakery pages.
@@ -181,6 +194,8 @@ export async function applyInsertInternalLink(
 
   // 5. PUT updated content.
   const updated = await client.updatePost(postType, summary.id, { content: newContent });
+
+  recordApply({ postType, postId: summary.id, actionId: action.id, stateStore });
 
   log.info("internal link inserted", {
     actionId: action.id,

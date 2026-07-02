@@ -16,7 +16,9 @@
 import { createLogger } from "@rynk/core";
 import type { ExecutionAction, InjectSchemaAction } from "@rynk/layer3-generate";
 import type { ApplyResult } from "../../types.js";
+import type { FileApplyStateStore } from "../../../state/apply-state.js";
 import { WordPressClient } from "../client.js";
+import { checkHumanTouched, recordApply } from "./_human-touched-guard.js";
 
 const log = createLogger("layer4.wp.inject-schema");
 
@@ -69,6 +71,7 @@ function stripExistingBlock(content: string, schemaType: string): string {
 export async function applyInjectSchema(
   client: WordPressClient,
   action: ExecutionAction,
+  stateStore?: FileApplyStateStore,
 ): Promise<ApplyResult> {
   if (action.type !== "inject_schema") {
     return { status: "skipped", message: "Not an inject_schema action" };
@@ -84,6 +87,16 @@ export async function applyInjectSchema(
     };
   }
   const postType = summary.type === "page" ? "page" : "post";
+
+  // Human-touched guard.
+  const touched = await checkHumanTouched({
+    client,
+    postType,
+    postSummary: summary,
+    targetUrl: inject.target.url,
+    stateStore,
+  });
+  if (touched.skip) return touched.result;
 
   // 2. Page-builder guard - page builders render from their own storage
   //    and skip post_content entirely, so our <script> block wouldn't
@@ -113,6 +126,8 @@ export async function applyInjectSchema(
 
   // 4. PUT the updated content.
   const updated = await client.updatePost(postType, summary.id, { content: newContent });
+
+  recordApply({ postType, postId: summary.id, actionId: action.id, stateStore });
 
   log.info("schema injected", {
     actionId: action.id,

@@ -25,8 +25,10 @@
 import { createLogger } from "@rynk/core";
 import type { ExecutionAction, UpdatePageAction } from "@rynk/layer3-generate";
 import type { ApplyResult } from "../../types.js";
+import type { FileApplyStateStore } from "../../../state/apply-state.js";
 import { WordPressClient } from "../client.js";
 import { markdownToHtml } from "../markdown-to-html.js";
+import { checkHumanTouched, recordApply } from "./_human-touched-guard.js";
 
 const log = createLogger("layer4.wp.update-page");
 
@@ -60,6 +62,7 @@ function stripMarkerBlock(content: string, openMarker: string, closeMarker: stri
 export async function applyUpdatePage(
   client: WordPressClient,
   action: ExecutionAction,
+  stateStore?: FileApplyStateStore,
 ): Promise<ApplyResult> {
   if (action.type !== "update_page") {
     return { status: "skipped", message: "Not an update_page action" };
@@ -72,6 +75,16 @@ export async function applyUpdatePage(
     return { status: "failed", error: `No post or page found at ${update.target.url}` };
   }
   const postType = summary.type === "page" ? "page" : "post";
+
+  // Human-touched guard.
+  const touched = await checkHumanTouched({
+    client,
+    postType,
+    postSummary: summary,
+    targetUrl: update.target.url,
+    stateStore,
+  });
+  if (touched.skip) return touched.result;
 
   // 2. Page-builder guard - if the page is managed by Elementor / Divi /
   //    WPBakery, modifying post_content won't affect what visitors see.
@@ -168,6 +181,8 @@ export async function applyUpdatePage(
 
   // 4. PUT the updated content.
   const updated = await client.updatePost(postType, summary.id, { content: newContent });
+
+  recordApply({ postType, postId: summary.id, actionId: action.id, stateStore });
 
   log.info("update_page applied", {
     actionId: action.id,

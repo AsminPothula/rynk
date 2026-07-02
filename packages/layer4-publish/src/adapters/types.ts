@@ -40,7 +40,11 @@ export type EdgeCaseCode =
   | "unsupported-permalink-mode"
   | "client-config-cache-locked"
   | "dependency-redirect-plugin-missing"
-  | "dependency-seo-plugin-missing";
+  | "dependency-seo-plugin-missing"
+  /** Human edited the target page in wp-admin AFTER rynk's last apply. */
+  | "human-edit-since-rynk"
+  /** URL is on the client's human-only allowlist - rynk never touches it. */
+  | "human-only-url";
 
 /** Outcome of applying a single action. */
 export interface ApplyResult {

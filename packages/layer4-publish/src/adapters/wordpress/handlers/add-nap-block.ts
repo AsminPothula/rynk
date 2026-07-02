@@ -22,7 +22,9 @@
 import { createLogger } from "@rynk/core";
 import type { AddNAPBlockAction, ExecutionAction } from "@rynk/layer3-generate";
 import type { ApplyResult } from "../../types.js";
+import type { FileApplyStateStore } from "../../../state/apply-state.js";
 import { WordPressClient } from "../client.js";
+import { checkHumanTouched, recordApply } from "./_human-touched-guard.js";
 
 const log = createLogger("layer4.wp.add-nap-block");
 
@@ -75,6 +77,7 @@ function stripExistingNapBlock(content: string): string {
 export async function applyAddNapBlock(
   client: WordPressClient,
   action: ExecutionAction,
+  stateStore?: FileApplyStateStore,
 ): Promise<ApplyResult> {
   if (action.type !== "add_nap_block") {
     return { status: "skipped", message: "Not an add_nap_block action" };
@@ -87,6 +90,16 @@ export async function applyAddNapBlock(
     return { status: "failed", error: `No post or page found at ${nap.target.url}` };
   }
   const postType = summary.type === "page" ? "page" : "post";
+
+  // Human-touched guard.
+  const touched = await checkHumanTouched({
+    client,
+    postType,
+    postSummary: summary,
+    targetUrl: nap.target.url,
+    stateStore,
+  });
+  if (touched.skip) return touched.result;
 
   // 2. Page-builder guard - injecting HTML into post_content won't
   //    show on Elementor/Divi/WPBakery pages. The LocalBusiness schema
@@ -128,6 +141,8 @@ export async function applyAddNapBlock(
 
   // 5. PUT the updated content.
   const updated = await client.updatePost(postType, summary.id, { content: newContent });
+
+  recordApply({ postType, postId: summary.id, actionId: action.id, stateStore });
 
   log.info("NAP block applied", {
     actionId: action.id,

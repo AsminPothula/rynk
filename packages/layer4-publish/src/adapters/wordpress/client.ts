@@ -34,6 +34,10 @@ export interface WPPostSummary {
 export interface WPPost extends WPPostSummary {
   content: { rendered: string; raw?: string };
   excerpt: { rendered: string };
+  /** ISO timestamp for last-modified (server local time). Set on every PUT. */
+  modified?: string;
+  /** ISO timestamp for last-modified (UTC). Preferred for cross-timezone comparisons. */
+  modified_gmt?: string;
   /** Some themes / SEO plugins extend the post with these. We read defensively. */
   meta?: Record<string, unknown>;
   yoast_head_json?: Record<string, unknown>;

@@ -26,6 +26,7 @@ import { createLogger, optionalEnv } from "@rynk/core";
 import type { ExecutionAction } from "@rynk/layer3-generate";
 import type { ApplyResult, CMSAdapter } from "../types.js";
 import { WordPressClient, WordPressApiError } from "./client.js";
+import { FileApplyStateStore } from "../../state/apply-state.js";
 import { applyUpdateMeta } from "./handlers/update-meta.js";
 import { applyInjectSchema } from "./handlers/inject-schema.js";
 import { applyCreatePage } from "./handlers/create-page.js";
@@ -56,6 +57,13 @@ export interface WordPressAdapterConfig {
   username: string;
   /** WP REST API application password. */
   appPassword: string;
+  /**
+   * Optional path to the per-client apply-state JSON file. When set, the
+   * adapter records every successful apply and refuses to overwrite pages
+   * a human has edited since our last touch. When omitted, no history is
+   * tracked and no human-touched check runs (backwards compat).
+   */
+  stateFilePath?: string;
 }
 
 /**
@@ -73,6 +81,12 @@ export function makeWordPressAdapter(config: WordPressAdapterConfig): CMSAdapter
     if (!client) client = new WordPressClient({ ...config, siteUrl });
     return client;
   };
+
+  // State store is constructed once - lightweight since it re-reads the
+  // JSON file on every access (no in-memory cache to invalidate).
+  const stateStore = config.stateFilePath
+    ? new FileApplyStateStore(config.stateFilePath)
+    : undefined;
 
   return {
     adapterName: "wordpress",
@@ -103,17 +117,17 @@ export function makeWordPressAdapter(config: WordPressAdapterConfig): CMSAdapter
       try {
         switch (action.type) {
           case "update_meta":
-            return await applyUpdateMeta(getClient(), action);
+            return await applyUpdateMeta(getClient(), action, stateStore);
           case "inject_schema":
-            return await applyInjectSchema(getClient(), action);
+            return await applyInjectSchema(getClient(), action, stateStore);
           case "create_page":
             return await applyCreatePage(getClient(), action);
           case "update_page":
-            return await applyUpdatePage(getClient(), action);
+            return await applyUpdatePage(getClient(), action, stateStore);
           case "add_nap_block":
-            return await applyAddNapBlock(getClient(), action);
+            return await applyAddNapBlock(getClient(), action, stateStore);
           case "insert_internal_link":
-            return await applyInsertInternalLink(getClient(), action);
+            return await applyInsertInternalLink(getClient(), action, stateStore);
           case "create_author":
             return await applyCreateAuthor(getClient(), siteUrl, action);
           case "add_redirect":
