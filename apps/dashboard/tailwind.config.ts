@@ -79,6 +79,17 @@ const config: Config = {
           document: "hsl(var(--channel-document))",
           offsite: "hsl(var(--channel-offsite))",
         },
+        // Brand palette - used on the public marketing site.
+        brand: {
+          navy: "#2f4156",
+          navy2: "#567c8d",
+          sky: "#c8d9e6",
+          cream: "#f5efeb",
+          orange: "#f97306",
+          orangeSoft: "#ff8b28",
+          green: "#38761d",
+          greenDeep: "#274e13",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -90,6 +101,8 @@ const config: Config = {
         // layout. They expose --font-geist-sans and --font-geist-mono.
         sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-geist-mono)", "ui-monospace", "monospace"],
+        // Fraunces - display serif for marketing headings.
+        serif: ["var(--font-serif)", "Georgia", "serif"],
       },
     },
   },
