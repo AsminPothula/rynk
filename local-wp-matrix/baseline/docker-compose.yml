@@ -1,0 +1,113 @@
+# Baseline WordPress: no plugins, plain permalinks. Port 8080.
+#
+# Start:  docker compose up -d
+# Watch:  docker compose logs -f init
+# Ready:  when the init service prints "matrix config ready"
+# Down:   docker compose down -v
+
+services:
+  db:
+    image: mysql:8
+    container_name: rynk-matrix-baseline-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: wp
+      MYSQL_USER: wp
+      MYSQL_PASSWORD: wppass
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  wp:
+    image: wordpress:latest
+    container_name: rynk-matrix-baseline-wp
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wp
+      WORDPRESS_DB_PASSWORD: wppass
+      WORDPRESS_DB_NAME: wp
+      WORDPRESS_DEBUG: 1
+      # Enables Application Passwords over HTTP - required for local dev.
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_ENVIRONMENT_TYPE', 'local');
+    volumes:
+      - wp_data:/var/www/html
+
+  # One-shot provisioner: installs WP, applies config, generates an
+  # Application Password, writes credentials to a bind-mounted secrets dir.
+  init:
+    image: wordpress:cli
+    container_name: rynk-matrix-baseline-init
+    depends_on:
+      - wp
+    user: "33:33"  # www-data - matches the wp container's file ownership
+    volumes:
+      - wp_data:/var/www/html
+      - ./.secrets:/rynk-secrets
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -e
+
+        echo "waiting for wp files..."
+        until [ -f /var/www/html/wp-config.php ]; do sleep 2; done
+
+        echo "waiting for db..."
+        until wp db check --allow-root >/dev/null 2>&1; do sleep 2; done
+
+        echo "installing wp if needed..."
+        wp core install \
+          --url=http://localhost:8080 \
+          --title="Rynk Matrix - baseline" \
+          --admin_user=admin \
+          --admin_password=admin \
+          --admin_email=admin@rynk.test \
+          --skip-email \
+          --allow-root || echo "already installed"
+
+        # Baseline: plain permalinks (WP default). Nothing to set.
+
+        echo "creating a sample published page..."
+        wp post exists 2 --allow-root >/dev/null 2>&1 || \
+          wp post create \
+            --post_type=page \
+            --post_title="Sample Page" \
+            --post_content="<p>Sample page for rynk matrix testing.</p>" \
+            --post_status=publish \
+            --allow-root
+
+        echo "generating rynk-matrix Application Password..."
+        # Idempotent: delete any prior one, then create fresh.
+        wp user application-password delete admin --all --allow-root >/dev/null 2>&1 || true
+        APP_PW=$$(wp user application-password create admin rynk-matrix --porcelain --allow-root)
+
+        # Pick any published page for the test target.
+        TEST_ID=$$(wp post list --post_type=page --post_status=publish --field=ID --posts_per_page=1 --allow-root | head -n1)
+
+        cat > /rynk-secrets/config.json <<EOF
+        {
+          "config": "baseline",
+          "url": "http://localhost:8080",
+          "user": "admin",
+          "appPassword": "$$APP_PW",
+          "testPage": "http://localhost:8080/?page_id=$${TEST_ID}"
+        }
+        EOF
+
+        echo "matrix config ready"
+    restart: "no"
+
+volumes:
+  db_data:
+  wp_data:
