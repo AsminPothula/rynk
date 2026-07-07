@@ -23,8 +23,10 @@ import { createLogger } from "@rynk/core";
 import type { AddNAPBlockAction, ExecutionAction } from "@rynk/layer3-generate";
 import type { ApplyResult } from "../../types.js";
 import type { FileApplyStateStore } from "../../../state/apply-state.js";
+import type { CachePurger } from "../../../cache/purger.js";
 import { WordPressClient } from "../client.js";
 import { checkHumanTouched, recordApply } from "./_human-touched-guard.js";
+import { runPostApplyPurge } from "./_post-apply-purge.js";
 
 const log = createLogger("layer4.wp.add-nap-block");
 
@@ -78,6 +80,7 @@ export async function applyAddNapBlock(
   client: WordPressClient,
   action: ExecutionAction,
   stateStore?: FileApplyStateStore,
+  purger?: CachePurger,
 ): Promise<ApplyResult> {
   if (action.type !== "add_nap_block") {
     return { status: "skipped", message: "Not an add_nap_block action" };
@@ -144,6 +147,8 @@ export async function applyAddNapBlock(
 
   recordApply({ postType, postId: summary.id, actionId: action.id, stateStore });
 
+  const purgeNote = await runPostApplyPurge({ purger, url: nap.target.url });
+
   log.info("NAP block applied", {
     actionId: action.id,
     postId: summary.id,
@@ -156,7 +161,7 @@ export async function applyAddNapBlock(
     status: "applied",
     externalRef: String(summary.id),
     externalUrl: updated.link || summary.link,
-    message: `Injected NAP block${nap.payload.includeLocalBusinessSchema ? " + LocalBusiness schema" : ""} on ${postType} #${summary.id}`,
+    message: `Injected NAP block${nap.payload.includeLocalBusinessSchema ? " + LocalBusiness schema" : ""} on ${postType} #${summary.id}${purgeNote}`,
   };
 }
 

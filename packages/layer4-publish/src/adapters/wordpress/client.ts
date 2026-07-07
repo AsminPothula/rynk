@@ -255,6 +255,45 @@ export class WordPressClient {
       return null;
     }
   }
+
+  /**
+   * Detect active caching plugins on the site. Used by the cache purger
+   * so it knows which purge endpoints to hit after a successful apply.
+   *
+   * Returns the set of known-supported plugins that are currently active.
+   * Silently returns an empty array if we can't read `/wp/v2/plugins`
+   * (usually a permissions issue on the Application Password).
+   *
+   * Supported today:
+   *   - "wp-rocket"      WP Rocket
+   *   - "w3-total-cache" W3 Total Cache
+   *   - "litespeed"      LiteSpeed Cache
+   *   - "wp-super-cache" WP Super Cache
+   */
+  async detectCachingPlugins(): Promise<
+    Array<"wp-rocket" | "w3-total-cache" | "litespeed" | "wp-super-cache">
+  > {
+    try {
+      const plugins = await this.request<Array<{ plugin: string; status: string }>>(
+        "GET",
+        "/wp/v2/plugins",
+      );
+      const active = plugins.filter((p) => p.status === "active").map((p) => p.plugin);
+      const detected: Array<
+        "wp-rocket" | "w3-total-cache" | "litespeed" | "wp-super-cache"
+      > = [];
+      if (active.some((p) => p.startsWith("wp-rocket/"))) detected.push("wp-rocket");
+      if (active.some((p) => p.startsWith("w3-total-cache/"))) detected.push("w3-total-cache");
+      if (active.some((p) => p.startsWith("litespeed-cache/"))) detected.push("litespeed");
+      if (active.some((p) => p.startsWith("wp-super-cache/"))) detected.push("wp-super-cache");
+      return detected;
+    } catch {
+      // Plugins endpoint requires upload_plugins capability. Some sites
+      // hide it - proceed as if no cache plugin exists rather than
+      // blocking apply.
+      return [];
+    }
+  }
 }
 
 // ── Utility: extract the URL slug for a post lookup ─────────────────────────

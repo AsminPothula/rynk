@@ -17,8 +17,10 @@ import { createLogger } from "@rynk/core";
 import type { ExecutionAction, InjectSchemaAction } from "@rynk/layer3-generate";
 import type { ApplyResult } from "../../types.js";
 import type { FileApplyStateStore } from "../../../state/apply-state.js";
+import type { CachePurger } from "../../../cache/purger.js";
 import { WordPressClient } from "../client.js";
 import { checkHumanTouched, recordApply } from "./_human-touched-guard.js";
+import { runPostApplyPurge } from "./_post-apply-purge.js";
 
 const log = createLogger("layer4.wp.inject-schema");
 
@@ -72,6 +74,7 @@ export async function applyInjectSchema(
   client: WordPressClient,
   action: ExecutionAction,
   stateStore?: FileApplyStateStore,
+  purger?: CachePurger,
 ): Promise<ApplyResult> {
   if (action.type !== "inject_schema") {
     return { status: "skipped", message: "Not an inject_schema action" };
@@ -129,6 +132,8 @@ export async function applyInjectSchema(
 
   recordApply({ postType, postId: summary.id, actionId: action.id, stateStore });
 
+  const purgeNote = await runPostApplyPurge({ purger, url: inject.target.url });
+
   log.info("schema injected", {
     actionId: action.id,
     postId: summary.id,
@@ -141,6 +146,6 @@ export async function applyInjectSchema(
     status: "applied",
     externalRef: String(summary.id),
     externalUrl: updated.link || summary.link,
-    message: `Injected ${inject.target.schemaType} schema into ${postType} #${summary.id}`,
+    message: `Injected ${inject.target.schemaType} schema into ${postType} #${summary.id}${purgeNote}`,
   };
 }
