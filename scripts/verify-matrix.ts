@@ -34,11 +34,30 @@ interface MatrixConfig {
   user: string;
   appPassword: string;
   testPage: string;
+  /** Set by the elementor config - a page carrying `_elementor_edit_mode`. */
   elementorPage?: string;
   elementorPageId?: string;
+  /** Set by the divi config - a page carrying `_et_pb_use_builder`. */
+  diviPage?: string;
+  diviPageId?: string;
+  /** Set by the redirection config - a fake source path to redirect. */
+  redirectSource?: string;
+  /** Set by the woocommerce config - a WooCommerce product URL. */
+  productPage?: string;
+  productId?: string;
 }
 
-const ALL_CONFIGS = ["baseline", "yoast", "elementor"] as const;
+const ALL_CONFIGS = [
+  "baseline",
+  "yoast",
+  "rank-math",
+  "seopress",
+  "elementor",
+  "divi",
+  "redirection",
+  "litespeed",
+  "woocommerce",
+] as const;
 
 function loadConfig(name: string): MatrixConfig | null {
   const path = resolve("local-wp-matrix", name, ".secrets", "config.json");
@@ -152,6 +171,28 @@ const BATTERY: BatteryEntry[] = [
             notes: null,
             target: { sourceUrl: cfg.elementorPage, targetUrl: cfg.testPage },
             payload: { anchorText: "matrix" },
+          } as unknown as ExecutionAction)
+        : null,
+  },
+  {
+    key: "update_page_on_divi",
+    buildAction: (cfg) =>
+      cfg.diviPage
+        ? ({
+            id: `mx-divi-update-${cfg.config}`,
+            type: "update_page",
+            status: "approved",
+            risk: "low",
+            channel: "cms",
+            automatable: true,
+            provenance: baseProv("matrix:divi-update", "matrix - expect skip on divi"),
+            notes: null,
+            target: { url: cfg.diviPage, operation: "rewrite" },
+            payload: {
+              newBodyMarkdown: "Rewritten by matrix",
+              addSections: [],
+              consolidateFromUrls: [],
+            },
           } as unknown as ExecutionAction)
         : null,
   },

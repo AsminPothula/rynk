@@ -4,16 +4,19 @@ Multiple pre-configured local WordPress installations that rynk's Layer 4
 adapter can be tested against. Each config runs on its own port so they
 can be brought up in parallel.
 
-Configs shipped today:
+Configs shipped:
 
 | Config | Port | Plugins | Notes |
 |---|---|---|---|
-| baseline | 8080 | none | Plain permalinks. Baseline for regression. |
+| baseline | 8080 | none | Plain permalinks. Regression baseline. |
 | yoast | 8081 | Yoast SEO | Pretty permalinks. Exercises Yoast meta field routing. |
-| elementor | 8082 | Elementor + Yoast SEO | Pretty permalinks. Exercises the page-builder skip guards. |
-
-More configs (rank-math, seopress, divi, redirection, wp-rocket, woocommerce)
-will land as follow-ups using the same pattern.
+| rank-math | 8083 | Rank Math SEO | Pretty permalinks. Exercises Rank Math meta field routing. |
+| seopress | 8084 | SEOPress | Pretty permalinks. Exercises SEOPress meta field routing. |
+| elementor | 8082 | Elementor + Yoast | Pretty permalinks. Seeds an Elementor-managed page for the skip guard. |
+| divi | 8085 | Yoast + simulated Divi page | Pretty permalinks. Divi is paid, so we simulate `_et_pb_use_builder = on`. |
+| redirection | 8086 | Yoast + Redirection plugin | Pretty permalinks. Exercises `applyAddRedirect` once merged. |
+| litespeed | 8087 | Yoast + LiteSpeed Cache | Pretty permalinks. Exercises the cache-purge detection + attempt. |
+| woocommerce | 8088 | Yoast + WooCommerce | Pretty permalinks. Seeds a WooCommerce product to see how rynk copes with custom post types. |
 
 ## Bring one config up
 
