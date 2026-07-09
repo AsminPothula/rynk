@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "@rynk/layer5-monitor",
   "version": "0.1.0",
   "private": true,
@@ -23,5 +24,28 @@
     "@rynk/core": "*",
     "dotenv": "^16.4.5",
     "zod": "^3.24.1"
+=======
+    "name": "@rynk/layer5-monitor",
+    "version": "0.1.0",
+    "private": true,
+    "description": "rynk.ai Layer 5 — Monitor Agent. Monitor and alert on changes to a website.",
+    "type": "module",
+    "main": "./dist/index.js",
+    "scripts": {
+      "build": "tsc -b",
+      "start": "tsx src/index.ts",
+      "dev": "tsx watch src/index.ts",
+      "clean": "rm -rf dist tsconfig.tsbuildinfo",
+      "test": "tsx tests/run.ts",
+      "verify": "tsx scripts/verify-metrics-watch.ts"
+    },
+    "dependencies": {
+      "@anthropic-ai/sdk": "^0.39.0",
+      "@rynk/clients": "*",
+      "@rynk/core": "*",
+      "dotenv": "^16.4.5",
+      "zod": "^3.24.1"
+    }
+>>>>>>> 817ffb8 (feat(layer5): implement Person 2 metrics snapshots, digest, and metrics-watch)
   }
 }

@@ -1,10 +1,2 @@
-export async function runMetricsWatch(
-
-    domain: string,
-  
-    clientContext: ClientContext,
-  
-    runsDir: string,
-  
-  ): Promise<{ digest: WeeklyDigest }>
-  
+/** Re-export — full implementation is in src/jobs/metrics-watch.ts */
+export { runMetricsWatch } from "../../../jobs/metrics-watch.js";
