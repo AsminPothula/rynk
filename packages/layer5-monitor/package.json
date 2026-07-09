@@ -10,7 +10,8 @@
       "start": "tsx src/index.ts",
       "dev": "tsx watch src/index.ts",
       "clean": "rm -rf dist tsconfig.tsbuildinfo",
-      "test": "tsx tests/run.ts"
+      "test": "tsx tests/run.ts",
+      "verify": "tsx scripts/verify-metrics-watch.ts"
     },
     "dependencies": {
       "@anthropic-ai/sdk": "^0.39.0",
