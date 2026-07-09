@@ -4,6 +4,9 @@
   "private": true,
   "description": "rynk.ai Layer 5 — Monitor Agent",
   "type": "module",
+  "exports": {
+    "./schema": "./src/schema/index.ts"
+  },
   "main": "./dist/index.js",
   "scripts": {
     "build": "tsc -b",

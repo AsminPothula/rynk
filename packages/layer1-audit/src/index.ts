@@ -19,6 +19,8 @@ import { saveAuditFindings, type SaveAuditResult } from "./utils/output-writer.j
 import { preComputeInventory } from "./utils/crawl-precompute.js";
 import { enrichKeywordsAndAuthority } from "./utils/keyword-enrichment.js";
 
+console.log("Finished these imports")
+
 export { runDataCollectionAgent } from "./agents/data-collection-agent.js";
 export { runOffsiteResearchAgent } from "./agents/offsite-research-agent.js";
 export { runSynthesiserAgent } from "./agents/synthesiser-agent.js";
