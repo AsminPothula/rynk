@@ -64,6 +64,7 @@ function extractRedirectId(value: unknown): number | null {
   return null;
 }
 
+
 async function findExistingRedirect(
   client: WordPressClient,
   sourcePath: string,
@@ -73,7 +74,7 @@ async function findExistingRedirect(
     `/redirection/v1/redirect?filterBy[url]=${encodeURIComponent(sourcePath)}&per_page=5`,
   );
   const items = res.items ?? [];
-  return items.find((item) => item.url === sourcePath) ?? items[0] ?? null;
+  return items.find((item) => item.url === sourcePath) ?? null;
 }
 
 export async function applyAddRedirect(
