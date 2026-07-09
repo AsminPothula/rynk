@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "./src",
@@ -7,3 +8,14 @@
   "include": ["src/**/*"],
   "references": [{ "path": "../core" }, { "path": "../clients" }]
 }
+=======
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+      "rootDir": "./src",
+      "outDir": "./dist"
+    },
+    "include": ["src/**/*"],
+    "references": [{ "path": "../core" }, { "path": "../clients" }]
+  }
+  
+>>>>>>> e1858f6 (Implemented fixes into layer 4, and finished building person 2 in layer 5)
