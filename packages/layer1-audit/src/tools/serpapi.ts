@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { requireEnv, withRetry, createLogger, type AgentTool } from "@rynk/core";
-import { SerpSnapshotSchema, RankSnapshotSchema, type SerpSnapshot, type RankSnapshot, } from "@rynk/layer5-monitor/schema";
 
 
 const log = createLogger("layer1.tools.serpapi");
@@ -9,7 +8,7 @@ const SERPAPI_BASE = "https://serpapi.com/search.json";
 
 export interface SerpKeywordResult {
   keyword: string;
-  topResults: { url: string; title: string; position: number; description: string | null; }[]; 
+  topResults: { url: string; title: string; position: number; description: string | null; domain: string; }[]; 
   peopleAlsoAsk: string[];
   featuredSnippet: { present: boolean; sourceUrl: string | null };
   aiOverview: { present: boolean; cites: string[]; text: string | null };
@@ -82,7 +81,8 @@ export function makeSerpApiClient(
           url: r.link,
           title: r.title,
           position: r.position,
-          description: r.description ?? null //keeping the description data all the time -- I think will help LLM make better decisions
+          description: r.description ?? null, //keeping the description data all the time -- I think will help LLM make better decisions
+          domain: new URL(r.link).hostname
         })),
         peopleAlsoAsk: (body.related_questions ?? []).map((q) => q.question),
         featuredSnippet: {
@@ -132,44 +132,4 @@ export function serpSearchTool(client: SerpApiClient): AgentTool<z.infer<typeof 
       return JSON.stringify(result);
     },
   };
-}
-
-//this is for layer 5 -- returns in format of SerpSnapshotSchema 
-//format:
-export async function getSnapshot(client: SerpApiClient, keyword: string): Promise<SerpSnapshot> {
-  
-  //how many results should I pull here?
-  const result = await client.search(keyword, undefined, 100) //I didn't put any country/language code
-
-  const raw = {
-    keyword,
-    takenAt: new Date().toISOString(),
-    results: result.topResults,
-  }
-
-  return SerpSnapshotSchema.parse(raw)
-}
-
-//this is also for layer 5 -- returns in format of RankSnapshotSchema
-//the user's domain format needs to www.name.extension -- Eg: www.itechdata.ai
-//returns null if the domain name isn't in the top 100
-export async function getRankSnapshot(client: SerpApiClient, keyword: string, domain:string) : Promise<RankSnapshot> {
-  
-  
-  const result = await client.search(keyword, undefined, 100) //Here also, I didn't put country/language code, pulling top 100
-
-  const position = result.topResults.find((r) => {
-    const resultDomain = new URL(r.url).hostname
-
-    return resultDomain === domain
-  })?.position ?? null;
-
-  const raw = {
-    keyword,
-    takenAt: new Date().toISOString(),
-    rank: position,
-    ai_engine: "google"
-  }
-
-  return RankSnapshotSchema.parse(raw)
 }

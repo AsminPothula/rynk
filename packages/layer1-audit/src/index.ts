@@ -30,6 +30,8 @@ export {
   scrapeUrlTool,
 } from "./tools/crawl4ai.js";
 
+export * from "./tools/serpapi.js"
+
 const log = createLogger("layer1");
 
 export interface RunLayer1Options {

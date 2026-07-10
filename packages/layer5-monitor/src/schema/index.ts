@@ -3,7 +3,7 @@ import { z } from "zod";
 
 //stores the results page for one keyword at a time
 export const SerpSnapshotSchema = z.object({
-  // domain: z.string(), //client domain
+  domain: z.string(), //client domain
   keyword: z.string(),
   takenAt: z.string().datetime(),
   results: z.array(
@@ -12,7 +12,7 @@ export const SerpSnapshotSchema = z.object({
       url: z.string().url(),
       title: z.string(),
       description: z.string().nullable(),
-      // domain: z.string(), why is domain necessary if we have the url? 
+      domain: z.string(), 
     }),
   ),
 });
@@ -113,6 +113,7 @@ export const SerpDeltaSchema = z.object({
       to: z.number().int().positive(),
     }),
   ),
+
   triggerRestrategy: z.boolean(),
   triggerReason: z.string().nullable(),
 });
