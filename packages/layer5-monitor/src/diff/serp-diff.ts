@@ -61,7 +61,7 @@ export function computeSerpDelta(previous: SerpSnapshot, current: SerpSnapshot, 
   let triggerReason = null
 
   if(prevPosition && currentPosition) {
-    let domainDrop = (currentPosition - prevPosition) >=3
+    domainDrop = (currentPosition - prevPosition) >=3
     if(domainDrop) triggerReason = `Domain position dropped by ${currentPosition - prevPosition} `
   }
 
@@ -83,18 +83,24 @@ export function computeSerpDelta(previous: SerpSnapshot, current: SerpSnapshot, 
 }
 
 //get the latest two objects
-async function loadLastTwoSnapshots(keyword: string, runsDir: string): Promise<SerpSnapshot[]> { //returns 2 serpSnapshots
-  const keywordDir = path.join(runsDir, keyword);
+//returns tuple [older, newer]
+//if less than two snap shots (edge case), returns null
+export async function loadLastTwoSnapshots(keyword: string, runsDir: string, domain: string): Promise<[SerpSnapshot, SerpSnapshot] | null> { //returns 2 serpSnapshots
+  const keywordDir = path.join(runsDir, domain, "monitor", "serp", keyword);
 
   const latestTwo = (await readdir(keywordDir)) //go through directory for runs/keyword
     .sort((a, b) => b.localeCompare(a)) // newest first
     .slice(0, 2);
 
-  const latestTwoObjects = await Promise.all( //iterate through the two filefs
-    latestTwo.map(file =>
-      readJson<SerpSnapshot>(path.join(keywordDir, file)) //turn the JSON string into object of type Serp Snapshot
-    )
+  if(latestTwo.length < 2) return null
+
+  const newer = readJson<SerpSnapshot>(
+    path.join(keywordDir, latestTwo[0]!),
   );
 
-  return latestTwoObjects;
+  const older = readJson<SerpSnapshot>(
+    path.join(keywordDir, latestTwo[1]!),
+  );
+
+  return [older, newer];
 }

@@ -10,10 +10,10 @@ const client = makeSerpApiClient(process.env.SERPAPI_API_KEY);
 
 
 //Returns in format of SerpSnapshotSchema 
-//format:
-export async function takeSerpSnapshot(domain: string, keyword: string, runsDir: string): Promise<SerpSnapshot> {
+//returns the serp snapshot (top 10 search results for a given keyword) and file location of the snapshot
+export async function takeSerpSnapshot(domain: string, keyword: string, runsDir: string): Promise<{serpSnapshot: SerpSnapshot, location: string}> {
   const result = await client.search(keyword);
-
+  
   const raw = {
     domain: domain,
     keyword: keyword,
@@ -24,15 +24,18 @@ export async function takeSerpSnapshot(domain: string, keyword: string, runsDir:
   const serpSnapshot = SerpSnapshotSchema.parse(raw);
 
   const fileName = `${raw.takenAt.replace(/:/g, "-")}.json`;
-  writeJson(`${runsDir}/${domain}/monitor/serp/${keyword}/${fileName}`, serpSnapshot);
+  const writingTo = `${runsDir}/${domain}/monitor/serp/${keyword}/${fileName}`
 
-  return serpSnapshot;
+  writeJson(writingTo, serpSnapshot);
+
+  return { serpSnapshot, location: writingTo};
 }
 
 //Returns in format of RankSnapshotSchema
 //the user's domain format needs to www.name.extension -- Eg: www.itechdata.ai
 //returns null if the domain name isn't in the top 100
-export async function takeRankSnapshot(keyword: string, domain: string, runsDir: string): Promise<RankSnapshot> {
+//gives you how the domain ranks on a certain keyword
+export async function takeRankSnapshot(domain: string, keyword: string, runsDir: string): Promise<{rankSnapshot: RankSnapshot, location: string}> {
   const result = await client.search(keyword, undefined, 100);
 
   const position =
@@ -51,9 +54,10 @@ export async function takeRankSnapshot(keyword: string, domain: string, runsDir:
   const rankSnapshot = RankSnapshotSchema.parse(raw);
 
   const fileName = `${raw.takenAt.replace(/:/g, "-")}.json`;
-  writeJson(`${runsDir}/${domain}/monitor/rank/${fileName}`, rankSnapshot);
+  const writingTo = `${runsDir}/${domain}/monitor/rank/${keyword}/${fileName}`
+  writeJson(writingTo, rankSnapshot);
 
-  return rankSnapshot;
+  return {rankSnapshot: rankSnapshot, location: writingTo}
 }
 
 
