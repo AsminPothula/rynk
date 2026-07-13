@@ -13,7 +13,7 @@
     "start": "tsx src/index.ts",
     "dev": "tsx watch src/index.ts",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
-    "test": "tsx tests/run.ts"
+    "test": "node --env-file=../../.env --import tsx tests/run.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

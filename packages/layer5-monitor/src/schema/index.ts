@@ -103,7 +103,7 @@ export const SerpDeltaSchema = z.object({
   droppedFromTop10: z.array(
     z.object({
       url: z.string().url(),
-      lastPosition: z.number().int().positive(),
+      position: z.number().int().positive(),
     }),
   ),
   positionChanges: z.array(
@@ -113,7 +113,7 @@ export const SerpDeltaSchema = z.object({
       to: z.number().int().positive(),
     }),
   ),
-
+  domainPositionChange: z.number().nullable(),
   triggerRestrategy: z.boolean(),
   triggerReason: z.string().nullable(),
 });

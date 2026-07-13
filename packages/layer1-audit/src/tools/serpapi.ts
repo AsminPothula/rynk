@@ -16,7 +16,7 @@ export interface SerpKeywordResult {
 }
 
 interface SerpApiResponse {
-  organic_results?: Array<{ position: number; link: string; title: string; description?: string }>; //I think it's here?
+  organic_results?: Array<{ position: number; link: string; title: string; snippet?: string }>; //I think it's here?
   related_questions?: Array<{ question: string }>;
   answer_box?: { link?: string; title?: string };
   ai_overview?: {
@@ -36,64 +36,204 @@ export function makeSerpApiClient(
   apiKey: string = requireEnv("SERPAPI_API_KEY"),
 ): SerpApiClient {
   return {
-    async search(keyword, opts = {}, numResults = 10) {  //defaults to ten results for layer 1 -- we'll call with 100 results for layer 5
-      const params = new URLSearchParams({
-        engine: "google",
-        q: keyword,
-        api_key: apiKey,
-        gl: opts.gl ?? "us",
-        hl: opts.hl ?? "en",
-        google_domain: "google.com",
-        include_ai_overview: "true",
-      });
+    async search(keyword, opts = {}, numResults = 10) {
+      if (!Number.isInteger(numResults) || numResults < 1) {
+        throw new Error("numResults must be a positive integer");
+      }
 
-      const body = await withRetry(async () => {
-        const res = await fetch(`${SERPAPI_BASE}?${params.toString()}`);
-        if (!res.ok) {
-          const text = await res.text().catch(() => "");
-          const err = new Error(`SerpAPI ${res.status}: ${text.slice(0, 200)}`);
-          (err as unknown as { status: number }).status = res.status;
-          throw err;
+      const collectedResults: NonNullable<
+        SerpApiResponse["organic_results"]
+      > = [];
+
+      const seenUrls = new Set<string>();
+
+      // Keep the first response because this contains the SERP features
+      let firstPageBody: SerpApiResponse | null = null;
+
+      let start = 0;
+      let pagesFetched = 0;
+
+      // Prevent an unexpected infinite loop.
+      const maxPages = Math.max(Math.ceil(numResults / 5) + 5, 10);
+
+      while (
+        collectedResults.length < numResults &&
+        pagesFetched < maxPages
+      ) {
+        const params = new URLSearchParams({
+          engine: "google",
+          q: keyword,
+          api_key: apiKey,
+          gl: opts.gl ?? "us",
+          hl: opts.hl ?? "en",
+          google_domain: "google.com",
+          include_ai_overview: "true",
+          start: String(start),
+        });
+
+        const body = await withRetry(async () => {
+          const res = await fetch(
+            `${SERPAPI_BASE}?${params.toString()}`,
+          );
+
+          if (!res.ok) {
+            const text = await res.text().catch(() => "");
+
+            const err = new Error(
+              `SerpAPI ${res.status}: ${text.slice(0, 200)}`,
+            );
+
+            (err as unknown as { status: number }).status = res.status;
+            throw err;
+          }
+
+          return (await res.json()) as SerpApiResponse;
+        });
+
+        firstPageBody ??= body;
+        pagesFetched++;
+
+        const pageResults = body.organic_results ?? [];
+
+        log.info("serp page searched", {
+          keyword,
+          start,
+          page: pagesFetched,
+          pageOrganicResults: pageResults.length,
+          totalCollected: collectedResults.length,
+          requestedResults: numResults,
+        });
+
+        // No results means there is nothing else to collect.
+        if (pageResults.length === 0) {
+          break;
         }
-        return (await res.json()) as SerpApiResponse;
-      });
+
+        let newResultsAdded = 0;
+
+        for (const result of pageResults) {
+          if (seenUrls.has(result.link)) {
+            continue;
+          }
+
+          seenUrls.add(result.link);
+          collectedResults.push(result);
+          newResultsAdded++;
+
+          if (collectedResults.length >= numResults) {
+            break;
+          }
+        }
+
+        /*
+         * If the next page returns only duplicate URLs, continuing could
+         * repeatedly request equivalent results.
+         */
+        if (newResultsAdded === 0) {
+          log.warn("serp pagination returned no new organic results", {
+            keyword,
+            start,
+            page: pagesFetched,
+          });
+
+          break;
+        }
+
+        /*
+         * SerpAPI's pagination offset advances according to the number
+         * of organic results returned.
+         */
+        start += pageResults.length;
+      }
+
+      const body = firstPageBody;
+
+      if (!body) {
+        throw new Error(`SerpAPI returned no response for "${keyword}"`);
+      }
 
       const features: string[] = [];
-      if (body.answer_box) features.push("featured_snippet");
-      if (body.knowledge_graph) features.push("knowledge_panel");
-      if (body.inline_images) features.push("image_pack");
-      if (body.inline_videos) features.push("video_carousel");
-      if (body.related_questions?.length) features.push("people_also_ask");
-      if (body.ai_overview) features.push("ai_overview");
 
-      const aiCites = body.ai_overview?.references?.map((r) => r.link) ?? [];
-      const aiText = body.ai_overview?.text_blocks?.map((b) => b.snippet ?? "").join(" ") ?? null;
+      if (body.answer_box) {
+        features.push("featured_snippet");
+      }
+
+      if (body.knowledge_graph) {
+        features.push("knowledge_panel");
+      }
+
+      if (body.inline_images) {
+        features.push("image_pack");
+      }
+
+      if (body.inline_videos) {
+        features.push("video_carousel");
+      }
+
+      if (body.related_questions?.length) {
+        features.push("people_also_ask");
+      }
+
+      if (body.ai_overview) {
+        features.push("ai_overview");
+      }
+
+      const aiCites =
+        body.ai_overview?.references?.map((reference) => reference.link) ??
+        [];
+
+      const aiText =
+        body.ai_overview?.text_blocks
+          ?.map((block) => block.snippet ?? "")
+          .join(" ") ?? null;
 
       log.info("serp searched", {
         keyword,
         aiOverview: !!body.ai_overview,
-        organicResults: body.organic_results?.length ?? 0,
+        organicResults: collectedResults.length,
+        requestedResults: numResults,
+        pagesFetched,
+        complete: collectedResults.length >= numResults,
       });
 
       return {
         keyword,
-        topResults: (body.organic_results ?? []).slice(0, numResults).map((r) => ({ //changed from top 10 to top 100 results
-          url: r.link,
-          title: r.title,
-          position: r.position,
-          description: r.description ?? null, //keeping the description data all the time -- I think will help LLM make better decisions
-          domain: new URL(r.link).hostname
-        })),
-        peopleAlsoAsk: (body.related_questions ?? []).map((q) => q.question),
+
+        topResults: collectedResults
+          .slice(0, numResults)
+          .map((result, index) => ({
+            url: result.link,
+            title: result.title,
+
+            /*
+             * This gives one continuous rank across all collected pages.
+             * Use result.position instead if you want SerpAPI's original
+             * position value unchanged.
+             */
+            position: index + 1,
+
+            description: result.snippet ?? null,
+            domain: new URL(result.link).hostname,
+          })),
+
+        peopleAlsoAsk: (body.related_questions ?? []).map(
+          (question) => question.question,
+        ),
+
         featuredSnippet: {
           present: !!body.answer_box,
           sourceUrl: body.answer_box?.link ?? null,
         },
+
         aiOverview: {
           present: !!body.ai_overview,
           cites: aiCites,
-          text: aiText && aiText.length > 0 ? aiText.slice(0, 500) : null,
+          text:
+            aiText && aiText.length > 0
+              ? aiText.slice(0, 500)
+              : null,
         },
+
         serpFeatures: features,
       };
     },

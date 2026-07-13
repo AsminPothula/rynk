@@ -30,10 +30,31 @@ export function computeSerpDelta(previous: SerpSnapshot, current: SerpSnapshot, 
         position: result.position,
       }))
   
-  //if last two show ranks, then show ranks. Should be some logic in hre for entering the top 100. Maybe add later.
-  let posChanges
-  if(currentRankSnapshot.rank && previousRankSnapshot.rank) posChanges = currentRankSnapshot.rank - previousRankSnapshot.rank
-  else posChanges = null
+  //take the current results, track whether domain ranks have changed or not by comparing the lists
+  const posChanges = current.results
+  .filter(currentResult =>
+    previous.results.some(
+      previousResult => previousResult.url === currentResult.url,
+    ),
+  )
+  .map(currentResult => {
+    const previousResult = previous.results.find(
+      result => result.url === currentResult.url,
+    )!;
+
+    return {
+      url: currentResult.url,
+      from: previousResult.position,
+      to: currentResult.position,
+    };
+  })
+  .filter(change => change.from !== change.to);
+
+  //track the change in ranking for our domain (if both times our domain was in top 100)
+  //Should be some logic in hre for entering the top 100. Maybe add later.
+  let domainPosChange
+  if(currentRankSnapshot.rank && previousRankSnapshot.rank) domainPosChange = currentRankSnapshot.rank - previousRankSnapshot.rank
+  else domainPosChange = null
 
   
   //TRIGGER RESTRATEGY
@@ -60,9 +81,10 @@ export function computeSerpDelta(previous: SerpSnapshot, current: SerpSnapshot, 
     keyword: previous.keyword,
     from: previous.takenAt,
     to: current.takenAt,
-    newInTopTen: newInT10,
-    droppedFromTopTen: droppedfromT10,
-    positionChanges: posChanges, //only counts if website was in top 100 before and after -- might be a problem
+    newInTop10: newInT10,
+    droppedFromTop10: droppedfromT10,
+    positionChanges: posChanges, //pos changes of the top 10 URLs (if any)
+    domainPositionChange: domainPosChange, //this is for our domain - //only counts if website was in top 100 before and after -- might be a problem
     triggerRestrategy: (brandNewInT3 || domainDrop), //either true or false
     triggerReason: triggerReason //either a string or null
   }

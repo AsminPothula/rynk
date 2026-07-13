@@ -12,6 +12,7 @@ const client = makeSerpApiClient(process.env.SERPAPI_API_KEY);
 //Returns in format of SerpSnapshotSchema 
 //returns the serp snapshot (top 10 search results for a given keyword) and file location of the snapshot
 export async function takeSerpSnapshot(domain: string, keyword: string, runsDir: string): Promise<{serpSnapshot: SerpSnapshot, location: string}> {
+  
   const result = await client.search(keyword);
   
   const raw = {
