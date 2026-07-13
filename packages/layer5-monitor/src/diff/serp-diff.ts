@@ -1,4 +1,4 @@
-import {SerpDeltaSchema, type SerpDelta, type SerpSnapshot, } from "@rynk/layer5-monitor/schema";
+import {SerpDeltaSchema, type SerpDelta, type SerpSnapshot, type RankSnapshot } from "@rynk/layer5-monitor/schema";
 import { readJson, createLogger } from "@rynk/core/utils"
 
 import { readdir } from "node:fs/promises";
@@ -8,7 +8,7 @@ const log = createLogger("layer5.serp-diff")
 
 //added domain as an arg
 //needs to be in format www.<domain name>.<extension>
-export function computeSerpDelta(previous: SerpSnapshot, current: SerpSnapshot, domain: string): SerpDelta {
+export function computeSerpDelta(previous: SerpSnapshot, current: SerpSnapshot, previousRankSnapshot: RankSnapshot, currentRankSnapshot: RankSnapshot, domain: string): SerpDelta {
 
   //filter all the current results and find results that were not in previous results
   const newInT10 = current.results
@@ -30,21 +30,10 @@ export function computeSerpDelta(previous: SerpSnapshot, current: SerpSnapshot, 
         position: result.position,
       }))
   
-  
-  const posChanges = current.results //take the current results
-      .filter(curr =>
-        previous.results.some(prev => prev.url === curr.url) //filter to get only the results that are in BOTH 
-      )
-      .map(curr => { //for each shared result in the current results
-        const prev = previous.results.find(p => p.url === curr.url)! //get the previous posiiton
-
-        return { //return the url, with the current and previous positions
-          url: curr.url,
-          from: prev.position,
-          to: curr.position,
-        }
-      })
-      .filter(change => change.from !== change.to) //get rid of all the shared results that did not change position
+  //if last two show ranks, then show ranks. Should be some logic in hre for entering the top 100. Maybe add later.
+  let posChanges
+  if(currentRankSnapshot.rank && previousRankSnapshot.rank) posChanges = currentRankSnapshot.rank - previousRankSnapshot.rank
+  else posChanges = null
 
   
   //TRIGGER RESTRATEGY
@@ -73,7 +62,7 @@ export function computeSerpDelta(previous: SerpSnapshot, current: SerpSnapshot, 
     to: current.takenAt,
     newInTopTen: newInT10,
     droppedFromTopTen: droppedfromT10,
-    positionChanges: posChanges, //only counts position changes within the top 10 -- probably an issue
+    positionChanges: posChanges, //only counts if website was in top 100 before and after -- might be a problem
     triggerRestrategy: (brandNewInT3 || domainDrop), //either true or false
     triggerReason: triggerReason //either a string or null
   }
@@ -82,25 +71,34 @@ export function computeSerpDelta(previous: SerpSnapshot, current: SerpSnapshot, 
   return serpDelta
 }
 
-//get the latest two objects
-//returns tuple [older, newer]
-//if less than two snap shots (edge case), returns null
-export async function loadLastTwoSnapshots(keyword: string, runsDir: string, domain: string): Promise<[SerpSnapshot, SerpSnapshot] | null> { //returns 2 serpSnapshots
+//get the latest serpSnapshot for this domain and this keyword
+//if no previous serp snap shot (edge case), returns null
+export async function loadLastSerpSnapshot(keyword: string,runsDir: string, domain: string,): Promise<SerpSnapshot | null> {
   const keywordDir = path.join(runsDir, domain, "monitor", "serp", keyword);
 
-  const latestTwo = (await readdir(keywordDir)) //go through directory for runs/keyword
+  const latest = (await readdir(keywordDir))
     .sort((a, b) => b.localeCompare(a)) // newest first
-    .slice(0, 2);
+    .at(0);
 
-  if(latestTwo.length < 2) return null
+  if (!latest) return null;
 
-  const newer = readJson<SerpSnapshot>(
-    path.join(keywordDir, latestTwo[0]!),
+  return readJson<SerpSnapshot>(
+    path.join(keywordDir, latest),
   );
+}
 
-  const older = readJson<SerpSnapshot>(
-    path.join(keywordDir, latestTwo[1]!),
+//get the latest rankSnapshot for this domain and this keyword
+//if no previous rank snap shot (edge case), returns null
+export async function loadLastRankSnapshot(keyword: string,runsDir: string, domain: string,): Promise<RankSnapshot | null> {
+  const keywordDir = path.join(runsDir, domain, "monitor", "rank", keyword);
+
+  const latest = (await readdir(keywordDir))
+    .sort((a, b) => b.localeCompare(a)) // newest first
+    .at(0);
+
+  if (!latest) return null;
+
+  return readJson<RankSnapshot>(
+    path.join(keywordDir, latest),
   );
-
-  return [older, newer];
 }
