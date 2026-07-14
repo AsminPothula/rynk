@@ -17,10 +17,8 @@ import { createLogger } from "@rynk/core";
 import type { ExecutionAction, UpdateMetaAction } from "@rynk/layer3-generate";
 import type { ApplyResult } from "../../types.js";
 import type { FileApplyStateStore } from "../../../state/apply-state.js";
-import type { CachePurger } from "../../../cache/purger.js";
 import { WordPressClient } from "../client.js";
 import { checkHumanTouched, recordApply } from "./_human-touched-guard.js";
-import { runPostApplyPurge } from "./_post-apply-purge.js";
 
 const log = createLogger("layer4.wp.update-meta");
 
@@ -46,7 +44,6 @@ export async function applyUpdateMeta(
   client: WordPressClient,
   action: ExecutionAction,
   stateStore?: FileApplyStateStore,
-  purger?: CachePurger,
 ): Promise<ApplyResult> {
   if (action.type !== "update_meta") {
     return { status: "skipped", message: "Not an update_meta action" };
@@ -108,13 +105,10 @@ export async function applyUpdateMeta(
   // for next time.
   recordApply({ postType, postId: summary.id, actionId: action.id, stateStore });
 
-  // Best-effort cache purge for the URL we just modified.
-  const purgeNote = await runPostApplyPurge({ purger, url: update.target.url });
-
   return {
     status: "applied",
     externalRef: String(summary.id),
     externalUrl: updated.link || summary.link,
-    message: `Updated meta on ${postType} #${summary.id} via ${plugin === "none" ? "WP core (no SEO plugin detected)" : plugin}${purgeNote}`,
+    message: `Updated meta on ${postType} #${summary.id} via ${plugin === "none" ? "WP core (no SEO plugin detected)" : plugin}`,
   };
 }

@@ -1,96 +1,55 @@
 /**
- * Landing page - modern 2026 redesign on a dark ink base.
+ * Landing page - marketing redesign on brand palette.
  *
- * Layout system:
- *   - Every section's content sits in the same `mx-auto max-w-screen-xl`
- *     container so all edges align down the page.
- *   - Sections share one vertical rhythm: py-14 md:py-16 (56/64px).
- *   - The hero fits above the fold on a typical laptop viewport.
- *   - Hero action cards use a structured 2-column staggered grid (no
- *     absolute positioning), so they can never overlap at any width.
+ * Sections:
+ *   1. Hero - serif headline left, brand mark + tagline right
+ *   2. What we offer - flip-tile grid; each tile reveals a description
+ *      when hovered (label slides up, description slides in from below)
+ *   3. Watch Rynk work - domain-input CTA
  *
- * All motion is pure CSS from globals.css. `prefers-reduced-motion: reduce`
- * disables everything automatically.
+ * Colors are from the brand palette (Tailwind `brand-*`). Serif font
+ * (Fraunces) drives headings; body copy stays sans.
  */
 
 import Link from "next/link";
-import {
-  ArrowRight,
-  ArrowUpRight,
-  Sparkles,
-  Type,
-  Braces,
-  MessageSquare,
-  FilePlus2,
-  Link2,
-  Repeat2,
-  Image as ImageIcon,
-  Mail,
-  BookOpen,
-  GitPullRequest,
-} from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 
-// ── Offerings ─────────────────────────────────────────────────────────
-
-const OFFERINGS: Array<{
-  label: string;
-  description: string;
-  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
-  tint: TintKey;
-}> = [
+const OFFERINGS: Array<{ label: string; description: string }> = [
   {
     label: "Meta Rewrites",
-    description: "Titles and descriptions rewritten so pages rank for the keywords they should.",
-    icon: Type,
-    tint: "emerald",
+    description: "Rewrites titles and descriptions so pages rank for the keywords they should.",
   },
   {
     label: "Schema Markup",
-    description: "Structured data every page needs, injected by type.",
-    icon: Braces,
-    tint: "pink",
+    description: "Injects structured data so search engines and AI understand every page.",
   },
   {
     label: "301 Redirects",
-    description: "Duplicate + competing pages consolidated cleanly.",
-    icon: Repeat2,
-    tint: "amber",
+    description: "Consolidates competing pages so authority isn't split across duplicates.",
   },
   {
     label: "Internal Links",
-    description: "Smart internal links so authority flows to the right pages.",
-    icon: Link2,
-    tint: "cyan",
+    description: "Adds smart internal links so authority flows to the pages that matter.",
   },
   {
     label: "New Pages",
-    description: "Fully-optimized new pages targeting keywords the site is missing.",
-    icon: FilePlus2,
-    tint: "highlight",
+    description: "Writes fully-optimized new pages targeting keywords the site is missing.",
   },
   {
     label: "Hero Images",
-    description: "AI hero visuals for every page - alt text included.",
-    icon: ImageIcon,
-    tint: "violet",
+    description: "Generates hero visuals for every page - alt text included.",
   },
   {
     label: "Outreach Emails",
-    description: "Backlink pitches + guest post drafts ready to send.",
-    icon: Mail,
-    tint: "blue",
+    description: "Drafts backlink pitches and guest-post emails ready to review and send.",
   },
   {
     label: "Brand Posts",
-    description: "LinkedIn, Reddit and Threads posts that feed AI citation signals.",
-    icon: MessageSquare,
-    tint: "pink",
+    description: "Drafts LinkedIn, Reddit and Threads posts that feed AI citation signals.",
   },
   {
     label: "Whitepapers",
-    description: "PDF + slide-deck assets that LLMs cite heavily.",
-    icon: BookOpen,
-    tint: "sky",
+    description: "Generates PDF and slide-deck assets that LLMs cite heavily.",
   },
   {
     label: "GitHub PRs",
@@ -151,9 +110,7 @@ const HERO_CARDS = [
     target: "",
     status: "See Rynk work and keep improving",
   },
-] as const;
-
-// ── Page ──────────────────────────────────────────────────────────────
+];
 
 export default function LandingPage(): React.JSX.Element {
   return (
@@ -195,21 +152,17 @@ export default function LandingPage(): React.JSX.Element {
                 style={{ animationDelay: "260ms" }}
               >
                 <Link
-                  href="/sign-in"
-                  className="group relative overflow-hidden inline-flex h-12 items-center gap-2.5 rounded-full bg-white pl-7 pr-6 font-serif text-[16px] font-medium text-brand-ink transition-all hover:shadow-[0_14px_36px_-14px_rgba(255,255,255,0.35)]"
+                  href="/signup"
+                  className="group inline-flex h-12 items-center gap-2.5 rounded-full bg-brand-navy pl-7 pr-6 font-serif text-[16px] font-medium text-brand-cream transition-all hover:bg-brand-navy2 hover:shadow-[0_8px_24px_-8px_rgba(47,65,86,0.5)]"
                 >
-                  <span
-                    aria-hidden
-                    className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-brand-blue/25 to-transparent animate-shimmer"
-                  />
-                  Get started
-                  <ArrowRight className="relative h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                  Get Started
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                 </Link>
                 <Link
                   href="/how-it-works"
-                  className="group inline-flex items-center gap-2 font-serif text-[16px] text-brand-textMute transition-colors hover:text-brand-text"
+                  className="group inline-flex items-center gap-2 font-serif text-[16px] text-brand-navy/80 transition-colors hover:text-brand-navy"
                 >
-                  Watch how it works
+                  How it works
                   <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </Link>
               </div>
@@ -367,25 +320,17 @@ export default function LandingPage(): React.JSX.Element {
             </p>
           </div>
 
-          {/* Aligned 5x2 grid on desktop, 2 cols on tablet, 1 on mobile */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {OFFERINGS.map((item) => (
-              <OfferingTile
-                key={item.label}
-                label={item.label}
-                description={item.description}
-                icon={item.icon}
-                tint={item.tint}
-              />
-            ))}
-          </div>
+        <div className="flex flex-wrap gap-3.5">
+          {OFFERINGS.map((item) => (
+            <FlipTile key={item.label} label={item.label} description={item.description} />
+          ))}
         </div>
       </section>  
     </div>
   );
 }
 
-// ─── Tint styles ──────────────────────────────────────────────────────
+// ─── FlipTile ──────────────────────────────────────────────────────────
 
 /**
  * Per-tint style bundle. Every visual channel (icon square, glow, ring,
@@ -547,37 +492,23 @@ function ActionCard({ card, delay }: { card: HeroCard; delay: string }): React.J
 function OfferingTile({
   label,
   description,
-  icon: Icon,
-  tint,
 }: {
   label: string;
   description: string;
-  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
-  tint: TintKey;
 }): React.JSX.Element {
-  const s = CARD_STYLES[tint];
   return (
     <div
-      className={`group relative overflow-hidden rounded-2xl bg-white/[0.03] ring-1 ${s.ring} p-5 transition-all duration-300 hover:-translate-y-1`}
+      className="group relative h-[72px] min-w-[240px] flex-1 overflow-hidden rounded-full bg-brand-navy px-7 text-brand-cream cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_36px_-14px_rgba(47,65,86,0.45)]"
+      role="button"
+      tabIndex={0}
     >
-      <div className={`absolute inset-x-0 top-0 h-[2px] ${s.topBar}`} aria-hidden />
-      <div
-        aria-hidden
-        className={`pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full ${s.ambient} blur-2xl opacity-60 transition-opacity duration-500 group-hover:opacity-100`}
-      />
-
-      <div className="relative">
-        <div
-          className={`inline-flex h-11 w-11 items-center justify-center rounded-xl ${s.iconBg} shadow-[0_6px_16px_-4px_rgba(0,0,0,0.5)] transition-transform duration-300 group-hover:scale-105`}
-        >
-          <Icon className={`h-5 w-5 ${s.iconText}`} strokeWidth={2.2} />
-        </div>
-        <div className="mt-4 font-serif text-[18px] font-medium leading-tight tracking-tight text-brand-text">
+      <div className="flex flex-col transition-transform duration-[550ms] ease-[cubic-bezier(0.32,0.72,0.24,1)] group-hover:-translate-y-[72px] group-focus:-translate-y-[72px]">
+        <div className="flex h-[72px] items-center font-serif text-[17px] font-medium tracking-tight">
           {label}
         </div>
-        <p className="mt-2 text-[13px] leading-relaxed text-brand-textMute">
+        <div className="flex h-[72px] items-center pr-2 text-[13px] leading-snug text-brand-cream/85">
           {description}
-        </p>
+        </div>
       </div>
     </div>
   );

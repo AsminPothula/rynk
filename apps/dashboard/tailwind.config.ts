@@ -79,33 +79,16 @@ const config: Config = {
           document: "hsl(var(--channel-document))",
           offsite: "hsl(var(--channel-offsite))",
         },
-        // Brand palette - dark-first, muted blues + violets.
-        // Every hue is desaturated so nothing screams. The highlight coral is
-        // the only warm note and is used sparingly as a real marker.
+        // Brand palette - used on the public marketing site.
         brand: {
-          ink:         "#141d3d", // page bg - lifted mid-navy (was near-black)
-          ink2:        "#1c264f", // elevated surface (nav, cards)
-          surface:     "#252f60", // card/tile surface, one step brighter
-          surface2:    "#2f3b74", // hover / accent surface
-          hairline:    "#3a4680", // 1px borders on dark surfaces
-          blue:        "#6d8dff", // primary - soft periwinkle blue
-          blueSoft:    "#8fa8ff", // hover / secondary
-          sky:         "#c9d5ff", // very light blue for orbs + accents
-          violet:      "#9c8cf0", // muted violet, not neon
-          violetSoft:  "#c4b8ff", // pale mauve for chips + tags
-          // Contrasting accents used for action-card variety.
-          emerald:     "#34d399",
-          emeraldSoft: "#6ee7b7",
-          pink:        "#f472b6",
-          pinkSoft:    "#f9a8d4",
-          amber:       "#fbbf24",
-          amberSoft:   "#fcd34d",
-          cyan:        "#22d3ee",
-          cyanSoft:    "#67e8f9",
-          cream:       "#f4ecd8", // warm off-white - light-mode wash
-          text:        "#eeeaf6", // main body text on dark
-          textMute:    "#a5adc8", // muted body text
-          highlight:   "#f7a072", // warm coral - marker/underline accent
+          navy: "#2f4156",
+          navy2: "#567c8d",
+          sky: "#c8d9e6",
+          cream: "#f5efeb",
+          orange: "#f97306",
+          orangeSoft: "#ff8b28",
+          green: "#38761d",
+          greenDeep: "#274e13",
         },
       },
       borderRadius: {

@@ -25,10 +25,8 @@ import { createLogger } from "@rynk/core";
 import type { ExecutionAction, InsertInternalLinkAction } from "@rynk/layer3-generate";
 import type { ApplyResult } from "../../types.js";
 import type { FileApplyStateStore } from "../../../state/apply-state.js";
-import type { CachePurger } from "../../../cache/purger.js";
 import { WordPressClient } from "../client.js";
 import { checkHumanTouched, recordApply } from "./_human-touched-guard.js";
-import { runPostApplyPurge } from "./_post-apply-purge.js";
 
 const log = createLogger("layer4.wp.insert-internal-link");
 
@@ -116,7 +114,6 @@ export async function applyInsertInternalLink(
   client: WordPressClient,
   action: ExecutionAction,
   stateStore?: FileApplyStateStore,
-  purger?: CachePurger,
 ): Promise<ApplyResult> {
   if (action.type !== "insert_internal_link") {
     return { status: "skipped", message: "Not an insert_internal_link action" };
@@ -200,8 +197,6 @@ export async function applyInsertInternalLink(
 
   recordApply({ postType, postId: summary.id, actionId: action.id, stateStore });
 
-  const purgeNote = await runPostApplyPurge({ purger, url: insert.target.sourceUrl });
-
   log.info("internal link inserted", {
     actionId: action.id,
     postId: summary.id,
@@ -215,6 +210,6 @@ export async function applyInsertInternalLink(
     status: "applied",
     externalRef: String(summary.id),
     externalUrl: updated.link || summary.link,
-    message: `Linked "${anchorText}" -> ${targetUrl} on ${postType} #${summary.id} (${mode})${purgeNote}`,
+    message: `Linked "${anchorText}" -> ${targetUrl} on ${postType} #${summary.id} (${mode})`,
   };
 }

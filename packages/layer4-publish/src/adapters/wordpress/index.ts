@@ -17,9 +17,11 @@
  *                              if the phrase isn't found in content
  *   - applyCreateAuthor        creates a WP user with role=author, custom
  *                              meta for credentials + LinkedIn + headshot
+ *   - applyAddRedirect         creates/updates redirects via the Redirection
+ *                              plugin REST API
  *
  * Still pending (intern follow-up, smallest scope):
- *   - applyAddRedirect, applyAssignAuthor
+ *   - applyAssignAuthor
  */
 
 import { createLogger, optionalEnv } from "@rynk/core";
@@ -34,7 +36,7 @@ import { applyAddNapBlock } from "./handlers/add-nap-block.js";
 import { applyUpdatePage } from "./handlers/update-page.js";
 import { applyInsertInternalLink } from "./handlers/insert-internal-link.js";
 import { applyCreateAuthor } from "./handlers/create-author.js";
-import { CachePurger, type CloudflarePurgeConfig } from "../../cache/purger.js";
+import { applyAddRedirect } from "./handlers/add-redirect.js";
 
 const log = createLogger("layer4.wordpress");
 
@@ -65,13 +67,6 @@ export interface WordPressAdapterConfig {
    * tracked and no human-touched check runs (backwards compat).
    */
   stateFilePath?: string;
-  /**
-   * Optional Cloudflare credentials for CDN-level cache purging after a
-   * successful content change. Only used when the client's site sits
-   * behind Cloudflare - detected either automatically (via response
-   * headers, future work) or set here explicitly during onboarding.
-   */
-  cloudflare?: CloudflarePurgeConfig;
 }
 
 /**
@@ -95,20 +90,6 @@ export function makeWordPressAdapter(config: WordPressAdapterConfig): CMSAdapter
   const stateStore = config.stateFilePath
     ? new FileApplyStateStore(config.stateFilePath)
     : undefined;
-
-  // Cache purger - handles WP-plugin purges + optional Cloudflare purge
-  // after every successful content change. Constructed lazily to avoid
-  // building the WP client just to inspect it in skeleton mode.
-  let purger: CachePurger | null = null;
-  const getPurger = (): CachePurger => {
-    if (!purger) {
-      purger = new CachePurger({
-        wpClient: getClient(),
-        cloudflare: config.cloudflare,
-      });
-    }
-    return purger;
-  };
 
   return {
     adapterName: "wordpress",
@@ -139,21 +120,21 @@ export function makeWordPressAdapter(config: WordPressAdapterConfig): CMSAdapter
       try {
         switch (action.type) {
           case "update_meta":
-            return await applyUpdateMeta(getClient(), action, stateStore, getPurger());
+            return await applyUpdateMeta(getClient(), action, stateStore);
           case "inject_schema":
-            return await applyInjectSchema(getClient(), action, stateStore, getPurger());
+            return await applyInjectSchema(getClient(), action, stateStore);
           case "create_page":
             return await applyCreatePage(getClient(), action);
           case "update_page":
-            return await applyUpdatePage(getClient(), action, stateStore, getPurger());
+            return await applyUpdatePage(getClient(), action, stateStore);
           case "add_nap_block":
-            return await applyAddNapBlock(getClient(), action, stateStore, getPurger());
+            return await applyAddNapBlock(getClient(), action, stateStore);
           case "insert_internal_link":
-            return await applyInsertInternalLink(getClient(), action, stateStore, getPurger());
+            return await applyInsertInternalLink(getClient(), action, stateStore);
           case "create_author":
             return await applyCreateAuthor(getClient(), siteUrl, action);
           case "add_redirect":
-            return await applyAddRedirect(siteUrl, action, config);
+            return await applyAddRedirect(getClient(), action);
           case "assign_author":
             return await applyAssignAuthor(siteUrl, action, config);
           default:
@@ -179,13 +160,6 @@ export function makeWordPressAdapter(config: WordPressAdapterConfig): CMSAdapter
 
 // ── Stubs for handlers still pending (intern work) ──────────────────────────
 
-async function applyAddRedirect(
-  _siteUrl: string,
-  _action: ExecutionAction,
-  _config: WordPressAdapterConfig,
-): Promise<ApplyResult> {
-  throw new Error("add_redirect not yet implemented (route: Yoast Premium API / Redirection plugin)");
-}
 async function applyAssignAuthor(
   _siteUrl: string,
   _action: ExecutionAction,
