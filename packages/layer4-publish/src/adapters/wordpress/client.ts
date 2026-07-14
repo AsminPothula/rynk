@@ -138,7 +138,7 @@ export class WordPressClient {
     // 1. Try plain-permalink style — ?page_id= or ?p=
     const idFromQuery = extractPostId(url);
     if (idFromQuery) {
-      // Try as page first.
+      // Try if its a 404, then try as post.
       try {
         return await this.request<WPPostSummary>("GET", `/wp/v2/pages/${idFromQuery}?context=edit`);
       } catch {

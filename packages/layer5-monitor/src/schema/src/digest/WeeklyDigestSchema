@@ -1,0 +1,9 @@
+/*
+rankGains / rankLosses: keywords that moved by 3+ positions.
+newCompetitors: unique competitor domains that appeared in any SERP top 10 this week that weren't there last week.
+gscTrend / gaTrend: up / down / flat based on WoW percentage.
+daChange: numeric.
+backlinkChange: +X new, -Y lost.
+actionsRecommended: list of keywords that triggered Layer 2 re-strategy this week, plus any keywords the digest itself flags for manual review (e.g. rank dropped 10+ positions but no SERP-level cause).
+
+*/
