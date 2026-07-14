@@ -27,6 +27,8 @@ export interface OutreachAdapterConfig {
 function buildToHeader(action: DraftOutreachAction): string {
   const { recipientDomain, recipientName } = action.target;
   const email = `contact@${recipientDomain.replace(/^www\./, "")}`;
+  console.log("recipientName", recipientName);
+  console.log("email", email);
   return recipientName ? `To: ${recipientName} <${email}>` : `To: ${email}`;
 }
 
