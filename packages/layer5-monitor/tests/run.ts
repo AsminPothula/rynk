@@ -1,6 +1,10 @@
 import { runSerpWatch } from "../src/jobs/serp-watch.js"
-import { readJson, ClientContext } from "@rynk/core"
+import { readJson, ClientContext, createLogger } from "@rynk/core"
+import { Logger } from "@rynk/core"
+import { RankSnapshot, SerpSnapshot } from "../src/schema/index.js"
 
+
+const log = createLogger('layer5.run.ts')
 
 const DOMAIN = "itechdata.ai"
 const RUNS_DIR = "../../runs"
@@ -8,4 +12,4 @@ const RUNS_DIR = "../../runs"
 const CLIENT_CONTEXT = readJson<ClientContext>(`${RUNS_DIR}/${DOMAIN}/client.json`)
 
 
-runSerpWatch(DOMAIN, CLIENT_CONTEXT, RUNS_DIR, true)
+await runSerpWatch(DOMAIN, CLIENT_CONTEXT, RUNS_DIR, true)

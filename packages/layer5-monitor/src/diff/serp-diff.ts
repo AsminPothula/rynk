@@ -8,12 +8,12 @@ const log = createLogger("layer5.serp-diff")
 
 //added domain as an arg
 //needs to be in format www.<domain name>.<extension>
-export function computeSerpDelta(previous: SerpSnapshot, current: SerpSnapshot, previousRankSnapshot: RankSnapshot, currentRankSnapshot: RankSnapshot, domain: string): SerpDelta {
+export function computeSerpDelta(previousSerpSnapshot: SerpSnapshot, currentSerpSnapshot: SerpSnapshot, previousRankSnapshot: RankSnapshot, currentRankSnapshot: RankSnapshot, domain: string): SerpDelta {
 
   //filter all the current results and find results that were not in previous results
-  const newInT10 = current.results
+  const newInT10 = currentSerpSnapshot.results
       .filter(result =>
-        !previous.results.some(prev => prev.url === result.url)
+        !previousSerpSnapshot.results.some(prev => prev.url === result.url)
       )
       .map(result => ({
         url: result.url,
@@ -21,9 +21,9 @@ export function computeSerpDelta(previous: SerpSnapshot, current: SerpSnapshot, 
       }))
   
   //filter all the previous results and find results that are not in current results
-  const droppedfromT10 = previous.results
+  const droppedfromT10 = previousSerpSnapshot.results
       .filter(result =>
-        !current.results.some(curr => curr.url === result.url)
+        !currentSerpSnapshot.results.some(curr => curr.url === result.url)
       )
       .map(result => ({
         url: result.url,
@@ -31,14 +31,14 @@ export function computeSerpDelta(previous: SerpSnapshot, current: SerpSnapshot, 
       }))
   
   //take the current results, track whether domain ranks have changed or not by comparing the lists
-  const posChanges = current.results
+  const posChanges = currentSerpSnapshot.results
   .filter(currentResult =>
-    previous.results.some(
+    previousSerpSnapshot.results.some(
       previousResult => previousResult.url === currentResult.url,
     ),
   )
   .map(currentResult => {
-    const previousResult = previous.results.find(
+    const previousResult = previousSerpSnapshot.results.find(
       result => result.url === currentResult.url,
     )!;
 
@@ -60,12 +60,12 @@ export function computeSerpDelta(previous: SerpSnapshot, current: SerpSnapshot, 
   //TRIGGER RESTRATEGY
   // //true if (a) a brand new URL is now in top 3, OR (b) our own domain dropped 3+ positions. 
   const newURLs = newInT10.map(newResult => newResult.url) 
-  const brandNewInT3 = current.results.slice(0,3).some(result => newURLs.includes(result.url))
+  const brandNewInT3 = currentSerpSnapshot.results.slice(0,3).some(result => newURLs.includes(result.url))
   
   //previous and current position of our domain - either numbers or null
   // only returns the first, edge case is that a domain may be on the SERP multiple times
-  const prevPosition = previous.results.find(result => result.domain === domain)?.position ?? null
-  const currentPosition = current.results.find(result => result.domain === domain)?.position ?? null
+  const prevPosition = previousSerpSnapshot.results.find(result => result.domain === domain)?.position ?? null
+  const currentPosition = currentSerpSnapshot.results.find(result => result.domain === domain)?.position ?? null
 
   let domainDrop = false
   let triggerReason = null
@@ -78,9 +78,9 @@ export function computeSerpDelta(previous: SerpSnapshot, current: SerpSnapshot, 
   if(brandNewInT3) triggerReason += "New URL in top 3."
 
   const raw = {
-    keyword: previous.keyword,
-    from: previous.takenAt,
-    to: current.takenAt,
+    keyword: previousSerpSnapshot.keyword,
+    from: previousSerpSnapshot.takenAt,
+    to: currentSerpSnapshot.takenAt,
     newInTop10: newInT10,
     droppedFromTop10: droppedfromT10,
     positionChanges: posChanges, //pos changes of the top 10 URLs (if any)
