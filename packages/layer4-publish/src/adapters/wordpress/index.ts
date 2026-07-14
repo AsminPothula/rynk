@@ -17,9 +17,11 @@
  *                              if the phrase isn't found in content
  *   - applyCreateAuthor        creates a WP user with role=author, custom
  *                              meta for credentials + LinkedIn + headshot
+ *   - applyAddRedirect         creates/updates redirects via the Redirection
+ *                              plugin REST API
  *
  * Still pending (intern follow-up, smallest scope):
- *   - applyAddRedirect, applyAssignAuthor
+ *   - applyAssignAuthor
  */
 
 import { createLogger, optionalEnv } from "@rynk/core";
@@ -34,6 +36,7 @@ import { applyAddNapBlock } from "./handlers/add-nap-block.js";
 import { applyUpdatePage } from "./handlers/update-page.js";
 import { applyInsertInternalLink } from "./handlers/insert-internal-link.js";
 import { applyCreateAuthor } from "./handlers/create-author.js";
+import { applyAddRedirect } from "./handlers/add-redirect.js";
 
 const log = createLogger("layer4.wordpress");
 
@@ -131,7 +134,7 @@ export function makeWordPressAdapter(config: WordPressAdapterConfig): CMSAdapter
           case "create_author":
             return await applyCreateAuthor(getClient(), siteUrl, action);
           case "add_redirect":
-            return await applyAddRedirect(siteUrl, action, config);
+            return await applyAddRedirect(getClient(), action);
           case "assign_author":
             return await applyAssignAuthor(siteUrl, action, config);
           default:
@@ -157,13 +160,6 @@ export function makeWordPressAdapter(config: WordPressAdapterConfig): CMSAdapter
 
 // ── Stubs for handlers still pending (intern work) ──────────────────────────
 
-async function applyAddRedirect(
-  _siteUrl: string,
-  _action: ExecutionAction,
-  _config: WordPressAdapterConfig,
-): Promise<ApplyResult> {
-  throw new Error("add_redirect not yet implemented (route: Yoast Premium API / Redirection plugin)");
-}
 async function applyAssignAuthor(
   _siteUrl: string,
   _action: ExecutionAction,

@@ -210,6 +210,29 @@ export class WordPressClient {
   }
 
   /**
+   * Returns true when the free Redirection plugin is installed and active.
+   * Used by add-redirect handler before calling /redirection/v1/* routes.
+   */
+  async isRedirectionPluginActive(): Promise<boolean> {
+    try {
+      const plugins = await this.request<Array<{ plugin: string; status: string }>>(
+        "GET",
+        "/wp/v2/plugins",
+      );
+      return plugins.some(
+        (p) => p.status === "active" && p.plugin === "redirection/redirection.php",
+      );
+    } catch {
+      try {
+        await this.request("GET", "/redirection/v1/redirect?per_page=1");
+        return true;
+      } catch {
+        return false;
+      }
+    }
+  }
+
+  /**
    * Detect whether a specific post is managed by a page builder plugin.
    *
    * Page builders (Elementor, Divi, WPBakery, etc.) don't store their
