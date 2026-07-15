@@ -14,10 +14,10 @@
  */
 
 import Link from "next/link";
+import { WatchRynkForm } from "./_components/WatchRynkForm";
 import {
   ArrowRight,
   ArrowUpRight,
-  Sparkles,
   Type,
   Braces,
   MessageSquare,
@@ -398,25 +398,7 @@ export default function LandingPage(): React.JSX.Element {
               </p>
             </div>
 
-            <form
-              action="/sign-in"
-              className="group relative flex items-center gap-2 rounded-full bg-white/[0.06] ring-1 ring-white/12 py-2 pl-6 pr-2 text-brand-text shadow-[0_20px_50px_-20px_rgba(0,0,0,0.6)]"
-            >
-              <Sparkles className="h-4 w-4 text-brand-violetSoft" />
-              <input
-                type="text"
-                placeholder="yoursite.com"
-                aria-label="Your domain"
-                className="flex-1 bg-transparent font-serif text-[16px] text-brand-text placeholder:text-brand-textMute focus:outline-none"
-              />
-              <button
-                type="submit"
-                aria-label="Scan my site"
-                className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-brand-ink transition-all group-hover:scale-105"
-              >
-                <ArrowRight className="h-4 w-4" />
-              </button>
-            </form>
+            <WatchRynkForm />
           </div>
         </div>
       </section>
