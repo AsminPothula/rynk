@@ -23,9 +23,11 @@ export async function takeSerpSnapshot(domain: string, keyword: string, runsDir:
   };
 
   const serpSnapshot = SerpSnapshotSchema.parse(raw);
-
+  
   const fileName = `${raw.takenAt.replace(/:/g, "-")}.json`;
-  const writingTo = `${runsDir}/${domain}/monitor/serp/${keyword}/${fileName}`
+  const date = new Date().toISOString().split("T")[0];
+
+  const writingTo = `${runsDir}/${domain}/${date}/monitor/serp/${keyword}/${fileName}`
 
   writeJson(writingTo, serpSnapshot);
 
@@ -55,7 +57,9 @@ export async function takeRankSnapshot(domain: string, keyword: string, runsDir:
   const rankSnapshot = RankSnapshotSchema.parse(raw);
 
   const fileName = `${raw.takenAt.replace(/:/g, "-")}.json`;
-  const writingTo = `${runsDir}/${domain}/monitor/rank/${keyword}/${fileName}`
+  const date = new Date().toISOString().split("T")[0];
+  
+  const writingTo = `${runsDir}/${domain}/${date}/monitor/rank/${keyword}/${fileName}`
   writeJson(writingTo, rankSnapshot);
 
   return {rankSnapshot: rankSnapshot, location: writingTo}

@@ -16,7 +16,7 @@ export interface SerpKeywordResult {
 }
 
 interface SerpApiResponse {
-  organic_results?: Array<{ position: number; link: string; title: string; snippet?: string }>; //I think it's here?
+  organic_results?: Array<{ position: number; link: string; title: string; snippet?: string }>;
   related_questions?: Array<{ question: string }>;
   answer_box?: { link?: string; title?: string };
   ai_overview?: {

@@ -47,7 +47,7 @@ export async function runSerpWatch(domain: string, clientContext: ClientContext,
         const { serpSnapshot: newSerp } = await takeSerpSnapshot(domain, keyword, runsDir)
         const { rankSnapshot: newRank } = await takeRankSnapshot(domain, keyword, runsDir)
 
-        //before computing delta, see if we have at leasat 2 rank and serp snapshots
+        //before computing delta, see if we have at least 2 rank and serp snapshots
         //if it doesn't work we could have some type of "your analysis isn't yet ready" screen
         if(!lastSerp) continue
 
@@ -57,11 +57,11 @@ export async function runSerpWatch(domain: string, clientContext: ClientContext,
         const delta = computeSerpDelta(lastSerp, newSerp, lastRank, newRank, domain)
         allDeltas.push(delta) //any deltas are stored here
         
-        //save the delta
-        writeJson(`${runsDir}/${domain}/monitor/delta/${new Date().toISOString().replace(/:/g, "-")}.json`, delta)
+        //save the delta under today's date
+        const date = new Date().toISOString().split("T")[0];
+        writeJson(`${runsDir}/${domain}/${date}/monitor/delta/${new Date().toISOString().replace(/:/g, "-")}.json`, delta)
 
         //maybe trigger restrategy
-        //seems like overkill to run the restrategy after every keyword -- should figure out a better way
         const {triggered,runId} = await maybeTriggerRestrategy(delta, clientContext, runsDir)
 
         // if the delta leads to restrategy, add to number of resetrats
