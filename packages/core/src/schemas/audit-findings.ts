@@ -158,6 +158,29 @@ export const PolicyPageSchema = z.object({
   issues: z.array(z.string()).default([]),
 });
 
+/**
+ * Coerce a single NAP inconsistency (which the model may return as a string
+ * OR a structured object) into a readable string. Handles the common object
+ * shapes and falls back to compact JSON so nothing is ever dropped.
+ */
+function coerceInconsistency(v: unknown): string {
+  if (typeof v === "string") return v;
+  if (v && typeof v === "object") {
+    const o = v as Record<string, unknown>;
+    const where = o["directory"] ?? o["source"] ?? o["platform"] ?? o["site"];
+    const found = o["found"] ?? o["value"] ?? o["actual"] ?? o["address"] ?? o["phone"];
+    const expected = o["expected"] ?? o["canonical"] ?? o["shouldBe"];
+    const parts = [
+      where ? `${String(where)}:` : null,
+      found ? `found "${String(found)}"` : null,
+      expected ? `expected "${String(expected)}"` : null,
+    ].filter(Boolean);
+    if (parts.length > 0) return parts.join(" ");
+    return JSON.stringify(v);
+  }
+  return String(v);
+}
+
 export const NAPRecordSchema = z.object({
   // Use .default(null) so a missing key (not just null) is also accepted.
   address: z.string().nullable().default(null),
@@ -280,7 +303,13 @@ export const OffsiteEEATSchema = z.object({
     zoomInfo: NAPRecordSchema.optional(),
     rocketReach: NAPRecordSchema.optional(),
     yelp: NAPRecordSchema.extend({ entityName: z.string().nullable().default(null) }).optional(),
-    inconsistenciesVsCanonical: z.array(z.string()),
+    // The model sometimes returns each inconsistency as a structured object
+    // ({ directory, found, expected }) instead of a flat string. Accept any
+    // element shape and coerce to a readable string so validation never fails
+    // on this across arbitrary sites. Downstream consumers still get string[].
+    inconsistenciesVsCanonical: z
+      .array(z.unknown())
+      .transform((arr) => arr.map(coerceInconsistency)),
   }),
 });
 
