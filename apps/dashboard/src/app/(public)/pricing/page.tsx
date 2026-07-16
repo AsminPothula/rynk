@@ -106,7 +106,7 @@ export default function PricingPage(): React.JSX.Element {
             className="mt-4 mb-5 text-[16px] leading-[1.75] text-brand-textMute animate-rise"
             style={{ animationDelay: "160ms" }}
           >
-            Pick the tier that fits your business. 
+            Pick the tier that fits your business.
           </p>
         </div>
       </section>
@@ -130,9 +130,8 @@ export default function PricingPage(): React.JSX.Element {
               return (
                 <div
                   key={tier.name}
-                  className={`relative flex flex-col overflow-hidden rounded-3xl bg-white/[0.03] p-5 md:p-6 ring-1 ${s.ring} transition-all duration-300 hover:-translate-y-1 ${
-                    tier.accent ? "shadow-[0_18px_50px_-15px_rgba(156,140,240,0.45)]" : ""
-                  }`}
+                  className={`relative flex flex-col overflow-hidden rounded-3xl bg-white/[0.03] p-5 md:p-6 ring-1 ${s.ring} transition-all duration-300 hover:-translate-y-1 ${tier.accent ? "shadow-[0_18px_50px_-15px_rgba(156,140,240,0.45)]" : ""
+                    }`}
                 >
                   <div className={`absolute inset-x-0 top-0 h-[2px] ${s.topBar}`} aria-hidden />
                   {/* Tint blob so each card carries its color */}
@@ -160,11 +159,10 @@ export default function PricingPage(): React.JSX.Element {
 
                   <Link
                     href={tier.href}
-                    className={`relative mt-5 inline-flex h-11 items-center justify-center gap-2 rounded-full font-serif text-[15px] font-medium transition-all ${
-                      tier.accent
-                        ? "bg-white text-brand-ink hover:shadow-[0_14px_36px_-14px_rgba(255,255,255,0.4)]"
-                        : "ring-1 ring-white/15 text-brand-text hover:bg-white/5"
-                    }`}
+                    className={`relative mt-5 inline-flex h-11 items-center justify-center gap-2 rounded-full font-serif text-[15px] font-medium transition-all ${tier.accent
+                      ? "bg-white text-brand-ink hover:shadow-[0_14px_36px_-14px_rgba(255,255,255,0.4)]"
+                      : "ring-1 ring-white/15 text-brand-text hover:bg-white/5"
+                      }`}
                   >
                     {tier.cta}
                     <ArrowRight className="h-4 w-4" />
