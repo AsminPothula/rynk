@@ -11,7 +11,7 @@
  */
 import Image from "next/image";
 import rk from "./rk.png";
-import Ashwika from "./Ashwika.jpg";
+import ak from "./ak-1.png";
 
 import Link from "next/link";
 import { ArrowRight, User } from "lucide-react";
@@ -30,7 +30,7 @@ const FOUNDERS = [
     role: "Co-Founder",
     bio: "Ashwika Khandavalli is driven by a passion for entrepreneurship and community impact. She leads product strategy and go-to-market at Rynk — covering competitive positioning, pricing, and client segmentation across the SEO and AI-visibility space.",
     tint: "pink",
-    image: Ashwika,
+    image: ak,
   },
 ] as const;
 
