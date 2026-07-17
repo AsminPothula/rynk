@@ -9,22 +9,28 @@
  * Founder photos are placeholders until headshots / LinkedIn images
  * are delivered.
  */
+import Image from "next/image";
+import rk from "./rk.png";
+import Ashwika from "./Ashwika.jpg";
 
 import Link from "next/link";
 import { ArrowRight, User } from "lucide-react";
 
 const FOUNDERS = [
   {
+
     name: "Rishik Khandavalli",
     role: "Co-Founder",
     bio: "Rishik Khandavalli is a student at Greenhill School (Class of 2027) and leader of a $340K+ student-managed investment portfolio. He focuses on equity research, sector analysis, and business analytics.",
     tint: "blue",
+    image: rk,
   },
   {
     name: "Ashwika Khandavalli",
     role: "Co-Founder",
-    bio: "Ashwika Khandavalli is a member of the Class of 2030 at The Hockaday School. Driven by a passion for entrepreneurship and community impact, she has developed strong collaboration and leadership skills while working with experienced professionals.",
+    bio: "Ashwika Khandavalli is driven by a passion for entrepreneurship and community impact. She leads product strategy and go-to-market at Rynk — covering competitive positioning, pricing, and client segmentation across the SEO and AI-visibility space.",
     tint: "pink",
+    image: Ashwika,
   },
 ] as const;
 
@@ -67,6 +73,8 @@ export default function AboutPage(): React.JSX.Element {
               className="mt-8 space-y-5 text-[16px] leading-[1.8] text-brand-textMute animate-rise"
               style={{ animationDelay: "160ms" }}
             >
+
+
               <p>
                 Rynk began because of one problem: small and medium-sized
                 businesses weren&apos;t visible online - not because they lacked
@@ -121,19 +129,19 @@ export default function AboutPage(): React.JSX.Element {
                     className={`pointer-events-none absolute -top-14 -right-14 h-44 w-44 rounded-full ${s.ambient} blur-3xl opacity-70`}
                   />
 
+
+
                   <div className="relative">
                     {/* Photo placeholder - swap for a real headshot / LinkedIn
                         image when the founders deliver one */}
-                    <div className="flex aspect-[4/3] w-full items-center justify-center rounded-2xl bg-white/[0.04] ring-1 ring-white/10">
-                      <div className="flex flex-col items-center gap-2 text-brand-textMute">
-                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/[0.06] ring-1 ring-white/10">
-                          <User className="h-6 w-6" strokeWidth={1.8} />
-                        </div>
-                        <span className="font-mono text-[10px] uppercase tracking-[0.18em]">
-                          photo coming soon
-                        </span>
-                      </div>
-                    </div>
+<div className="aspect-[4/3] w-full overflow-hidden rounded-2xl ring-1 ring-white/10">
+  <Image
+    src={f.image}
+    alt={f.name}
+    className="h-full w-full object-cover"
+    sizes="(max-width: 768px) 100vw, 50vw"
+  />
+</div>
 
                     <h3 className="mt-6 font-serif text-2xl font-medium leading-tight tracking-tight">
                       {f.name}

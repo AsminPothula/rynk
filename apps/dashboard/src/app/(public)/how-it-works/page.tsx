@@ -42,24 +42,7 @@ const OUTCOMES = [
     body: "Rynk ships meta, schema, pages, links, images, and code changes directly to your site.",
     tint: "pink",
   },
-  {
-    icon: Timer,
-    title: "Continuous optimization",
-    body: "SERPs shift weekly. Rynk re-audits, re-plans, and re-ships in the background.",
-    tint: "amber",
-  },
-  {
-    icon: Settings2,
-    title: "Zero tools to learn",
-    body: "You don't touch Ahrefs, Screaming Frog, WordPress, or GitHub. Rynk does the work.",
-    tint: "cyan",
-  },
-  {
-    icon: Layers,
-    title: "One dashboard",
-    body: "Every action, every channel, every result - in one place. No stack. No sprawl.",
-    tint: "blue",
-  },
+
 ] as const;
 
 // ── Built around three jobs (content from the design team) ────────────
@@ -72,28 +55,32 @@ const JOBS = [
     intro: "Crawl, score, and benchmark - Rynk understands the site as deeply as a human auditor.",
     cards: [
       {
-        title: "Full site crawl",
-        body: "Renders every page with a real browser, captures titles, metadata, schema, H1s, body, and internal links.",
+        title: "Full Site Scan",
+        body: "We go through every page of your website — just like a visitor or Google would — to see what's working and what's missing.",
+      },
+      /*
+      {
+        title: "Speed Check",
+        body: "We check how fast your site loads and flag anything that's slowing it down for visitors",
       },
       {
-        title: "Performance scoring",
-        body: "PageSpeed Insights per template - TBT, LCP, CLS, render-blocking resources, image weight.",
+        title: "Search Visibility",
+        body: "We check where you actually show up — on Google and on AI tools like ChatGPT — for the searches your customers are making."
       },
+      */
       {
-        title: "SERP + AI Overview",
-        body: "Every seed keyword checked: top-ranking URLs, People-Also-Ask, AI Overview citations, featured snippets.",
+        title: "Keyword Insights",
+        body: "We find out what people are searching for, how hard it is to rank for, and how you compare to your competitors.",
       },
+      /*
       {
-        title: "Keyword + DA metrics",
-        body: "Volume, difficulty, CPC for every keyword. Domain Authority for you and your competitors.",
+        title: "Trust Signals",
+        body: "We check the things that make Google and customers trust your business — reviews, credentials, and consistent info across the web.",
       },
+      */
       {
-        title: "Onsite and offsite EEAT",
-        body: "Policy pages, author bylines, NAP consistency, certifications, third-party profiles (G2, Crunchbase, Clutch).",
-      },
-      {
-        title: "Cannibalization detection",
-        body: "URL clusters competing for the same keyword, with a canonical recommendation per cluster.",
+        title: "Duplicate Content Check",
+        body: "We find pages on your site that are competing with each other and fix it so the right one shows up in search.",
       },
     ],
   },
@@ -104,29 +91,33 @@ const JOBS = [
     intro: "Eleven generators produce every change rynk plans - typed, validated, traceable.",
     cards: [
       {
-        title: "CMS work",
-        body: "Meta rewrites, schema injection, 301 redirects, internal links, NAP blocks - all produced as structured actions ready to ship.",
+        title: "Site Updates",
+        body: "We write the behind-the-scenes fixes your website needs — like updated page titles, working links, and consistent business info — ready to go live.",
       },
       {
-        title: "Full pages",
-        body: "Pillar + spoke pages with titles, meta descriptions, outline, and optional fully-written body. Each linked to its schema and image actions.",
+        title: "New Web Pages",
+        body: "We write full pages for your site, from the main content down to the small details that help you get found in search.",
       },
       {
-        title: "Images",
-        body: "Hero images, inline diagrams, social card thumbnails - prompt + dimensions + alt text, generated at publish time.",
+        title: "Photos & Graphics",
+        body: "We create the images your site and posts need — banners, simple graphics, and thumbnails — sized and labeled correctly.",
       },
+/*
       {
-        title: "Outreach drafts",
-        body: "Guest pitches, press, backlink requests - full subject and body, staggered send dates, ready to personalize.",
+        title: "Partnership Emails",
+        body: "We draft emails to other sites and publications who could feature or link to your business — ready for you to send.",
       },
+   
       {
-        title: "Brand posts",
-        body: "LinkedIn thought-leadership, Reddit discussions, Threads short takes - drafted in your brand's voice with a clear rationale per post.",
+        title: "Social Posts",
+        body: "We write posts for LinkedIn, Reddit, and other platforms in your brand's voice, so you can build a presence without starting from scratch.",
       },
+      /*
       {
-        title: "Documents + PRs",
-        body: "Whitepapers + sales decks for distribution. GitHub PR drafts for code-level fixes when you have a repo.",
+        title: "Sales Materials",
+        body: "We put together documents like sales sheets and guides you can share with customers or partners.",
       },
+      */
     ],
   },
   {
@@ -136,28 +127,30 @@ const JOBS = [
     intro: "Every action is dispatched to the right service - WordPress, GitHub, image generation, document rendering.",
     cards: [
       {
-        title: "WordPress adapter",
-        body: "Pushes meta, schema, redirects, pages, and authors via the WP REST API. Detects which SEO plugin (Yoast / RankMath / SEOPress) is installed.",
+        title: "Website Publishing",
+        body: "If your site runs on WordPress, we publish updates directly — no need to copy and paste anything yourself.",
       },
       {
-        title: "Image pipeline",
-        body: "Generates each image action via the configured provider and attaches the results to the right post automatically.",
+        title: "Image Publishing",
+        body: "New images are automatically attached to the right page or post — no extra steps for you.",
+      },
+      /*
+      {
+        title: "Shareable Documents",
+        body: "Your sales sheets and guides are turned into ready-to-share files you can send to customers or post online.",
       },
       {
-        title: "Document rendering",
-        body: "Markdown to PDF / PPTX, distributed to SlideShare, Scribd, and Issuu for wider indexing.",
+        title: "Developer Handoff",
+        body: "If your site is custom-built, we prepare the code changes for your developer to review and approve.",
       },
       {
-        title: "GitHub PRs",
-        body: "Opens draft pull requests for code-level fixes - proper branch naming, full description, test plan.",
+        title: "You Stay in Control",
+        body: "Bigger changes wait for your OK before going live. Smaller, safe updates go out automatically.",
       },
+      */
       {
-        title: "Approval gating",
-        body: "Every action carries a risk score and an automatable flag. Humans approve riskier actions before they fire.",
-      },
-      {
-        title: "Status tracking",
-        body: "Every action records its lifecycle: pending, approved, applied, done. Failed actions retry without re-planning.",
+        title: "See What's Done",
+        body: "You can always check what's been published, what's waiting on you, and what's in progress.",
       },
     ],
   },
@@ -168,29 +161,31 @@ const JOBS = [
     intro: "Search shifts every week. Rynk watches the results and feeds what changed back into the plan.",
     cards: [
       {
-        title: "Weekly SERP re-crawls",
-        body: "The top results for every target keyword re-pulled weekly - new entrants, dropped competitors, position shifts.",
+        title: "Weekly Search Check",
+        body: "Every week, we check how the top results look for your key searches — so we catch changes before they cost you customers.",
       },
       {
-        title: "Rank tracking",
-        body: "Where you stand for every keyword, tracked over time - on Google and in AI engines.",
+        title: "Ranking Tracker",
+        body: "See exactly where you stand — on Google and on AI tools — for every search that matters to your business.",
       },
       {
-        title: "Competitor deltas",
-        body: "When a new competitor takes over a top spot, rynk catches it and re-plans that keyword automatically.",
+        title: "Competitor Watch",
+        body: "If a competitor jumps ahead of you, we notice right away and adjust your plan to help you catch up.",
+      },
+      /*
+      {
+        title: "Real Traffic Numbers",
+        body: "We check how many people are actually visiting your site and taking action, not just where you rank.",
       },
       {
-        title: "Traffic ground truth",
-        body: "Search Console impressions and clicks plus Analytics sessions and conversions, pulled weekly so results tie back to real traffic.",
+        title: "Reputation Tracking",
+        body: "We keep an eye on other sites linking to yours, since that's one of the things that builds trust with Google."
       },
       {
-        title: "Backlink watch",
-        body: "New and lost backlinks tracked over time - the authority signals behind your rankings.",
+        title: "Weekly Update",
+        body: "A simple weekly summary: what changed, what we did about it, and what's coming next.",
       },
-      {
-        title: "Weekly digest",
-        body: "One summary per week: what moved, what rynk shipped in response, and what's next.",
-      },
+      */
     ],
   },
 ] as const;
@@ -274,6 +269,7 @@ const TINT_STYLES: Record<
     topBar: "bg-gradient-to-r from-transparent via-brand-cyan to-transparent",
     ambient: "bg-brand-cyan/22",
     text: "text-brand-cyanSoft",
+
   },
 };
 
@@ -287,24 +283,28 @@ export default function HowItWorksPage(): React.JSX.Element {
         <div className="pointer-events-none absolute inset-0 bg-grid-brand opacity-50" aria-hidden />
         <div className="relative mx-auto w-full max-w-3xl text-center">
           <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-brand-violetSoft animate-rise">
-            How rynk works
           </p>
           <h1
             className="mt-4 font-serif text-5xl md:text-6xl lg:text-[72px] font-medium leading-[1.02] tracking-tight animate-rise"
             style={{ animationDelay: "60ms" }}
           >
-            Growth on <span className="italic text-brand-blueSoft">autopilot.</span>
+            Leads on <span className="italic text-brand-blueSoft">autopilot.</span>
           </h1>
           <p
             className="mt-7 text-[16px] leading-[1.75] text-brand-textMute animate-rise"
             style={{ animationDelay: "160ms" }}
           >
-            Rynk is an automated growth system for your business. It audits your
-            site, plans every fix worth making, ships the changes directly to
-            your CMS and channels, and monitors what changes as search
-            evolves - so you rank higher on Google and get cited more by AI
-            engines, without ever touching an SEO tool.
-          </p>
+            a
+
+            We scan your website, find every fix worth making, and ship those changes 
+            straight to your site and channels — no manual work on your end. As search 
+            keeps evolving, we keep watching and adjusting, so you consistently rank 
+            higher on Google and get cited more when people 
+            ask AI assistants questions.
+
+          </p> <br /> <br />
+
+
         </div>
       </section>
 
@@ -424,10 +424,12 @@ export default function HowItWorksPage(): React.JSX.Element {
           <div className="relative flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
             <div>
               <h2 className="font-serif text-3xl md:text-4xl font-medium leading-[1.05] tracking-tight text-brand-text">
-                Ready to <span className="italic text-brand-blueSoft">plug rynk in?</span>
+              Watch Rynk work on your site. <span className="italic text-brand-blueSoft">your site. </span>
               </h2>
               <p className="mt-2 text-[15px] leading-[1.7] text-brand-textMute">
-                Setup takes five minutes. After that, rynk runs on its own.
+                Enter your website URL and see what Rynk has to say.
+
+.
               </p>
             </div>
             <div className="flex shrink-0 flex-wrap items-center gap-6">
