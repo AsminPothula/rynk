@@ -1,63 +1,104 @@
 /**
- * Landing page - marketing redesign on brand palette.
- *
- * Sections:
- *   1. Hero - serif headline left, brand mark + tagline right
- *   2. What we offer - flip-tile grid; each tile reveals a description
- *      when hovered (label slides up, description slides in from below)
- *   3. Watch Rynk work - domain-input CTA
- *
- * Colors are from the brand palette (Tailwind `brand-*`). Serif font
- * (Fraunces) drives headings; body copy stays sans.
- */
+* Landing page - modern 2026 redesign on a dark ink base.
+*
+* Layout system:
+*   - Every section's content sits in the same `mx-auto max-w-screen-xl`
+*     container so all edges align down the page.
+*   - Sections share one vertical rhythm: py-14 md:py-16 (56/64px).
+*   - The hero fits above the fold on a typical laptop viewport.
+*   - Hero action cards use a structured 2-column staggered grid (no
+*     absolute positioning), so they can never overlap at any width.
+*
+* All motion is pure CSS from globals.css. `prefers-reduced-motion: reduce`
+* disables everything automatically.
+*/
 
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Sparkles,
+  Type,
+  Braces,
+  MessageSquare,
+  FilePlus2,
+  Link2,
+  Repeat2,
+  Image as ImageIcon,
+  Mail,
+  BookOpen,
+  GitPullRequest,
+} from "lucide-react";
 
-const OFFERINGS: Array<{ label: string; description: string }> = [
-  {
-    label: "Meta Rewrites",
-    description: "Rewrites titles and descriptions so pages rank for the keywords they should.",
-  },
-  {
-    label: "Schema Markup",
-    description: "Injects structured data so search engines and AI understand every page.",
-  },
-  {
-    label: "301 Redirects",
-    description: "Consolidates competing pages so authority isn't split across duplicates.",
-  },
-  {
-    label: "Internal Links",
-    description: "Adds smart internal links so authority flows to the pages that matter.",
-  },
-  {
-    label: "New Pages",
-    description: "Writes fully-optimized new pages targeting keywords the site is missing.",
-  },
-  {
-    label: "Hero Images",
-    description: "Generates hero visuals for every page - alt text included.",
-  },
-  {
-    label: "Outreach Emails",
-    description: "Drafts backlink pitches and guest-post emails ready to review and send.",
-  },
-  {
-    label: "Brand Posts",
-    description: "Drafts LinkedIn, Reddit and Threads posts that feed AI citation signals.",
-  },
-  {
-    label: "Whitepapers",
-    description: "Generates PDF and slide-deck assets that LLMs cite heavily.",
-  },
-  {
-    label: "GitHub PRs",
-    description: "Pull requests fixing page speed and technical SEO issues.",
-    icon: GitPullRequest,
-    tint: "emerald",
-  },
-];
+// ── Offerings ─────────────────────────────────────────────────────────
+
+const OFFERINGS: Array<{
+  label: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  tint: TintKey;
+}> = [
+    {
+      label: "Better Website Text",
+      description: 'We rewrite titles and descriptions so your pages come up when customers hit "search."',
+      icon: Type,
+      tint: "emerald",
+    },
+    {
+      label: "AI Readability",
+      description: "We reformat your pages so AI tools can describe your business accurately to customers.",
+      icon: Braces,
+      tint: "pink",
+    },
+    {
+      label: "Cleanup",
+      description: "We fix duplicate pages so that customers always find you where you expect them to.",
+      icon: Repeat2,
+      tint: "amber",
+    },
+    {
+      label: "Page Connections",
+      description: "We connect your webpages to each other so Google easily finds relevant content.",
+      icon: Link2,
+      tint: "cyan",
+    },
+    {
+      label: "New Pages",
+      description: "We build brand-new web pages for you based on what your site is missing.",
+      icon: FilePlus2,
+      tint: "highlight",
+    },
+    {
+      label: "Custom images",
+      description: "We create polished images for every page, so Google knows your site is professional.",
+      icon: ImageIcon,
+      tint: "violet",
+    },
+    {
+      label: "Outreach Emails",
+      description: "We draft emails to other sites, asking them to include your business name on their website.",
+      icon: Mail,
+      tint: "blue",
+    },
+    {
+      label: "Social Media Posts",
+      description: "We draft LinkedIn, Reddit and Threads posts, so AI tools are more likely to mention you.",
+      icon: MessageSquare,
+      tint: "pink",
+    },
+    {
+      label: "Credibility Signals",
+      description: "We create reports that mention your business, increasing the chance AI references you.",
+      icon: BookOpen,
+      tint: "sky",
+    },
+    {
+      label: "GitHub Fixes",
+      description: "If your site is custom-built, we write down developer-friendly SEO improvement suggestions.",
+      icon: GitPullRequest,
+      tint: "emerald",
+    },
+  ];
 
 const PLATFORMS = [
   "Google",
@@ -110,157 +151,127 @@ const HERO_CARDS = [
     target: "",
     status: "See Rynk work and keep improving",
   },
-];
+] as const;
+
+// ── Page ──────────────────────────────────────────────────────────────
 
 export default function LandingPage(): React.JSX.Element {
   return (
-    
+
     <div className="relative text-brand-text overflow-x-hidden">
       {/* ═════ HERO - fills the first screen (100dvh minus the 64px nav).
-             The card stretches to the viewport bottom and its content is
-             vertically centered, so there is never dead space below it and
-             the next section starts exactly at the fold. 660px floor keeps
-             short windows from clipping the content. ═════ */}
-      <section className="relative px-6 pt-6 pb-6 md:px-10 md:pb-6 lg:min-h-[520px]">
+            The card stretches to the viewport bottom and its content is
+            vertically centered, so there is never dead space below it and
+            the next section starts exactly at the fold. 660px floor keeps
+            short windows from clipping the content. ═════ */}
+
+      <p className="text-center mt-7 mb-4 font-serif text-5xl md:text-5xl leading-tight tracking-tight text-brand-text">Rynk</p>
+
+      <section className="relative px-6 pt-6 pb-6 md:px-10 md:pb-6 lg:min-h-[700px]">
         <div className="pointer-events-none absolute inset-0 bg-grid-brand opacity-60" aria-hidden />
 
         <div className="relative mx-auto h-full max-w-screen-xl">
           <div className="flex h-full items-center overflow-hidden rounded-[32px] bg-white/[0.02] ring-1 ring-white/8 shadow-[0_1px_0_rgba(255,255,255,0.04)_inset,0_30px_80px_-40px_rgba(0,0,0,0.7)]">
 
             <div className="grid w-full gap-12 p-8 md:p-12 lg:grid-cols-2 lg:items-right lg:gap-10 lg:px-14 lg:py-10">
-           
-           {/* LEFT - copy + CTAs */}
-            <div>
-              
 
-              <h1 className="font-serif text-5xl md:text-6xl font-medium leading-[0.98] tracking-tight animate-rise text-brand-text">
-              Want more sales?
-              <span className="block mt-2 italic text-brand-blueSoft">
-                Get more website visits.
-              </span>
-            </h1>
-              <p
-                className="mt-6 max-w-xl text-[15.5px] leading-[1.75] text-brand-textMute animate-rise"
-                style={{ animationDelay: "160ms" }}
-              >
-                Rynk is the first AI-powered SEO platform that makes growing your website effortless. It studies your site, identifies exactly what's preventing you from ranking, generates the fixes, and deploys them directly to your website—no SEO expertise or manual optimization required. 
+              {/* LEFT - copy + CTAs */}
+              <div>
 
-              </p>
-
-              <div
-                className="mt-20 flex flex-wrap items-center gap-8 animate-rise"
-                style={{ animationDelay: "260ms" }}
-              >
-                <Link
-                  href="/signup"
-                  className="group inline-flex h-12 items-center gap-2.5 rounded-full bg-brand-navy pl-7 pr-6 font-serif text-[16px] font-medium text-brand-cream transition-all hover:bg-brand-navy2 hover:shadow-[0_8px_24px_-8px_rgba(47,65,86,0.5)]"
+                <h1 className="font-serif text-5xl md:text-6xl font-medium leading-[0.98] tracking-tight animate-rise text-brand-text">
+                  Want more sales?
+                  <span className="block mt-2 italic text-brand-blueSoft">
+                    Get more website visits.
+                  </span>
+                </h1>
+                <p
+                  className="mt-6 max-w-xl text-[15.5px] leading-[1.75] text-brand-textMute animate-rise"
+                  style={{ animationDelay: "160ms" }}
                 >
-                  Get Started
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                </Link>
-                <Link
-                  href="/how-it-works"
-                  className="group inline-flex items-center gap-2 font-serif text-[16px] text-brand-navy/80 transition-colors hover:text-brand-navy"
-                >
-                  How it works
-                  <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </Link>
-              </div>
-            </div>
+                  Rynk is the first AI-powered SEO platform that makes growing your website effortless. It studies your site, identifies exactly what's preventing you from ranking, generates the fixes, and deploys them directly to your website—no SEO expertise or manual optimization required.
+                </p>
 
-            {/* RIGHT - "rynk at work" action cards in a staggered grid */}
-
-            <div className="relative">
-              {/* Ambient orbs behind the cards */}
-              <div className="pointer-events-none absolute inset-0 flex items-center justify-center" aria-hidden>
-                <div className="h-80 w-80 rounded-full bg-brand-blue/14 blur-3xl animate-float-slow" />
-              </div>
-              <div className="pointer-events-none absolute inset-0 flex items-center justify-center" aria-hidden>
                 <div
-                  className="h-56 w-56 rounded-full bg-brand-violet/18 blur-3xl animate-float-slow"
-                  style={{ animationDelay: "3s" }}
-                />
-              </div>
-
-              {/* Criss-cross cascade - cards alternate left/right down the
-                  column. Normal document flow (no absolute positioning), so
-                  they can never hide each other at any viewport width. */}
-              <p className="mb-6 font-serif text-xl md:text-2xl leading-tight tracking-tight text-brand-text text-center">
-                Automated SEO, powered by <span>AI</span>.
-              </p>
-
-              {/* Criss-cross cascade - cards alternate left/right down the
-                  column. Normal document flow (no absolute positioning), so
-                  they can never hide each other at any viewport width. */}
-              <div className="relative mx-auto flex w-full max-w-md flex-col gap-2.5">
-                {HERO_CARDS.map((card, i) => (
-                  <div
-                    key={card.label}
-                    className={`w-[72%] sm:w-[68%] ${i % 2 === 1 ? "self-end" : "self-start"}`}
-                  >
-                    <ActionCard card={card} delay={`${i * 1.3}s`} />
+                  className="mt-20 flex w-full flex-col items-stretch gap-8 animate-rise"
+                  style={{ animationDelay: "260ms" }}
+                >
+                  <div className="w-full">
+                    <h2 className="w-full font-serif text-10xl md:text-10xl lg:text-[24px] font-medium leading-[1.02] tracking-tight text-brand-text">
+                      Watch Rynk work
+                      on <span className="italic text-brand-blueSoft">your site.</span>
+                    </h2>
+                    <p className="mt-2 w-full text-[15.5px] leading-[1.7] text-brand-textMute">
+                      Enter your website URL and see what Rynk has to say.
+                    </p>
                   </div>
-                ))}
+
+                  <form
+                    action="/sign-in"
+                    className="group relative flex w-full items-center gap-2 rounded-full bg-white/[0.06] ring-1 ring-white/12 py-2 pl-6 pr-2 text-brand-text shadow-[0_20px_50px_-20px_rgba(0,0,0,0.6)]"
+                  >
+                    <Sparkles className="h-4 w-4 text-brand-violetSoft" />
+                    <input
+                      type="text"
+                      placeholder="www.yoursite.com"
+                      aria-label="Your domain"
+                      className="min-w-0 flex-1 bg-transparent font-serif text-[16px] text-brand-text placeholder:text-brand-textMute focus:outline-none"
+                    />
+                    <button
+                      type="submit"
+                      aria-label="Scan my site"
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-brand-ink transition-all group-hover:scale-105"
+                    >
+                      <ArrowRight className="h-4 w-4" />
+                    </button>
+                  </form>
+                </div>
               </div>
 
-              
-            </div>
-            </div>
-          </div>
-        </div>
-      </section>
+              {/* RIGHT - "rynk at work" action cards in a staggered grid */}
 
-      {/* ═════ WATCH RYNK WORK (final CTA) ═════ */}
-      <section className="px-6 pt-2 pb-4 md:px-10 md:pt-0 md:pb-0">
-        <div className="relative mx-auto max-w-screen-xl overflow-hidden rounded-[32px] bg-white/[0.02] px-8 pt-6 pb-6 md:px-14 md:pt-8 md:pb-8 ring-1 ring-white/8">
-          <div
-            className="pointer-events-none absolute -top-20 right-24 h-72 w-72 rounded-full bg-brand-blue/15 blur-3xl animate-float-slow"
-            aria-hidden
-          />
-          <div
-            className="pointer-events-none absolute -bottom-16 -left-10 h-64 w-64 rounded-full bg-brand-violet/15 blur-3xl animate-float-slow"
-            style={{ animationDelay: "5s" }}
-            aria-hidden
-          />
+              <div className="relative">
+                {/* Ambient orbs behind the cards */}
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-center" aria-hidden>
+                  <div className="h-80 w-80 rounded-full bg-brand-blue/14 blur-3xl animate-float-slow" />
+                </div>
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-center" aria-hidden>
+                  <div
+                    className="h-56 w-56 rounded-full bg-brand-violet/18 blur-3xl animate-float-slow"
+                    style={{ animationDelay: "3s" }}
+                  />
+                </div>
 
-          <div className="relative grid gap-12 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] md:items-start">
-            <div>
-              <h2 className="font-serif text-4xl md:text-5xl lg:text-[40px] font-medium leading-[1.02] tracking-tight text-brand-text">
-                Watch Rynk work
-                on <span className="italic text-brand-blueSoft">your site.</span>
-              </h2>
-              <p className="mt-2 max-w-xl text-[15.5px] leading-[1.7] text-brand-textMute">
-                Enter your website URL and see what Rynk has to say.
-              </p>
+                {/* Criss-cross cascade - cards alternate left/right down the
+                 column. Normal document flow (no absolute positioning), so
+                 they can never hide each other at any viewport width. */}
+                <p className="mb-12 font-serif text-xl md:text-2xl leading-tight tracking-tight text-brand-text text-center">
+                  Automated SEO, powered by <span>AI</span>.
+                </p>
+
+                {/* Criss-cross cascade - cards alternate left/right down the
+                 column. Normal document flow (no absolute positioning), so
+                 they can never hide each other at any viewport width. */}
+                <div className="relative mx-auto flex w-full max-w-md flex-col gap-4">
+                  {HERO_CARDS.map((card, i) => (
+                    <div
+                      key={card.label}
+                      className={`w-[72%] sm:w-[68%] ${i % 2 === 1 ? "self-end" : "self-start"}`}
+                    >
+                      <ActionCard card={card} delay={`${i * 1.3}s`} />
+                    </div>
+                  ))}
+                </div>
+
+              </div>
             </div>
-
-            <form
-              action="/sign-in"
-              className="group relative flex items-center gap-2 rounded-full bg-white/[0.06] ring-1 ring-white/12 py-2 pl-6 pr-2 text-brand-text shadow-[0_20px_50px_-20px_rgba(0,0,0,0.6)]"
-            >
-              <Sparkles className="h-4 w-4 text-brand-violetSoft" />
-              <input
-                type="text"
-                placeholder="www.yoursite.com"
-                aria-label="Your domain"
-                className="flex-1 bg-transparent font-serif text-[16px] text-brand-text placeholder:text-brand-textMute focus:outline-none"
-              />
-              <button
-                type="submit"
-                aria-label="Scan my site"
-                className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-brand-ink transition-all group-hover:scale-105"
-              >
-                <ArrowRight className="h-4 w-4" />
-              </button>
-            </form>
           </div>
         </div>
       </section>
 
       {/* ═════ TRUST BAR (marquee) ═════ */}
-      <section className="px-6 py-14 md:px-10 md:py-14">
-        <div className="border-y border-white/8">
-          <div className="mx-auto max-w-screen-xl py-4">
+      <section className="px-6 py-10 md:px-10 md:py-10">
+        <div className="mx-auto max-w-screen-xl border-y border-brand-blue/30">
+          <div className="py-4">
             <div className="flex items-center gap-4">
               <span className="hidden shrink-0 font-mono text-[10px] uppercase tracking-[0.2em] text-brand-textMute md:block">
                 Get cited by
@@ -268,35 +279,35 @@ export default function LandingPage(): React.JSX.Element {
               <span className="h-px flex-1 bg-white/8" />
             </div>
           </div>
-          
-        <div
-          className="mt-2 mb-7 overflow-hidden"
-          style={{
-            maskImage:
-              "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
-            WebkitMaskImage:
-              "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
-          }}
-        >
-          <div className="flex w-max animate-marquee gap-14">
-            {[...PLATFORMS, ...PLATFORMS].map((name, i) => (
-              <span
-                key={`${name}-${i}`}
-                className="font-serif text-2xl md:text-3xl text-brand-textMute"
-              >
-                {name}
-                <span className="mx-8 text-brand-violet/40">•</span>
-              </span>
-            ))}
+
+          <div
+            className="mt-3 mb-7 overflow-hidden"
+            style={{
+              maskImage:
+                "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+              WebkitMaskImage:
+                "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+            }}
+          >
+            <div className="flex w-max animate-marquee gap-0">
+              {[...PLATFORMS, ...PLATFORMS].map((name, i) => (
+                <span
+                  key={`${name}-${i}`}
+                  className="font-serif text-2xl md:text-3xl text-brand-textMute"
+                >
+                  {name}
+                  <span className="mx-8 text-brand-violet/40">•</span>
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
 
         </div>
 
       </section>
 
       {/* ═════ WHAT WE OFFER ═════ */}
-      <section className="relative px-6 py-0 md:px-10 md:py-0">
+      <section className="relative px-6 py-5 md:px-10 md:py-5">
         <div
           aria-hidden
           className="pointer-events-none absolute -top-16 left-8 h-72 w-72 rounded-full bg-brand-violet/20 blur-3xl animate-float-slow"
@@ -310,34 +321,43 @@ export default function LandingPage(): React.JSX.Element {
         <div className="relative mx-auto max-w-screen-xl">
           <div className="mb-12">
             <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-brand-violetSoft">
-              The full growth system.
+              The full package.
             </p>
             <h2 className="mt-3.5 font-serif text-5xl md:text-6xl font-medium tracking-tight text-brand-text">
               What you <span className="italic text-brand-violetSoft">get.</span>
             </h2>
             <p className="mt-6 text-[15px] leading-[1.75] text-brand-textMute">
-              Rynk detects the keywords your customers actually search, optimizes every page to rank for them, and generates the content, meta, and schema to close the gaps - the traditional SEO base. On top of that, it builds the trust signals AI engines like ChatGPT and Perplexity actually look at: brand posts across LinkedIn and Reddit that spread your name, outreach emails that earn third-party mentions, hero images and whitepapers that get indexed as authoritative assets, and code fixes that keep your site fast and structured enough for AI crawlers to trust. All of it, continuously.
+              Rynk does the work of an SEO Specialist and an entire Web Developer team, in minutes. <br></br>
+              Every day, potential customers search Google, ChatGPT, and other AI search engines for businesses like yours. Rynk helps ensure your website is the one that Google and AI recommend to them.
             </p>
           </div>
 
-        <div className="flex flex-wrap gap-3.5">
-          {OFFERINGS.map((item) => (
-            <FlipTile key={item.label} label={item.label} description={item.description} />
-          ))}
+          {/* Aligned 5x2 grid on desktop, 2 cols on tablet, 1 on mobile */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {OFFERINGS.map((item) => (
+              <OfferingTile
+                key={item.label}
+                label={item.label}
+                description={item.description}
+                icon={item.icon}
+                tint={item.tint}
+              />
+            ))}
+          </div>
         </div>
-      </section>  
+      </section>
     </div>
   );
 }
 
-// ─── FlipTile ──────────────────────────────────────────────────────────
+// ─── Tint styles ──────────────────────────────────────────────────────
 
 /**
- * Per-tint style bundle. Every visual channel (icon square, glow, ring,
- * top accent bar, ambient blob) shares the same hue so each card reads as
- * one strong color identity. Single source of truth for hero cards +
- * offering tiles.
- */
+* Per-tint style bundle. Every visual channel (icon square, glow, ring,
+* top accent bar, ambient blob) shares the same hue so each card reads as
+* one strong color identity. Single source of truth for hero cards +
+* offering tiles.
+*/
 type TintKey =
   | "blue"
   | "violet"
@@ -434,10 +454,10 @@ const STATUS_COLOR: Record<string, string> = {
 // ─── ActionCard ───────────────────────────────────────────────────────
 
 /**
- * Floating chip in the hero. Lives inside a structured column (no absolute
- * positioning) so cards stack cleanly at every viewport width. The bob
- * animation delay is passed per card so the group breathes out of sync.
- */
+* Floating chip in the hero. Lives inside a structured column (no absolute
+* positioning) so cards stack cleanly at every viewport width. The bob
+* animation delay is passed per card so the group breathes out of sync.
+*/
 type HeroCard = (typeof HERO_CARDS)[number];
 
 function ActionCard({ card, delay }: { card: HeroCard; delay: string }): React.JSX.Element {
@@ -485,30 +505,44 @@ function ActionCard({ card, delay }: { card: HeroCard; delay: string }): React.J
 // ─── OfferingTile ─────────────────────────────────────────────────────
 
 /**
- * Equal-sized offering card with icon, title, description always visible.
- * Shares the CARD_STYLES palette with the hero action cards so the whole
- * page has one consistent accent language.
- */
+* Equal-sized offering card with icon, title, description always visible.
+* Shares the CARD_STYLES palette with the hero action cards so the whole
+* page has one consistent accent language.
+*/
 function OfferingTile({
   label,
   description,
+  icon: Icon,
+  tint,
 }: {
   label: string;
   description: string;
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  tint: TintKey;
 }): React.JSX.Element {
+  const s = CARD_STYLES[tint];
   return (
     <div
-      className="group relative h-[72px] min-w-[240px] flex-1 overflow-hidden rounded-full bg-brand-navy px-7 text-brand-cream cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_36px_-14px_rgba(47,65,86,0.45)]"
-      role="button"
-      tabIndex={0}
+      className={`group relative overflow-hidden rounded-2xl bg-white/[0.03] ring-1 ${s.ring} p-5 transition-all duration-300 hover:-translate-y-1`}
     >
-      <div className="flex flex-col transition-transform duration-[550ms] ease-[cubic-bezier(0.32,0.72,0.24,1)] group-hover:-translate-y-[72px] group-focus:-translate-y-[72px]">
-        <div className="flex h-[72px] items-center font-serif text-[17px] font-medium tracking-tight">
+      <div className={`absolute inset-x-0 top-0 h-[2px] ${s.topBar}`} aria-hidden />
+      <div
+        aria-hidden
+        className={`pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full ${s.ambient} blur-2xl opacity-60 transition-opacity duration-500 group-hover:opacity-100`}
+      />
+
+      <div className="relative">
+        <div
+          className={`inline-flex h-11 w-11 items-center justify-center rounded-xl ${s.iconBg} shadow-[0_6px_16px_-4px_rgba(0,0,0,0.5)] transition-transform duration-300 group-hover:scale-105`}
+        >
+          <Icon className={`h-5 w-5 ${s.iconText}`} strokeWidth={2.2} />
+        </div>
+        <div className="mt-4 font-serif text-[18px] font-medium leading-tight tracking-tight text-brand-text">
           {label}
         </div>
-        <div className="flex h-[72px] items-center pr-2 text-[13px] leading-snug text-brand-cream/85">
+        <p className="mt-2 text-[13px] leading-relaxed text-brand-textMute">
           {description}
-        </div>
+        </p>
       </div>
     </div>
   );

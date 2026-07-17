@@ -32,7 +32,7 @@ export function explainAction(action: ExecutionAction): ActionExplanation {
   switch (action.type) {
     case "create_page":
       return {
-        what: `Creates a new ${action.target.pageType} page targeting "${action.target.targetKeyword}".`,
+        what: `Creates a new ${action.target.pageType} page: "${action.payload.title}".`,
         whyItHelps:
           "Pillar and spoke pages build topical authority. Sites that comprehensively cover a topic rank higher on Google and are far more likely to be cited by AI engines (ChatGPT, Perplexity, Google AI Overview) when someone asks about this subject.",
       };
