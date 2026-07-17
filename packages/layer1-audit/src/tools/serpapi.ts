@@ -29,14 +29,14 @@ interface SerpApiResponse {
 }
 
 export interface SerpApiClient {
-  search: (keyword: string, opts?: { gl?: string; hl?: string }, numResults?: number) => Promise<SerpKeywordResult>;
+  search: (keyword: string, opts?: { gl?: string; hl?: string }, numResults?: number, domain?:string) => Promise<SerpKeywordResult>;
 }
 
 export function makeSerpApiClient(
   apiKey: string = requireEnv("SERPAPI_API_KEY"),
 ): SerpApiClient {
   return {
-    async search(keyword, opts = {}, numResults = 10) {
+    async search(keyword, opts = {}, numResults = 10, domain) {
       if (!Number.isInteger(numResults) || numResults < 1) {
         throw new Error("numResults must be a positive integer");
       }
@@ -53,8 +53,22 @@ export function makeSerpApiClient(
       let start = 0;
       let pagesFetched = 0;
 
+      /*
+       * calculating the maximum number of pages using Google's
+       * approximate page size of 10 results instead of 5.
+       */
       // Prevent an unexpected infinite loop.
-      const maxPages = Math.max(Math.ceil(numResults / 5) + 5, 10);
+      const maxPages = Math.max(Math.ceil(numResults / 10) + 5, 10);
+
+      
+       //get hostname and remove http, www, etc.
+      const clientDomain = domain ? new URL(
+        domain.startsWith("http://") || domain.startsWith("https://")
+          ? domain
+          : `https://${domain}`,
+      ).hostname
+        .toLowerCase()
+        .replace(/^www\./, "") : null;
 
       while (
         collectedResults.length < numResults &&
@@ -111,6 +125,10 @@ export function makeSerpApiClient(
 
         let newResultsAdded = 0;
 
+         //Track whether the client's domain appears on this page
+         //so pagination can stop immediately after finding it.
+        let clientDomainFound = false;
+
         for (const result of pageResults) {
           if (seenUrls.has(result.link)) {
             continue;
@@ -120,9 +138,26 @@ export function makeSerpApiClient(
           collectedResults.push(result);
           newResultsAdded++;
 
+          //take url, turn it into hostname, remove 'www'
+          const resultDomain = new URL(result.link).hostname
+            .toLowerCase()
+            .replace(/^www\./, "");
+
+          // Stop searching when the result matches client domain or is a subdomain
+          // For example, studio.youtube.com counts as youtube.com.
+          if (clientDomain && (resultDomain === clientDomain || resultDomain.endsWith(`.${clientDomain}`))) {
+            clientDomainFound = true;
+            break;
+          }
+
           if (collectedResults.length >= numResults) {
             break;
           }
+        }
+
+        //stop requesting pages when client domain is found
+        if (clientDomainFound) {
+          break;
         }
 
         /*
@@ -139,11 +174,7 @@ export function makeSerpApiClient(
           break;
         }
 
-        /*
-         * SerpAPI's pagination offset advances according to the number
-         * of organic results returned.
-         */
-        start += pageResults.length;
+        start += 10;
       }
 
       const body = firstPageBody;
@@ -205,11 +236,6 @@ export function makeSerpApiClient(
             url: result.link,
             title: result.title,
 
-            /*
-             * This gives one continuous rank across all collected pages.
-             * Use result.position instead if you want SerpAPI's original
-             * position value unchanged.
-             */
             position: index + 1,
 
             description: result.snippet ?? null,

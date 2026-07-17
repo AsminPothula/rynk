@@ -39,7 +39,7 @@ export async function takeSerpSnapshot(domain: string, keyword: string, runsDir:
 //returns null if the domain name isn't in the top 100
 //gives you how the domain ranks on a certain keyword
 export async function takeRankSnapshot(domain: string, keyword: string, runsDir: string): Promise<{rankSnapshot: RankSnapshot, location: string}> {
-  const result = await client.search(keyword, undefined, 100);
+  const result = await client.search(keyword, undefined, 100, domain);
 
   const position =
     result.topResults.find(r => {
