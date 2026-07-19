@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2017",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "@types": ["src/type"],
+      "@error": ["src/error"],
+      "@shared": ["src/shared"],
+      "@auth": ["src/auth"],
+      "@user": ["src/user"],
+      "@decorator": ["src/utils/decorator"],
+      "@config": ["src/utils/config"],
+      "@guard": ["src/utils/guard"],
+      "@interceptor": ["src/utils/interceptor"],
+      "@events": ["src/event"],
+      "@persistence/*": ["src/shared/database/persistence/*"],
+      "@logger": ["src/utils/logger"],
+      "@helper": ["src/utils/helper"],
+      "@filter": ["src/utils/filter"],
+      "@constant": ["src/constant"],
+      "@user/types": ["src/user/user.type"],
+      "@auth/types": ["src/auth/auth.type"]
+    },
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true
+  }
+}

@@ -1,0 +1,10 @@
+node*modules
+build
+dist
+logs
+*.todo
+src/DB*DEV/queries
+misc/docs
+misc/logs
+misc/coverage
+*.yml

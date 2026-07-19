@@ -6,7 +6,7 @@
   "type": "module",
   "workspaces": [
     "packages/*",
-    "apps/*"
+    "apps/dashboard"
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",

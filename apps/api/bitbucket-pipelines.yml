@@ -1,0 +1,120 @@
+# nvm and zip included in the image
+image: atlassian/default-image:3
+
+definitions:
+  steps:
+    # ready-for-build: Dummy step to allow for manual build & deploy to be the first step
+    - step: &ready-for-build
+        name: Ready for Build
+        max-time: 5
+        script:
+          - echo "Ready!"
+
+    - step: &run-unit-integration-tests
+        name: Lint, Build, Unit Coverage + Integration Test
+        max-time: 30
+        size: 2x
+        caches:
+          # This caches node_modules/ for every pipeline run for a week
+          - node
+        script:
+          - nvm install
+          - nvm use
+          - npm install
+          - npm run lint
+          - npm run build
+        artifacts:
+          - build/**
+
+    - step: &build-upload-deploy
+        name: Build, Upload & Deploy
+        max-time: 35
+        size: 2x
+        caches:
+          # This caches node_modules/ for every pipeline run for a week
+          - node
+        script:
+          - apt-get update
+          - apt-get install -y zip
+          - nvm install
+          - nvm use
+          - npm install
+          - npm run build
+          - npm run bitbucket:env:generate
+          - cat .env #NOTE:The output shown in this step will have all secured variables replaced by bitbucket in its console.
+          - npm run aws:scripts:generate
+          - rm -rf node_modules src
+          - zip -r application.zip .
+          - pipe: atlassian/aws-code-deploy:1.5.0
+            variables:
+              AWS_DEFAULT_REGION: $CD_AWS_DEFAULT_REGION
+              AWS_ACCESS_KEY_ID: $CD_AWS_ACCESS_KEY_ID
+              AWS_SECRET_ACCESS_KEY: $CD_AWS_SECRET_ACCESS_KEY
+              APPLICATION_NAME: $CD_APPLICATION_NAME
+              S3_BUCKET: $CD_S3_BUCKET
+              COMMAND: "upload"
+              ZIP_FILE: "application.zip"
+              FOLDER: $CD_APPLICATION_NAME/$CD_DEPLOYMENT_GROUP
+              # DEBUG: "true"
+              # VERSION_LABEL: 'my-app-1.0.0'
+          - pipe: atlassian/aws-code-deploy:1.5.0
+            variables:
+              AWS_DEFAULT_REGION: $CD_AWS_DEFAULT_REGION
+              AWS_ACCESS_KEY_ID: $CD_AWS_ACCESS_KEY_ID
+              AWS_SECRET_ACCESS_KEY: $CD_AWS_SECRET_ACCESS_KEY
+              APPLICATION_NAME: $CD_APPLICATION_NAME
+              DEPLOYMENT_GROUP: $CD_DEPLOYMENT_GROUP
+              S3_BUCKET: $CD_S3_BUCKET
+              COMMAND: "deploy"
+              WAIT: "true"
+              IGNORE_APPLICATION_STOP_FAILURES: "true"
+              FILE_EXISTS_BEHAVIOR: "OVERWRITE"
+              FOLDER: $CD_APPLICATION_NAME/$CD_DEPLOYMENT_GROUP
+              # DEBUG: "true"
+              # VERSION_LABEL: 'my-app-1.0.0'
+
+pipelines:
+  branches:
+    development:
+      # - step: *run-unit-integration-tests
+      - step: *ready-for-build
+      - step:
+          <<: *build-upload-deploy
+          # trigger: manual
+          name: Deploy to Development
+          deployment: development
+    qa:
+      # - step: *run-unit-integration-tests
+      - step: *ready-for-build
+      - step:
+          <<: *build-upload-deploy
+          # trigger: manual
+          name: Deploy to Qa
+          deployment: qa
+    staging:
+      # - step: *run-unit-integration-tests
+      - step: *ready-for-build
+      - step:
+          <<: *build-upload-deploy
+          # trigger: manual
+          name: Deploy to Staging
+          deployment: staging
+    production:
+      # - step: *run-unit-integration-tests
+      - step: *ready-for-build
+      - step:
+          <<: *build-upload-deploy
+          trigger: manual
+          name: Deploy to Production
+          deployment: production
+    # master:
+    #   - step: *run-unit-integration-tests
+    #   - step: *ready-for-build
+    #   - step:
+    #       <<: *build-upload-deploy
+    #       trigger: manual
+    #       name: Deploy to Production
+    #       deployment: production
+
+  default:
+    - step: *run-unit-integration-tests
