@@ -27,8 +27,16 @@
  *   3. applyCreatePage         - creates a brand-new "rynk verification" page
  *   4. applyAddNapBlock        - injects a NAP block (+ LocalBusiness schema)
  *                                on WP_TEST_PAGE
- *   5. applyUpdatePage:rewrite - rewrites the create_page's body
- *   6. applyUpdatePage:expand  - appends a section to the create_page
+ *   7. applyInsertInternalLink - wraps in-text phrase with anchor
+ *   8. applyCreateAuthor       - creates WP user with role=author
+ *   9. applyAssignAuthor       - attaches author byline to the new page
+ *  10. applyAddRedirect        - creates redirect via Redirection plugin
+ *
+ * Redirect test (#9) requires the Redirection plugin:
+ *   docker compose -f local-wp/docker-compose.yml run --rm wpcli \
+ *     wp plugin install redirection --activate
+ *   docker compose -f local-wp/docker-compose.yml run --rm wpcli \
+ *     wp redirection database install
  *
  * For each it prints the per-action result, then fetches the rendered HTML
  * back from WordPress and checks for the expected marker / content so we
@@ -74,7 +82,71 @@ const testPageUrl = WP_TEST_PAGE.startsWith("http")
 
 // The new page will live at this slug + URL.
 const NEW_PAGE_SLUG = "rynk-verification";
-const newPageUrl = `${WP_URL}/?pagename=${NEW_PAGE_SLUG}`;
+const newPageUrl = `${WP_URL}/${NEW_PAGE_SLUG}/`;
+const VERIFY_AUTHOR_USERNAME = "rynk-verify-author";
+const VERIFY_AUTHOR_DISPLAY_NAME = "Rynk Verify Author";
+
+const REDIRECT_SOURCE_PATH = "/rynk-redirect-source";
+const redirectSourceUrl = `${WP_URL}${REDIRECT_SOURCE_PATH}`;
+
+function redirectLocationMatches(location: string, sourceUrl: string, targetUrl: string): boolean {
+  const resolved = new URL(location, sourceUrl);
+  const expected = new URL(targetUrl);
+  return (
+    resolved.pathname.replace(/\/$/, "") === expected.pathname.replace(/\/$/, "") ||
+    resolved.href.replace(/\/$/, "") === expected.href.replace(/\/$/, "")
+  );
+}
+
+async function verifyHttpRedirect(
+  sourceUrl: string,
+  targetUrl: string,
+  expectedStatus: 301 | 302,
+): Promise<{ ok: boolean; detail: string }> {
+  const res = await fetch(sourceUrl, { redirect: "manual" });
+  const location = res.headers.get("location");
+  if (res.status !== expectedStatus) {
+    return { ok: false, detail: `expected HTTP ${expectedStatus}, got ${res.status}` };
+  }
+  if (!location) {
+    return { ok: false, detail: "missing Location header" };
+  }
+  if (!redirectLocationMatches(location, sourceUrl, targetUrl)) {
+    return { ok: false, detail: `Location ${location} does not point to ${targetUrl}` };
+  }
+  return { ok: true, detail: `HTTP ${res.status} → ${location}` };
+}
+
+/** Confirm the assigned author's display name is on the page (HTML or REST embed). */
+async function verifyAuthorOnPage(
+  pageUrl: string,
+  expectedDisplayName: string,
+): Promise<{ ok: boolean; detail: string }> {
+  const html = await fetch(pageUrl).then((r) => r.text());
+  if (html.includes(expectedDisplayName)) {
+    return { ok: true, detail: `"${expectedDisplayName}" visible in rendered page` };
+  }
+
+  const res = await fetch(
+    `${WP_URL}/?rest_route=${encodeURIComponent("/wp/v2/pages")}&slug=${encodeURIComponent(NEW_PAGE_SLUG)}&_embed=author`,
+  );
+  if (!res.ok) {
+    return { ok: false, detail: `REST fetch failed: HTTP ${res.status}` };
+  }
+  const pages = (await res.json()) as Array<{
+    link?: string;
+    _embedded?: { author?: Array<{ name?: string }> };
+  }>;
+  const page = pages[0];
+  const authorName = page?._embedded?.author?.[0]?.name;
+  if (authorName !== expectedDisplayName) {
+    return {
+      ok: false,
+      detail: `expected author "${expectedDisplayName}", got "${authorName ?? "none"}"`,
+    };
+  }
+  return { ok: true, detail: `author "${authorName}" confirmed via REST on ${page?.link ?? pageUrl}` };
+}
 
 // ── Build the test manifest ────────────────────────────────────────────────
 
@@ -254,15 +326,49 @@ const actions: ExecutionAction[] = [
     automatable: true,
     provenance: baseProv("verify:create-author", "Verify applyCreateAuthor creates WP user with role=author"),
     notes: "verify-wp-handlers.ts",
-    target: { username: "rynk-verify-author" },
+    target: { username: VERIFY_AUTHOR_USERNAME },
     payload: {
-      displayName: "Rynk Verify Author",
+      displayName: VERIFY_AUTHOR_DISPLAY_NAME,
       bio: "Created by rynk's applyCreateAuthor verifier. Acts as a byline for blog posts so they carry proper EEAT signals.",
       role: "Lead SEO Strategist",
       credentials: ["MBA", "Google Analytics Certified"],
       linkedinUrl: "https://www.linkedin.com/in/rynk-verify-author",
       headshotImageActionId: null,
     },
+  },
+
+  // 9. assign_author - attach the author to the page created in page-001.
+  {
+    id: "assign-001",
+    type: "assign_author",
+    status: "approved",
+    risk: "low",
+    channel: "cms",
+    automatable: true,
+    provenance: baseProv(
+      "verify:assign-author",
+      "Verify applyAssignAuthor sets post.author on the rynk-verification page",
+    ),
+    notes: "verify-wp-handlers.ts",
+    target: { postUrl: newPageUrl, authorUsername: VERIFY_AUTHOR_USERNAME },
+    payload: {},
+  },
+
+  // 10. add_redirect - 301 from a fake path to the test page (Redirection plugin).
+  {
+    id: "redirect-001",
+    type: "add_redirect",
+    status: "approved",
+    risk: "low",
+    channel: "cms",
+    automatable: true,
+    provenance: baseProv(
+      "verify:redirect",
+      "Verify applyAddRedirect creates a live 301 via the Redirection plugin",
+    ),
+    notes: "verify-wp-handlers.ts",
+    target: { sourceUrl: redirectSourceUrl, targetUrl: testPageUrl },
+    payload: { statusCode: 301 },
   },
 ];
 
@@ -271,7 +377,8 @@ const actions: ExecutionAction[] = [
 async function main(): Promise<void> {
   console.log(`\nTarget WP:   ${WP_URL}`);
   console.log(`Test page:   ${testPageUrl}`);
-  console.log(`New page:    ${newPageUrl} (will be created)\n`);
+  console.log(`New page:    ${newPageUrl} (will be created)`);
+  console.log(`Redirect:    ${redirectSourceUrl} → ${testPageUrl}\n`);
 
   const results: Record<string, { status: string; url?: string | null }> = {};
 
@@ -350,6 +457,63 @@ async function main(): Promise<void> {
       }
     } catch (err) {
       console.log(`  FAIL  ${check.label} - fetch error: ${err instanceof Error ? err.message : String(err)}`);
+      allPass = false;
+    }
+  }
+
+  const assignApply = results["assign-001"];
+  if (assignApply?.status !== "applied") {
+    console.log(`  FAIL  assign-001  apply status was "${assignApply?.status ?? "missing"}"`);
+    allPass = false;
+  } else {
+    try {
+      const assignCheck = await verifyAuthorOnPage(
+        assignApply.url || newPageUrl,
+        VERIFY_AUTHOR_DISPLAY_NAME,
+      );
+      console.log(
+        `  ${assignCheck.ok ? "PASS" : "FAIL"}  assign-001  author display name on new page`,
+      );
+      if (!assignCheck.ok) {
+        console.log(`        page:   ${assignApply.url || newPageUrl}`);
+        console.log(`        detail: ${assignCheck.detail}`);
+        allPass = false;
+      } else {
+        console.log(`        ${assignCheck.detail}`);
+      }
+    } catch (err) {
+      console.log(
+        `  FAIL  assign-001  fetch error: ${err instanceof Error ? err.message : String(err)}`,
+      );
+      allPass = false;
+    }
+  }
+
+  const redirectApply = results["redirect-001"];
+  if (redirectApply?.status === "skipped") {
+    console.log(`  FAIL  redirect-001  skipped — Redirection plugin must be installed and active`);
+    allPass = false;
+  } else if (redirectApply?.status !== "applied") {
+    console.log(`  FAIL  redirect-001  apply status was "${redirectApply?.status ?? "missing"}"`);
+    allPass = false;
+  } else {
+    try {
+      const redirectCheck = await verifyHttpRedirect(redirectSourceUrl, testPageUrl, 301);
+      console.log(
+        `  ${redirectCheck.ok ? "PASS" : "FAIL"}  redirect-001  source URL returns 301 to test page`,
+      );
+      if (!redirectCheck.ok) {
+        console.log(`        source: ${redirectSourceUrl}`);
+        console.log(`        target: ${testPageUrl}`);
+        console.log(`        detail: ${redirectCheck.detail}`);
+        allPass = false;
+      } else {
+        console.log(`        ${redirectCheck.detail}`);
+      }
+    } catch (err) {
+      console.log(
+        `  FAIL  redirect-001  fetch error: ${err instanceof Error ? err.message : String(err)}`,
+      );
       allPass = false;
     }
   }

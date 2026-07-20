@@ -158,11 +158,36 @@ export class WordPressClient {
     for (const type of ["pages", "posts"] as const) {
       const results = await this.request<WPPostSummary[]>(
         "GET",
-        `/wp/v2/${type}?slug=${encodeURIComponent(slug)}&context=edit&status=publish,draft,private`,
+        `/wp/v2/${type}?slug=${encodeURIComponent(slug)}&context=edit`,
       );
       if (results.length > 0) return results[0]!;
     }
     return null;
+  }
+
+  /**
+   * Returns true when the Redirection plugin is installed and active.
+   * Falls back to probing the plugin REST route when /wp/v2/plugins is forbidden.
+   */
+  async isRedirectionPluginActive(): Promise<boolean> {
+    try {
+      const plugins = await this.request<Array<{ plugin: string; status: string }>>(
+        "GET",
+        "/wp/v2/plugins",
+      );
+      return plugins.some((p) => p.status === "active" && p.plugin.startsWith("redirection/"));
+    } catch {
+      try {
+        await this.request("GET", "/redirection/v1/redirect?per_page=5");
+        return true;
+      } catch (err) {
+        if (err instanceof WordPressApiError && err.status === 404) return false;
+        if (err instanceof WordPressApiError && (err.status === 401 || err.status === 403)) {
+          return true;
+        }
+        return false;
+      }
+    }
   }
 
   /**
