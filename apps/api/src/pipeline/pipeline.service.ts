@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { spawn } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { LogService } from '@logger';
 
@@ -119,6 +119,55 @@ export class PipelineService {
     return this.readJson<PipelineRunStatus>(
       resolve(this.runDomainDir(domain), 'status.json'),
     );
+  }
+
+  /**
+   * Latest dated run dir (runs/{slug}/{YYYY-MM-DD}) — audit/strategy/manifest
+   * live under a date prefix, unlike the stable client.json/status.json.
+   */
+  findLatestRunDate(domain: string): string | null {
+    const dir = this.runDomainDir(domain);
+    if (!existsSync(dir)) {
+      return null;
+    }
+    try {
+      const dates = readdirSync(dir).filter(
+        (e) =>
+          /^\d{4}-\d{2}-\d{2}$/.test(e) &&
+          statSync(resolve(dir, e)).isDirectory(),
+      );
+      if (dates.length === 0) {
+        return null;
+      }
+      dates.sort(); // ISO dates sort lexicographically — newest last.
+      return dates[dates.length - 1] ?? null;
+    } catch {
+      return null;
+    }
+  }
+
+  /** Read a JSON artifact from the latest dated run dir (opaque to us). */
+  private readDatedJson(
+    domain: string,
+    file: string,
+  ): Record<string, unknown> | null {
+    const date = this.findLatestRunDate(domain);
+    if (!date) {
+      return null;
+    }
+    return this.readJson(resolve(this.runDomainDir(domain), date, file));
+  }
+
+  readAudit(domain: string): Record<string, unknown> | null {
+    return this.readDatedJson(domain, 'audit.json');
+  }
+
+  readStrategy(domain: string): Record<string, unknown> | null {
+    return this.readDatedJson(domain, 'strategy.json');
+  }
+
+  readManifest(domain: string): Record<string, unknown> | null {
+    return this.readDatedJson(domain, 'execution-manifest.json');
   }
 
   private readJson<T = Record<string, unknown>>(path: string): T | null {

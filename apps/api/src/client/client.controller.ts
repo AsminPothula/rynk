@@ -2,7 +2,12 @@ import { Api, DecodedJwt } from '@decorator';
 import { Body, Controller, Param } from '@nestjs/common';
 import { AppError } from '@types';
 import { AuthDetail } from '@user/types';
-import { ClientResponse, OnboardClientDTO } from './client.dto';
+import { PipelineService } from 'src/pipeline/pipeline.service';
+import {
+  ClientOverviewResponse,
+  ClientResponse,
+  OnboardClientDTO,
+} from './client.dto';
 import { ClientNotFoundError } from './client.error';
 import { ClientService } from './client.service';
 import { OnboardClientUseCase } from './initiator';
@@ -12,6 +17,7 @@ export class ClientController {
   constructor(
     private _clientService: ClientService,
     private _onboardClientUseCase: OnboardClientUseCase,
+    private _pipeline: PipelineService,
   ) {}
 
   @Api({
@@ -65,5 +71,30 @@ export class ClientController {
       throw new ClientNotFoundError();
     }
     return new ClientResponse(result);
+  }
+
+  @Api({
+    isPublic: false,
+    path: ':id/overview',
+    verb: 'GET',
+    disableCache: true,
+    swaggerSuccessResponse: ClientOverviewResponse,
+  })
+  async overview(@DecodedJwt() payload: AuthDetail, @Param('id') id: string) {
+    const client = await this._clientService.findById(id);
+    if (client instanceof AppError) {
+      throw client;
+    }
+    if (!client.isOwnedBy(payload.userId)) {
+      throw new ClientNotFoundError();
+    }
+    const domain = client.domain;
+    return new ClientOverviewResponse({
+      client,
+      latestAudit: this._pipeline.readAudit(domain),
+      latestStrategy: this._pipeline.readStrategy(domain),
+      latestManifest: this._pipeline.readManifest(domain),
+      latestRunDate: this._pipeline.findLatestRunDate(domain),
+    });
   }
 }
