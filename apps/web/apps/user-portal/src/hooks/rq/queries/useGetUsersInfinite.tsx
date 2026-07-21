@@ -1,0 +1,1 @@
+export { useGetUsersInfinite } from 'shared';

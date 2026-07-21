@@ -1,0 +1,27 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "interactive": true
+    },
+    "build": {
+      "cache": false
+    },
+    "lint": {
+      "cache": false
+    },
+    "preview": {
+      "cache": false,
+      "persistent": true,
+      "interactive": true
+    },
+    "bitbucket:env:generate": {
+      "cache": false
+    },
+    "generate-api": {
+      "cache": false
+    }
+  }
+}

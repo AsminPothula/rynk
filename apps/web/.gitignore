@@ -1,0 +1,52 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+turbo-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/settings.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+*.tsbuildinfo
+
+.env
+.env.e2e
+build/
+*.todo
+
+# vite temp files
+vite.config.ts.timestamp-*
+
+# turbo
+.turbo
+
+# shared package build
+packages/shared/lib
+
+*storybook.log
+storybook-static
+
+# playwright
+test-results/
+playwright-report/
+blob-report/
+.playwright-mcp/

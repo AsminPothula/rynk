@@ -1,0 +1,1 @@
+export { RoleRouteGuard } from 'shared';

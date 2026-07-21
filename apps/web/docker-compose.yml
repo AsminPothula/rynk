@@ -1,0 +1,28 @@
+version: '3'
+name: react-web-portal
+services:
+  frontend:
+    stdin_open: true
+    tty: true
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: local
+    command: sh -c "npm run all:dev"
+    image: starter-all-portals
+    container_name: starter-all-portals
+    volumes:
+      - '.:/app'
+      - '/app/node_modules'
+      - "/app/apps/user-portal/node_modules"
+      - "/app/apps/admin-portal/node_modules"
+      - "/app/packages/shared/node_modules"
+    ports:
+      - '3021:3021'
+      - '3022:3022'
+    environment:
+      HOST: "0.0.0.0"
+      USER_PORTAL_DEV_PORT: 3021
+      ADMIN_PORTAL_DEV_PORT: 3022
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'

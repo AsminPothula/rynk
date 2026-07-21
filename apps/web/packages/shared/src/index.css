@@ -1,0 +1,120 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body,
+#root {
+  @apply h-screen w-screen;
+}
+
+/**
+ * rynk design tokens — the navy brand, ported from apps/dashboard so the
+ * client dashboard matches the marketing site. shadcn semantic tokens are
+ * mapped onto the `brand` navy palette, so every existing component
+ * (bg-background / bg-card / text-foreground / border-border …) renders navy.
+ * Navy is applied to both :root and .dark so it's consistent regardless of
+ * the theme toggle (marketing is navy-always).
+ */
+@layer base {
+  :root,
+  .dark {
+    /* Fonts (loaded via Google Fonts in index.html) */
+    --font-geist-sans: 'Geist', system-ui, -apple-system, sans-serif;
+    --font-geist-mono: 'Geist Mono', ui-monospace, 'SFMono-Regular', monospace;
+    --font-serif: 'Fraunces', Georgia, serif;
+
+    /* Core — navy brand */
+    --background: 227 51% 16%;         /* brand.ink   #141d3d */
+    --foreground: 259 40% 94%;         /* brand.text  #eeeaf6 */
+    --card: 228 48% 21%;               /* brand.ink2  #1c264f */
+    --card-foreground: 259 40% 94%;
+    --popover: 228 48% 21%;
+    --popover-foreground: 259 40% 94%;
+    --muted: 230 44% 26%;              /* brand.surface  #252f60 */
+    --muted-foreground: 226 24% 72%;   /* brand.textMute #a5adc8 */
+    --border: 230 38% 37%;             /* brand.hairline #3a4680 */
+    --input: 230 38% 37%;
+    --ring: 228 100% 71%;              /* brand.blue */
+
+    --primary: 228 100% 71%;           /* brand.blue  #6d8dff */
+    --primary-foreground: 227 51% 16%;
+    --secondary: 230 44% 26%;          /* brand.surface */
+    --secondary-foreground: 259 40% 94%;
+    --accent: 230 42% 32%;             /* brand.surface2 #2f3b74 */
+    --accent-foreground: 259 40% 94%;
+    --destructive: 330 86% 70%;        /* brand.pink */
+    --destructive-foreground: 0 0% 100%;
+
+    /* Warm-neutral accents */
+    --cream: 43 55% 90%;               /* brand.cream #f4ecd8 */
+    --tan: 230 42% 32%;
+    --brown-soft: 226 24% 72%;
+
+    /* Status colors */
+    --status-success: 160 84% 39%;     /* brand.emerald */
+    --status-pending: 38 92% 55%;      /* brand.amber */
+    --status-failed: 330 86% 70%;      /* brand.pink */
+    --status-skipped: 226 24% 60%;
+
+    /* Channel colors — brand hues */
+    --channel-cms: 228 100% 71%;       /* blue */
+    --channel-image: 253 74% 75%;      /* violet */
+    --channel-outreach: 160 84% 52%;   /* emerald */
+    --channel-social: 330 86% 70%;     /* pink */
+    --channel-code-pr: 188 86% 53%;    /* cyan */
+    --channel-document: 43 96% 56%;    /* amber */
+    --channel-offsite: 22 89% 71%;     /* highlight coral */
+
+    --radius: 0.5rem;
+
+    /* Starter-only tokens kept for its remaining components */
+    --template-card: 230 44% 26%;
+    --template-card-foreground: 259 40% 94%;
+    --template-card-head-fg: 228 100% 71%;
+    --template-card-head-bg: 228 100% 71%;
+    --template-card-price-fg: 226 24% 72%;
+    --example: 210 100 10;
+    --example-foreground: 100 10 100;
+    --chart-1: 228 100% 71%;
+    --chart-2: 253 74% 75%;
+    --chart-3: 160 84% 52%;
+    --chart-4: 43 96% 56%;
+    --chart-5: 330 86% 70%;
+    --text-high-contrast-value: 0 0% 19.2%;
+    --detail-medium-contrast: 0 0% 82.4%;
+    --detail-high-contrast: 0 0% 75.3%;
+    --text-body: 259 40% 94%;
+    --text-body-light: 0 0% 100%;
+    --text-high-contrast: 259 40% 94%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-geist-sans);
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+  }
+}
+
+@layer utilities {
+  .bg-dotted {
+    background-image: radial-gradient(circle, hsl(var(--border)) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .bg-grain {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 3px 3px;
+  }
+  .bg-grid-brand {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse at center, black 12%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 12%, transparent 78%);
+  }
+}
