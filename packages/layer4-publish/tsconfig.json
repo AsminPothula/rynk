@@ -6,9 +6,6 @@
     "types": ["node"],
     "typeRoots": ["../../node_modules/@types"]
   },
-  "include": [
-    "src/**/*.ts",
-    "src/adapters/wordpress/handlers/assign-author.ts"
-  ],
+  "include": ["src/**/*"],
   "references": [{ "path": "../core" }, { "path": "../layer3-generate" }]
 }

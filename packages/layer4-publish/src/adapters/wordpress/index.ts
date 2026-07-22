@@ -37,7 +37,6 @@ import { applyCreateAuthor } from "./handlers/create-author.js";
 import { applyAddRedirect } from "./handlers/add-redirect.js";
 import { applyAssignAuthor } from "./handlers/assign-author.js";
 
-
 const log = createLogger("layer4.wordpress");
 
 /** Action types this adapter knows about today. */
