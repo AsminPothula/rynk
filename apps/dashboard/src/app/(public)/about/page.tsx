@@ -11,7 +11,7 @@
  */
 import Image from "next/image";
 import rk from "./rk.png";
-import ak from "./ak-1.png";
+import ak from "./ak.png";
 
 import Link from "next/link";
 import { ArrowRight, User } from "lucide-react";
