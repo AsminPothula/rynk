@@ -15,7 +15,16 @@ export { makeWordPressAdapter } from "./adapters/wordpress/index.js";
 export type { WordPressAdapterConfig } from "./adapters/wordpress/index.js";
 export { makeImageAdapter } from "./adapters/image/index.js";
 export type { ImageAdapterConfig } from "./adapters/image/index.js";
+<<<<<<< HEAD
 export { makeOutreachAdapter } from "./adapters/outreach/index.js";
 export type { OutreachAdapterConfig } from "./adapters/outreach/index.js";
 export { makeOffsiteAdapter } from "./adapters/offsite/index.js";
 export type { OffsiteAdapterConfig } from "./adapters/offsite/index.js";
+=======
+export { makeDocumentAdapter } from "./adapters/document/index.js";
+export type { DocumentAdapterConfig } from "./adapters/document/index.js";
+export { makeSocialAdapter } from "./adapters/social/index.js";
+export type { SocialAdapterConfig } from "./adapters/social/index.js";
+export { makeCodePrAdapter } from "./adapters/code-pr/index.js";
+export type { CodePrAdapterConfig } from "./adapters/code-pr/index.js";
+>>>>>>> d019dfa2f9041e2b75f71c20232cd41fa13af5c4

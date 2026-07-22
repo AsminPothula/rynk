@@ -25,8 +25,12 @@
 import { createLogger } from "@rynk/core";
 import type { ExecutionAction, UpdatePageAction } from "@rynk/layer3-generate";
 import type { ApplyResult } from "../../types.js";
+import type { FileApplyStateStore } from "../../../state/apply-state.js";
+import type { CachePurger } from "../../../cache/purger.js";
 import { WordPressClient } from "../client.js";
 import { markdownToHtml } from "../markdown-to-html.js";
+import { checkHumanTouched, recordApply } from "./_human-touched-guard.js";
+import { runPostApplyPurge } from "./_post-apply-purge.js";
 
 const log = createLogger("layer4.wp.update-page");
 
@@ -60,6 +64,8 @@ function stripMarkerBlock(content: string, openMarker: string, closeMarker: stri
 export async function applyUpdatePage(
   client: WordPressClient,
   action: ExecutionAction,
+  stateStore?: FileApplyStateStore,
+  purger?: CachePurger,
 ): Promise<ApplyResult> {
   if (action.type !== "update_page") {
     return { status: "skipped", message: "Not an update_page action" };
@@ -73,7 +79,31 @@ export async function applyUpdatePage(
   }
   const postType = summary.type === "page" ? "page" : "post";
 
-  // 2. Fetch the current content.
+  // Human-touched guard.
+  const touched = await checkHumanTouched({
+    client,
+    postType,
+    postSummary: summary,
+    targetUrl: update.target.url,
+    stateStore,
+  });
+  if (touched.skip) return touched.result;
+
+  // 2. Page-builder guard - if the page is managed by Elementor / Divi /
+  //    WPBakery, modifying post_content won't affect what visitors see.
+  //    Skip with a clear reason so the team can apply manually.
+  const builder = await client.detectPageBuilder(postType, summary.id);
+  if (builder) {
+    return {
+      status: "skipped",
+      externalRef: String(summary.id),
+      externalUrl: summary.link,
+      message: `Skipped - this page is built with ${builderLabel(builder)}, which stores content in its own format. Modifying WordPress's raw content field won't affect the rendered page. Apply this change manually via the ${builderLabel(builder)} editor.`,
+      edgeCase: `page-builder-${builder}` as const,
+    };
+  }
+
+  // 3. Fetch the current content.
   const full = await client.getPost(postType, summary.id);
   const existing = full.content.raw ?? full.content.rendered ?? "";
 
@@ -155,6 +185,10 @@ export async function applyUpdatePage(
   // 4. PUT the updated content.
   const updated = await client.updatePost(postType, summary.id, { content: newContent });
 
+  recordApply({ postType, postId: summary.id, actionId: action.id, stateStore });
+
+  const purgeNote = await runPostApplyPurge({ purger, url: update.target.url });
+
   log.info("update_page applied", {
     actionId: action.id,
     postId: summary.id,
@@ -166,7 +200,7 @@ export async function applyUpdatePage(
     status: "applied",
     externalRef: String(summary.id),
     externalUrl: updated.link || summary.link,
-    message: `${update.target.operation}: ${summaryMessage} on ${postType} #${summary.id}`,
+    message: `${update.target.operation}: ${summaryMessage} on ${postType} #${summary.id}${purgeNote}`,
   };
 }
 
@@ -175,4 +209,12 @@ function escapeHtml(s: string): string {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
+}
+
+function builderLabel(builder: "elementor" | "divi" | "wpbakery"): string {
+  switch (builder) {
+    case "elementor": return "Elementor";
+    case "divi": return "Divi Builder";
+    case "wpbakery": return "WPBakery Page Builder";
+  }
 }

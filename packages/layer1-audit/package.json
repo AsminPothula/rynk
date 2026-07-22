@@ -5,6 +5,10 @@
   "description": "rynk.ai Layer 1 — Audit Agent. Crawl + offsite research + synthesis into structured findings.",
   "type": "module",
   "main": "./dist/index.js",
+  "exports": {
+    ".": "./src/index.ts",
+    "./tools/serpapi": "./src/tools/serpapi.ts"
+  },
   "scripts": {
     "build": "tsc -b",
     "start": "tsx src/index.ts",

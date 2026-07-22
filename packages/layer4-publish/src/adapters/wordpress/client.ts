@@ -34,6 +34,10 @@ export interface WPPostSummary {
 export interface WPPost extends WPPostSummary {
   content: { rendered: string; raw?: string };
   excerpt: { rendered: string };
+  /** ISO timestamp for last-modified (server local time). Set on every PUT. */
+  modified?: string;
+  /** ISO timestamp for last-modified (UTC). Preferred for cross-timezone comparisons. */
+  modified_gmt?: string;
   /** Some themes / SEO plugins extend the post with these. We read defensively. */
   meta?: Record<string, unknown>;
   yoast_head_json?: Record<string, unknown>;
@@ -227,6 +231,92 @@ export class WordPressClient {
       // Plugins endpoint requires upload_plugins capability. If we can't read
       // it, fall back to "none" — handlers will use stock WP meta fields.
       return "none";
+    }
+  }
+
+  /**
+   * Detect whether a specific post is managed by a page builder plugin.
+   *
+   * Page builders (Elementor, Divi, WPBakery, etc.) don't store their
+   * content in the standard `post_content` field. Elementor stores its
+   * data in a JSON blob under `_elementor_data` post meta; Divi wraps
+   * everything in shortcodes; WPBakery uses `[vc_row]` shortcodes.
+   *
+   * If we modify `post_content` on a page-builder-managed post, the
+   * database gets updated but the rendered page is unchanged - the
+   * builder ignores post_content and renders from its own storage.
+   * That's the "silent failure" we're guarding against.
+   *
+   * Detection strategy:
+   *   - Elementor  : post_meta._elementor_edit_mode = "builder"
+   *   - Divi       : post_meta._et_pb_use_builder = "on"
+   *   - WPBakery   : post_meta._wpb_vc_js_status = "true"
+   *
+   * Returns the builder name if one is detected, or null if the post is
+   * managed by the standard editor and safe for content modifications.
+   */
+  async detectPageBuilder(
+    type: "post" | "page",
+    id: number,
+  ): Promise<"elementor" | "divi" | "wpbakery" | null> {
+    try {
+      const post = await this.getPost(type, id);
+      const meta = (post.meta ?? {}) as Record<string, unknown>;
+
+      // Elementor - the most common one by far
+      if (meta["_elementor_edit_mode"] === "builder") return "elementor";
+
+      // Divi Builder
+      if (meta["_et_pb_use_builder"] === "on") return "divi";
+
+      // WPBakery (formerly Visual Composer)
+      if (meta["_wpb_vc_js_status"] === "true") return "wpbakery";
+
+      return null;
+    } catch {
+      // If we can't read the post's meta for any reason, assume it's a
+      // standard editor post. This favors "try to apply" over "skip" -
+      // if the apply itself later fails, that's a different error path.
+      return null;
+    }
+  }
+
+  /**
+   * Detect active caching plugins on the site. Used by the cache purger
+   * so it knows which purge endpoints to hit after a successful apply.
+   *
+   * Returns the set of known-supported plugins that are currently active.
+   * Silently returns an empty array if we can't read `/wp/v2/plugins`
+   * (usually a permissions issue on the Application Password).
+   *
+   * Supported today:
+   *   - "wp-rocket"      WP Rocket
+   *   - "w3-total-cache" W3 Total Cache
+   *   - "litespeed"      LiteSpeed Cache
+   *   - "wp-super-cache" WP Super Cache
+   */
+  async detectCachingPlugins(): Promise<
+    Array<"wp-rocket" | "w3-total-cache" | "litespeed" | "wp-super-cache">
+  > {
+    try {
+      const plugins = await this.request<Array<{ plugin: string; status: string }>>(
+        "GET",
+        "/wp/v2/plugins",
+      );
+      const active = plugins.filter((p) => p.status === "active").map((p) => p.plugin);
+      const detected: Array<
+        "wp-rocket" | "w3-total-cache" | "litespeed" | "wp-super-cache"
+      > = [];
+      if (active.some((p) => p.startsWith("wp-rocket/"))) detected.push("wp-rocket");
+      if (active.some((p) => p.startsWith("w3-total-cache/"))) detected.push("w3-total-cache");
+      if (active.some((p) => p.startsWith("litespeed-cache/"))) detected.push("litespeed");
+      if (active.some((p) => p.startsWith("wp-super-cache/"))) detected.push("wp-super-cache");
+      return detected;
+    } catch {
+      // Plugins endpoint requires upload_plugins capability. Some sites
+      // hide it - proceed as if no cache plugin exists rather than
+      // blocking apply.
+      return [];
     }
   }
 }

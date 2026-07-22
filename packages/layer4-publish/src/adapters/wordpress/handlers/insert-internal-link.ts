@@ -24,7 +24,11 @@
 import { createLogger } from "@rynk/core";
 import type { ExecutionAction, InsertInternalLinkAction } from "@rynk/layer3-generate";
 import type { ApplyResult } from "../../types.js";
+import type { FileApplyStateStore } from "../../../state/apply-state.js";
+import type { CachePurger } from "../../../cache/purger.js";
 import { WordPressClient } from "../client.js";
+import { checkHumanTouched, recordApply } from "./_human-touched-guard.js";
+import { runPostApplyPurge } from "./_post-apply-purge.js";
 
 const log = createLogger("layer4.wp.insert-internal-link");
 
@@ -111,6 +115,8 @@ function stripRelatedBlock(content: string): string {
 export async function applyInsertInternalLink(
   client: WordPressClient,
   action: ExecutionAction,
+  stateStore?: FileApplyStateStore,
+  purger?: CachePurger,
 ): Promise<ApplyResult> {
   if (action.type !== "insert_internal_link") {
     return { status: "skipped", message: "Not an insert_internal_link action" };
@@ -126,7 +132,31 @@ export async function applyInsertInternalLink(
   }
   const postType = summary.type === "page" ? "page" : "post";
 
-  // 2. Fetch full content.
+  // Human-touched guard.
+  const touched = await checkHumanTouched({
+    client,
+    postType,
+    postSummary: summary,
+    targetUrl: insert.target.sourceUrl,
+    stateStore,
+  });
+  if (touched.skip) return touched.result;
+
+  // 2. Page-builder guard - inline link insertion in post_content won't
+  //    take effect on Elementor/Divi/WPBakery pages.
+  const builder = await client.detectPageBuilder(postType, summary.id);
+  if (builder) {
+    const label = builder === "elementor" ? "Elementor" : builder === "divi" ? "Divi Builder" : "WPBakery";
+    return {
+      status: "skipped",
+      externalRef: String(summary.id),
+      externalUrl: summary.link,
+      message: `Skipped - ${label} page. Add the link "${anchorText}" -> ${targetUrl} manually via the ${label} editor.`,
+      edgeCase: `page-builder-${builder}` as const,
+    };
+  }
+
+  // 3. Fetch full content.
   const full = await client.getPost(postType, summary.id);
   const existing = full.content.raw ?? full.content.rendered ?? "";
 
@@ -168,6 +198,10 @@ export async function applyInsertInternalLink(
   // 5. PUT updated content.
   const updated = await client.updatePost(postType, summary.id, { content: newContent });
 
+  recordApply({ postType, postId: summary.id, actionId: action.id, stateStore });
+
+  const purgeNote = await runPostApplyPurge({ purger, url: insert.target.sourceUrl });
+
   log.info("internal link inserted", {
     actionId: action.id,
     postId: summary.id,
@@ -181,6 +215,6 @@ export async function applyInsertInternalLink(
     status: "applied",
     externalRef: String(summary.id),
     externalUrl: updated.link || summary.link,
-    message: `Linked "${anchorText}" -> ${targetUrl} on ${postType} #${summary.id} (${mode})`,
+    message: `Linked "${anchorText}" -> ${targetUrl} on ${postType} #${summary.id} (${mode})${purgeNote}`,
   };
 }

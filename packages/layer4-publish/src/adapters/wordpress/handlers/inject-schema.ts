@@ -16,7 +16,11 @@
 import { createLogger } from "@rynk/core";
 import type { ExecutionAction, InjectSchemaAction } from "@rynk/layer3-generate";
 import type { ApplyResult } from "../../types.js";
+import type { FileApplyStateStore } from "../../../state/apply-state.js";
+import type { CachePurger } from "../../../cache/purger.js";
 import { WordPressClient } from "../client.js";
+import { checkHumanTouched, recordApply } from "./_human-touched-guard.js";
+import { runPostApplyPurge } from "./_post-apply-purge.js";
 
 const log = createLogger("layer4.wp.inject-schema");
 
@@ -69,6 +73,8 @@ function stripExistingBlock(content: string, schemaType: string): string {
 export async function applyInjectSchema(
   client: WordPressClient,
   action: ExecutionAction,
+  stateStore?: FileApplyStateStore,
+  purger?: CachePurger,
 ): Promise<ApplyResult> {
   if (action.type !== "inject_schema") {
     return { status: "skipped", message: "Not an inject_schema action" };
@@ -85,7 +91,34 @@ export async function applyInjectSchema(
   }
   const postType = summary.type === "page" ? "page" : "post";
 
-  // 2. Fetch full post to get the raw content.
+  // Human-touched guard.
+  const touched = await checkHumanTouched({
+    client,
+    postType,
+    postSummary: summary,
+    targetUrl: inject.target.url,
+    stateStore,
+  });
+  if (touched.skip) return touched.result;
+
+  // 2. Page-builder guard - page builders render from their own storage
+  //    and skip post_content entirely, so our <script> block wouldn't
+  //    appear in the rendered HTML. Structured data must land in the
+  //    theme header or via the SEO plugin's schema graph instead - a
+  //    future upgrade. For now, skip and note the reason.
+  const builder = await client.detectPageBuilder(postType, summary.id);
+  if (builder) {
+    const label = builder === "elementor" ? "Elementor" : builder === "divi" ? "Divi Builder" : "WPBakery";
+    return {
+      status: "skipped",
+      externalRef: String(summary.id),
+      externalUrl: summary.link,
+      message: `Skipped - ${label} page. Schema markup injected into WP's post_content is ignored by the page builder. Add ${inject.target.schemaType} schema via the ${label} custom-code widget or the site's theme header instead.`,
+      edgeCase: `page-builder-${builder}` as const,
+    };
+  }
+
+  // 3. Fetch full post to get the raw content.
   const full = await client.getPost(postType, summary.id);
   const existingContent = full.content.raw ?? full.content.rendered ?? "";
 
@@ -96,6 +129,10 @@ export async function applyInjectSchema(
 
   // 4. PUT the updated content.
   const updated = await client.updatePost(postType, summary.id, { content: newContent });
+
+  recordApply({ postType, postId: summary.id, actionId: action.id, stateStore });
+
+  const purgeNote = await runPostApplyPurge({ purger, url: inject.target.url });
 
   log.info("schema injected", {
     actionId: action.id,
@@ -109,6 +146,6 @@ export async function applyInjectSchema(
     status: "applied",
     externalRef: String(summary.id),
     externalUrl: updated.link || summary.link,
-    message: `Injected ${inject.target.schemaType} schema into ${postType} #${summary.id}`,
+    message: `Injected ${inject.target.schemaType} schema into ${postType} #${summary.id}${purgeNote}`,
   };
 }
