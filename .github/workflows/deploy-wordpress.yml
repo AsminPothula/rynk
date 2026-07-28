@@ -1,0 +1,24 @@
+name: Deploy WordPress Theme
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/wordpress/themes/rynk/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy Rynk theme to WP Engine
+        uses: wpengine/github-action-wpe-site-deploy@v3
+        with:
+          WPE_SSHG_KEY_PRIVATE: ${{ secrets.WPE_SSHG_KEY_PRIVATE }}
+          WPE_ENV: rynkai
+          SRC_PATH: "apps/wordpress/themes/rynk/"
+          REMOTE_PATH: "wp-content/themes/rynk/"
