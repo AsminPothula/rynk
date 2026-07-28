@@ -1,0 +1,274 @@
+/**
+ * Tailwind entry point for the rynk.ai theme.
+ *
+ * This is apps/dashboard/src/app/globals.css from the Next.js repo, carried
+ * over unchanged: the same design tokens, the same custom utilities, and the
+ * same keyframes. The four pages reference `.bg-grid-brand`, `.animate-rise`,
+ * `.animate-marquee`, `.animate-float-slow` and `.animate-bob`, and every one
+ * of them is defined here — including the `prefers-reduced-motion` block that
+ * turns all of it off.
+ *
+ * Font-family variables (--font-serif, --font-geist-sans, --font-geist-mono)
+ * are declared in assets/css/fonts.css, which is enqueued ahead of the build
+ * output.
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * Color tokens. Every visual decision lives here so the whole site
+ * can be re-skinned by editing this file alone.
+ */
+@layer base {
+  :root {
+    /* Neutral base — warm cream / tan / soft brown.
+       Cards pop against the warm background by staying pure white. */
+    --background: 38 28% 97.5%;       /* warm off-white */
+    --foreground: 30 10% 12%;          /* warm near-black with brown undertone */
+    --card: 0 0% 100%;                 /* pure white — contrast vs warm bg */
+    --card-foreground: 30 10% 12%;
+    --muted: 35 22% 94%;               /* warm beige */
+    --muted-foreground: 30 8% 42%;     /* warm grey-brown */
+    --border: 32 18% 88%;              /* warm tan-grey border */
+    --input: 32 18% 88%;
+    --ring: 245 40% 65%;
+
+    /* Extra warm neutrals — use sparingly for accent surfaces */
+    --cream: 38 38% 94%;               /* soft cream — alt card / hero panel */
+    --tan: 32 28% 88%;                 /* warm tan — alt section bg */
+    --brown-soft: 28 15% 35%;          /* warm dark text accent */
+
+    /* Pastel primary — muted indigo. Stripe-ish without being saturated. */
+    --primary: 245 35% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 35 22% 94%;
+    --secondary-foreground: 30 10% 12%;
+
+    --accent: 35 22% 94%;
+    --accent-foreground: 30 10% 12%;
+
+    --destructive: 0 65% 65%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Status colors — all pastel, washed-out versions of the standard signals */
+    --status-success: 142 40% 55%;
+    --status-pending: 35 75% 60%;
+    --status-failed: 355 65% 70%;
+    --status-skipped: 30 8% 55%;       /* warm grey */
+
+    /* Channel colors — each a distinct pastel hue */
+    --channel-cms: 215 45% 65%;
+    --channel-image: 280 35% 70%;
+    --channel-outreach: 150 35% 60%;
+    --channel-social: 330 50% 72%;
+    --channel-code-pr: 195 45% 65%;
+    --channel-document: 30 65% 65%;    /* warmer terracotta */
+    --channel-offsite: 28 12% 55%;     /* warm brown */
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 7%;
+    --foreground: 0 0% 95%;
+    --card: 0 0% 9%;
+    --card-foreground: 0 0% 95%;
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 64%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 220 91% 60%;
+
+    --primary: 220 91% 60%;
+    --primary-foreground: 0 0% 9%;
+
+    --secondary: 0 0% 14%;
+    --secondary-foreground: 0 0% 95%;
+
+    --accent: 0 0% 14%;
+    --accent-foreground: 0 0% 95%;
+
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --status-success: 142 71% 50%;
+    --status-pending: 38 92% 55%;
+    --status-failed: 0 70% 55%;
+    --status-skipped: 0 0% 50%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /*
+   * Addition over the Next.js globals.css, required by the port.
+   *
+   * React unmounted the mobile menu when it was closed, so nothing needed to
+   * hide it. This theme ships the panel in the markup with the `hidden`
+   * attribute set and lets JS toggle it, which keeps the menu present for
+   * assistive tech and screen-reader users. But the panel is a `flex`
+   * container, and `.flex { display: flex }` is an *author* style — it beats
+   * the UA stylesheet's `[hidden] { display: none }` no matter the
+   * specificity. Without this rule the menu renders open before nav.js runs.
+   */
+  [hidden] {
+    display: none !important;
+  }
+}
+
+@layer utilities {
+  /* Subtle dotted background — Vercel aesthetic */
+  .bg-dotted {
+    background-image: radial-gradient(circle, hsl(var(--border)) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  /* Subtle noise for grain sections. */
+  .bg-grain {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 3px 3px;
+  }
+
+  /* Radial grid pattern for hero backdrops (dark bg). */
+  .bg-grid-brand {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse at center, black 12%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 12%, transparent 78%);
+  }
+
+  /* Diagonal linework - stats band + accent surfaces. */
+  .bg-lines-brand {
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.03) 0px,
+      rgba(255, 255, 255, 0.03) 1px,
+      transparent 1px,
+      transparent 14px
+    );
+  }
+
+  /* Highlighter underline - coral marker sweep behind a word. */
+  .highlight-marker {
+    background-image: linear-gradient(120deg, rgba(247, 160, 114, 0.30) 0%, rgba(247, 160, 114, 0.30) 100%);
+    background-repeat: no-repeat;
+    background-size: 100% 38%;
+    background-position: 0 88%;
+    padding: 0 0.08em;
+  }
+
+  /* Marquee - horizontal infinite scroll for the trust bar. */
+  @keyframes marquee {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .animate-marquee {
+    animation: marquee 32s linear infinite;
+  }
+  .animate-marquee-slow {
+    animation: marquee 60s linear infinite;
+  }
+
+  /* Slow orbital float for the hero glow. */
+  @keyframes float-slow {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50%      { transform: translate(20px, -14px) scale(1.06); }
+  }
+  .animate-float-slow {
+    animation: float-slow 12s ease-in-out infinite;
+  }
+
+  /* Rise + fade on mount - for staggered hero copy. */
+  @keyframes rise-in {
+    0%   { opacity: 0; transform: translateY(18px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  .animate-rise {
+    animation: rise-in 700ms cubic-bezier(0.32, 0.72, 0.24, 1) both;
+  }
+
+  /* Shimmer sweep for primary CTA. */
+  @keyframes shimmer {
+    0%   { transform: translateX(-140%) skewX(-12deg); }
+    100% { transform: translateX(240%) skewX(-12deg); }
+  }
+  .animate-shimmer {
+    animation: shimmer 3.2s ease-in-out infinite;
+  }
+
+  /* Live pulse dot. */
+  @keyframes pulse-dot {
+    0%, 100% { transform: scale(1);   opacity: 1; }
+    50%      { transform: scale(1.6); opacity: 0.35; }
+  }
+  .animate-pulse-dot {
+    animation: pulse-dot 1.6s ease-in-out infinite;
+  }
+
+  /* Gentle floating bob for the hero action cards. Each card gets a
+     different animation-delay so the group moves out of sync. */
+  @keyframes bob {
+    0%, 100% { transform: translateY(0px); }
+    50%      { transform: translateY(-10px); }
+  }
+  .animate-bob {
+    animation: bob 6s ease-in-out infinite;
+  }
+
+  /* Slow conic shimmer used behind the hero visual. */
+  @keyframes spin-slow {
+    to { transform: rotate(360deg); }
+  }
+  .animate-spin-slow {
+    animation: spin-slow 30s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-marquee,
+    .animate-marquee-slow,
+    .animate-float-slow,
+    .animate-rise,
+    .animate-shimmer,
+    .animate-pulse-dot,
+    .animate-bob,
+    .animate-spin-slow {
+      animation: none;
+    }
+  }
+
+  /* Warm gradient — soft cream wash for hero / accent sections */
+  .bg-warm-wash {
+    background-image:
+      radial-gradient(ellipse at top, hsl(var(--cream)) 0%, transparent 60%),
+      linear-gradient(to bottom, hsl(var(--background)), hsl(var(--background)));
+  }
+
+  /* Channel-tinted soft accent — used for section backgrounds */
+  .bg-channel-cms-soft { background-color: hsl(var(--channel-cms) / 0.06); }
+  .bg-channel-image-soft { background-color: hsl(var(--channel-image) / 0.06); }
+  .bg-channel-outreach-soft { background-color: hsl(var(--channel-outreach) / 0.06); }
+  .bg-channel-social-soft { background-color: hsl(var(--channel-social) / 0.06); }
+  .bg-channel-code-pr-soft { background-color: hsl(var(--channel-code-pr) / 0.06); }
+  .bg-channel-document-soft { background-color: hsl(var(--channel-document) / 0.07); }
+  .bg-channel-offsite-soft { background-color: hsl(var(--channel-offsite) / 0.08); }
+
+  /* Hide scrollbar visually while keeping scroll behavior */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
