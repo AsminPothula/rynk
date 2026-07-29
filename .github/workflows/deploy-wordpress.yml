@@ -32,9 +32,7 @@ jobs:
           WPE_SSHG_KEY_PRIVATE: ${{ secrets.WPE_SSHG_KEY_PRIVATE }}
           WPE_ENV: rynkai
           SRC_PATH: "apps/wordpress/themes/rynk/"
-          REMOTE_PATH: "wp-content/themes/rynk/"
-          # NOTE: WP Engine serves PHP through OPcache and blocks the OPcache API
-          # from web-root scripts (opcache.restrict_api=/opt/), so a deployed
-          # template's changes only go live after WP Engine restarts PHP. A
-          # self-serve cache-clear cannot do this; ask WP Engine to restart PHP,
-          # or have them enable opcache.validate_timestamps on the environment.
+          # The ACTIVE theme on the rynkai install lives in themes/rynk-ai/
+          # (its directory slug is "rynk-ai"), not themes/rynk/. Deploy into the
+          # active directory or the live site never sees the changes.
+          REMOTE_PATH: "wp-content/themes/rynk-ai/"
