@@ -23,17 +23,32 @@ require_once get_theme_file_path( 'inc/components.php' );
  */
 function rynk_pages(): array {
 	return array(
-		'how-it-works' => array(
+		'how-it-works'   => array(
 			'title'    => 'How it works',
 			'template' => 'page-templates/how-it-works.php',
 		),
-		'pricing'      => array(
+		'pricing'        => array(
 			'title'    => 'Pricing',
 			'template' => 'page-templates/pricing.php',
 		),
-		'about'        => array(
+		'about'          => array(
 			'title'    => 'About',
 			'template' => 'page-templates/about.php',
+		),
+		// Placeholder pages — live until the real destinations ship. The app,
+		// sign-in, and free-scan CTAs all land on a "Coming soon" screen rather
+		// than a dead link.
+		'app'            => array(
+			'title'    => 'Dashboard',
+			'template' => 'page-templates/coming-soon.php',
+		),
+		'sign-in'        => array(
+			'title'    => 'Sign in',
+			'template' => 'page-templates/coming-soon.php',
+		),
+		'privacy-policy' => array(
+			'title'    => 'Privacy Policy and Agreement',
+			'template' => 'page-templates/privacy-policy.php',
 		),
 	);
 }
@@ -66,6 +81,20 @@ function rynk_nav_link_class( string $slug ): string {
 
 	return 'font-serif text-[16px] transition-colors ' . (
 		$is_active ? 'text-brand-text' : 'text-brand-textMute hover:text-brand-text'
+	);
+}
+
+/**
+ * Nav-link classes for the Home link, highlighted on the front page.
+ *
+ * Home is not one of the templated pages in rynk_nav_links(), so it gets its
+ * own class helper keyed on is_front_page() rather than a page slug.
+ *
+ * @return string Tailwind classes.
+ */
+function rynk_home_link_class(): string {
+	return 'font-serif text-[16px] transition-colors ' . (
+		is_front_page() ? 'text-brand-text' : 'text-brand-textMute hover:text-brand-text'
 	);
 }
 
@@ -202,3 +231,31 @@ function rynk_scaffold_pages(): void {
 	}
 }
 add_action( 'after_switch_theme', 'rynk_scaffold_pages' );
+
+/**
+ * Scaffold version. Bump whenever rynk_pages() gains a page so the new pages
+ * are created on the next request without a manual theme re-activation.
+ */
+const RYNK_SCAFFOLD_VERSION = '2';
+
+/**
+ * Re-run scaffolding once after a deploy that changed the page set.
+ *
+ * On the live site the theme is already active, so `after_switch_theme` never
+ * fires again — a freshly added page (privacy policy, the coming-soon pages)
+ * would otherwise never be created. This runs `rynk_scaffold_pages()` a single
+ * time per version bump, guarded by a stored option so it is a cheap no-op on
+ * every other request. Scaffolding itself is idempotent (existing pages are
+ * reused, never duplicated).
+ *
+ * @return void
+ */
+function rynk_maybe_scaffold_pages(): void {
+	if ( get_option( 'rynk_scaffold_version' ) === RYNK_SCAFFOLD_VERSION ) {
+		return;
+	}
+
+	rynk_scaffold_pages();
+	update_option( 'rynk_scaffold_version', RYNK_SCAFFOLD_VERSION );
+}
+add_action( 'init', 'rynk_maybe_scaffold_pages' );

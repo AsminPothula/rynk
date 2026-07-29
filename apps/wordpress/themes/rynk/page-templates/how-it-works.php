@@ -65,6 +65,13 @@ $tint_styles = rynk_tint_styles();
 		</div>
 	</section>
 
+	<?php // Section divider — separates the outcomes from the pipeline breakdown. ?>
+	<div class="px-6 md:px-10" aria-hidden="true">
+		<div class="mx-auto max-w-screen-xl">
+			<div class="h-px w-full bg-gradient-to-r from-transparent via-brand-hairline to-transparent"></div>
+		</div>
+	</div>
+
 	<?php // BUILT AROUND FOUR JOBS. ?>
 	<section class="relative px-6 py-14 md:px-10 md:py-16">
 		<div

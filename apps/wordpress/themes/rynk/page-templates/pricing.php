@@ -89,18 +89,22 @@ $tier_styles = rynk_tier_styles();
 							<?php echo rynk_icon( 'arrow-right', 'h-4 w-4' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						</a>
 
-						<div class="relative mt-5 border-t border-white/8 pt-4">
-							<p class="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-textMute">
-								<?php echo esc_html( $tier['featuresLabel'] ); ?>
-							</p>
-							<ul class="mt-3 grid grid-cols-2 gap-x-5 gap-y-1.5">
-								<?php foreach ( $tier['features'] as $feature ) : ?>
-									<li class="flex items-start gap-2 text-[13px] leading-snug">
-										<?php echo rynk_icon( 'check', 'mt-0.5 h-4 w-4 shrink-0 ' . $s['check'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-										<span class="text-brand-text/90"><?php echo esc_html( $feature ); ?></span>
-									</li>
-								<?php endforeach; ?>
-							</ul>
+						<div class="relative mt-5 grid gap-5 border-t border-white/8 pt-4 sm:grid-cols-2 sm:gap-x-6">
+							<?php foreach ( $tier['columns'] as $column ) : ?>
+								<div>
+									<p class="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-textMute">
+										<?php echo esc_html( $column['label'] ); ?>
+									</p>
+									<ul class="mt-3 space-y-1.5">
+										<?php foreach ( $column['features'] as $feature ) : ?>
+											<li class="flex items-start gap-2 text-[13px] leading-snug">
+												<?php echo rynk_icon( 'check', 'mt-0.5 h-4 w-4 shrink-0 ' . $s['check'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+												<span class="text-brand-text/90"><?php echo esc_html( $feature ); ?></span>
+											</li>
+										<?php endforeach; ?>
+									</ul>
+								</div>
+							<?php endforeach; ?>
 						</div>
 					</div>
 				<?php endforeach; ?>
@@ -117,36 +121,25 @@ $tier_styles = rynk_tier_styles();
 					class="pointer-events-none absolute -top-16 right-16 h-56 w-56 rounded-full bg-brand-highlight/15 blur-3xl"
 				></div>
 
-				<div class="relative grid gap-8 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] md:items-center">
-					<div>
+				<div class="relative flex flex-col items-center gap-6 text-center">
+					<div class="max-w-2xl">
 						<h2 class="font-serif text-3xl md:text-4xl font-medium leading-[1.05] tracking-tight text-brand-text">
 							Starting from zero?
 							<span class="italic text-brand-highlight">We&rsquo;ll build the site too.</span>
 						</h2>
 						<p class="mt-4 text-[15px] leading-[1.7] text-brand-textMute">
-							Full WordPress website with 2-3 pages, SEO-optimized from day one.
-						</p>
-						<p class="text-[12px] text-brand-textMute md:text-left">
-							Requires a Starter or Growth plan for ongoing
-							optimization.
+							Free website if you buy 6 months of either tier up front. Full
+							WordPress website with 2-3 pages, SEO-optimized from day one.
 						</p>
 					</div>
 
-					<div class="flex flex-col items-start gap-4 md:items-end">
-						<div class="flex items-baseline gap-2">
-							<span class="font-serif text-5xl font-medium tracking-tight text-brand-text">
-								$499
-							</span>
-							<span class="font-mono text-sm text-brand-textMute">one-time</span>
-						</div>
-						<a
-							href="<?php echo esc_url( home_url( '/contact' ) ); ?>"
-							class="group inline-flex h-12 items-center gap-2.5 rounded-full bg-white px-7 font-serif text-[16px] font-medium text-brand-ink transition-all hover:shadow-[0_14px_36px_-14px_rgba(255,255,255,0.4)]"
-						>
-							Get my site built
-							<?php echo rynk_icon( 'arrow-right', 'h-4 w-4 transition-transform group-hover:translate-x-0.5' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-						</a>
-					</div>
+					<a
+						href="<?php echo esc_url( home_url( '/contact' ) ); ?>"
+						class="group inline-flex h-12 items-center gap-2.5 rounded-full bg-white px-7 font-serif text-[16px] font-medium text-brand-ink transition-all hover:shadow-[0_14px_36px_-14px_rgba(255,255,255,0.4)]"
+					>
+						Get my site built
+						<?php echo rynk_icon( 'arrow-right', 'h-4 w-4 transition-transform group-hover:translate-x-0.5' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					</a>
 				</div>
 			</div>
 		</div>
