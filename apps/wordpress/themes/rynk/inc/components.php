@@ -13,6 +13,49 @@
 declare( strict_types = 1 );
 
 /**
+ * Header site logo.
+ *
+ * Renders a real logo image when a brand asset is present in assets/img/
+ * (checked in order of preference), and otherwise falls back to the original
+ * gradient leaf mark + wordmark — so the header is never broken while the
+ * logo file is still pending.
+ *
+ * To use a real logo, drop the file at assets/img/logo.svg (preferred), or
+ * logo.png / logo.webp. No code change is needed — it is picked up on sight.
+ *
+ * @return void
+ */
+function rynk_logo(): void {
+	$candidates = array( 'assets/img/logo.svg', 'assets/img/logo.png', 'assets/img/logo.webp' );
+
+	$logo = '';
+	foreach ( $candidates as $relative ) {
+		if ( file_exists( get_theme_file_path( $relative ) ) ) {
+			$logo = $relative;
+			break;
+		}
+	}
+
+	if ( '' !== $logo ) {
+		printf(
+			'<img src="%s" alt="rynk" class="h-8 w-auto transition-transform group-hover:scale-105" decoding="async" />',
+			esc_url( get_theme_file_uri( $logo ) )
+		);
+		return;
+	}
+
+	// Fallback — the original mark + wordmark.
+	?>
+	<span class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-brand-blue to-brand-violet shadow-[0_6px_16px_-6px_rgba(109,141,255,0.6)] transition-transform group-hover:scale-105">
+		<?php echo rynk_leaf_mark( 'h-4 w-4 text-white' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+	</span>
+	<span class="font-serif text-[19px] font-medium tracking-tight text-brand-text">
+		rynk<span class="text-brand-violetSoft">.ai</span>
+	</span>
+	<?php
+}
+
+/**
  * Floating hero chip.
  *
  * Lives inside a structured column (no absolute positioning) so cards stack

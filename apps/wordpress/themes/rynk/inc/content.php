@@ -263,49 +263,71 @@ function rynk_jobs(): array {
 /**
  * Pricing — the tiers.
  *
+ * Each tier renders as two feature columns: `columns[0]` is what the plan
+ * includes, `columns[1]` is the per-month page allowance.
+ *
  * @return array<int, array<string, mixed>>
  */
 function rynk_tiers(): array {
 	return array(
 		array(
-			'name'          => 'Starter',
-			'price'         => '$249',
-			'cadence'       => '/ month',
-			'target'        => 'For small businesses',
-			'featuresLabel' => 'Includes:',
-			'features'      => array(
-				'4 rounds of SEO improvements / month',
-				'See how you rank against your competitors',
-				'Automatic WordPress website updates',
-				'Monthly performance tracking',
+			'name'    => 'Gold',
+			'price'   => '$149',
+			'cadence' => '/ month',
+			'target'  => 'For small businesses',
+			'columns' => array(
+				array(
+					'label'    => 'Includes:',
+					'features' => array(
+						'Automatic WordPress website updates',
+						'Monthly performance tracking',
+						'See how you rank against your competitors',
+					),
+				),
+				array(
+					'label'    => 'Every month:',
+					'features' => array(
+						'5 hyperlocal pages / month',
+						'5 target keyword pages / month',
+						'5 pages updated / month',
+					),
+				),
 			),
-			'cta'           => 'Get Starter',
-			'href'          => '/sign-in',
-			'accent'        => true,
-			'badge'         => '',
-			'tint'          => 'emerald',
+			'cta'     => 'Get Gold',
+			'href'    => '/sign-in',
+			'accent'  => true,
+			'badge'   => '',
+			'tint'    => 'emerald',
 		),
 		array(
-			'name'          => 'Growth',
-			'price'         => '$449',
-			'cadence'       => '/ month',
-			'target'        => 'For scaling businesses',
-			'featuresLabel' => 'Includes:',
-			'features'      => array(
-				'8 rounds SEO improvements / month',
-				'See how you rank against your competitors',
-				'Automatic updates to WordPress website',
-				'Daily performance tracking',
-				'Custom strategy document',
-				'New website recommendations weekly',
-				'Extra rounds of SEO improvements',
-				'Priority support',
+			'name'    => 'Platinum',
+			'price'   => '$299',
+			'cadence' => '/ month',
+			'target'  => 'For scaling businesses',
+			'columns' => array(
+				array(
+					'label'    => 'Includes:',
+					'features' => array(
+						'Automatic updates to WordPress website',
+						'See how you rank against your competitors',
+						'Bi-weekly performance tracking',
+						'Priority support',
+					),
+				),
+				array(
+					'label'    => 'Every month:',
+					'features' => array(
+						'10 hyperlocal pages / month',
+						'10 target keyword pages / month',
+						'10 pages updated / month',
+					),
+				),
 			),
-			'cta'           => 'Get Growth',
-			'href'          => '/sign-in',
-			'accent'        => true,
-			'badge'         => 'Most teams pick this',
-			'tint'          => 'violet',
+			'cta'     => 'Get Platinum',
+			'href'    => '/sign-in',
+			'accent'  => true,
+			'badge'   => 'Most teams pick this',
+			'tint'    => 'violet',
 		),
 	);
 }

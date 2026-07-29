@@ -38,16 +38,14 @@
 		<div class="flex h-16 items-center justify-between pl-4 pr-4 md:pl-6 md:pr-8 lg:pl-8 lg:pr-12">
 			<?php // Logo - true left edge. ?>
 			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="group flex items-center gap-2.5">
-				<span class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-brand-blue to-brand-violet shadow-[0_6px_16px_-6px_rgba(109,141,255,0.6)] transition-transform group-hover:scale-105">
-					<?php echo rynk_leaf_mark( 'h-4 w-4 text-white' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-				</span>
-				<span class="font-serif text-[19px] font-medium tracking-tight text-brand-text">
-					rynk<span class="text-brand-violetSoft">.ai</span>
-				</span>
+				<?php rynk_logo(); ?>
 			</a>
 
 			<?php // Desktop nav - far right. ?>
 			<nav class="hidden items-center gap-8 md:flex">
+				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="<?php echo esc_attr( rynk_home_link_class() ); ?>">
+					Home
+				</a>
 				<?php foreach ( rynk_nav_links() as $slug => $label ) : ?>
 					<a href="<?php echo esc_url( home_url( '/' . $slug . '/' ) ); ?>" class="<?php echo esc_attr( rynk_nav_link_class( $slug ) ); ?>">
 						<?php echo esc_html( $label ); ?>
@@ -89,6 +87,12 @@
 			hidden
 			class="flex flex-col gap-1 border-t border-white/5 bg-brand-ink/95 px-6 py-4 backdrop-blur-xl md:hidden"
 		>
+			<a
+				href="<?php echo esc_url( home_url( '/' ) ); ?>"
+				class="<?php echo esc_attr( rynk_home_link_class() . ' rounded-lg px-3 py-3' ); ?>"
+			>
+				Home
+			</a>
 			<?php foreach ( rynk_nav_links() as $slug => $label ) : ?>
 				<a
 					href="<?php echo esc_url( home_url( '/' . $slug . '/' ) ); ?>"

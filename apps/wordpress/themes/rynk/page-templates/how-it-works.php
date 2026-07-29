@@ -20,20 +20,17 @@ $tint_styles = rynk_tint_styles();
 ?>
 
 <div class="relative text-brand-text overflow-x-hidden">
-	<?php // HERO - centered, fills the first screen exactly. ?>
-	<section class="relative flex items-center px-6 py-14 md:px-10 lg:h-[max(calc(100dvh-4rem),560px)] lg:py-0">
+	<?php // HERO - compact, so the outcomes below share the first screen. ?>
+	<section class="relative px-6 pt-16 pb-6 md:px-10 md:pt-20 md:pb-8">
 		<div class="pointer-events-none absolute inset-0 bg-grid-brand opacity-50" aria-hidden="true"></div>
 		<div class="relative mx-auto w-full max-w-3xl text-center">
-			<p class="font-mono text-[11px] uppercase tracking-[0.2em] text-brand-violetSoft animate-rise">
-			</p>
 			<h1
-				class="mt-4 font-serif text-5xl md:text-6xl lg:text-[72px] font-medium leading-[1.02] tracking-tight animate-rise"
-				style="animation-delay: 60ms;"
+				class="font-serif text-5xl md:text-6xl font-medium leading-[1.02] tracking-tight animate-rise"
 			>
 				Leads on <span class="italic text-brand-blueSoft">autopilot.</span>
 			</h1>
 			<p
-				class="mt-7 text-[16px] leading-[1.75] text-brand-textMute animate-rise"
+				class="mt-6 text-[16px] leading-[1.75] text-brand-textMute animate-rise"
 				style="animation-delay: 160ms;"
 			>
 				We scan your website, find every fix worth making, and ship those changes
@@ -41,14 +38,14 @@ $tint_styles = rynk_tint_styles();
 				keeps evolving, we keep watching and adjusting, so you consistently rank
 				higher on Google and get cited more when people
 				ask AI assistants questions.
-			</p> <br /> <br />
+			</p>
 		</div>
 	</section>
 
 	<?php // WHAT YOU GET. ?>
-	<section class="relative px-6 py-14 md:px-10 md:py-16">
+	<section class="relative px-6 pt-6 pb-24 md:px-10 md:pt-8 md:pb-28">
 		<div class="relative mx-auto max-w-screen-xl">
-			<div class="mb-12">
+			<div class="mb-8">
 				<p class="font-mono text-[11px] uppercase tracking-[0.18em] text-brand-emeraldSoft">
 					What you get
 				</p>
@@ -65,8 +62,15 @@ $tint_styles = rynk_tint_styles();
 		</div>
 	</section>
 
+	<?php // Section divider — separates the outcomes from the pipeline breakdown. ?>
+	<div class="px-6 md:px-10" aria-hidden="true">
+		<div class="mx-auto max-w-screen-xl">
+			<div class="h-px w-full bg-gradient-to-r from-transparent via-brand-hairline to-transparent"></div>
+		</div>
+	</div>
+
 	<?php // BUILT AROUND FOUR JOBS. ?>
-	<section class="relative px-6 py-14 md:px-10 md:py-16">
+	<section class="relative px-6 pt-24 pb-14 md:px-10 md:pt-28 md:pb-16">
 		<div
 			aria-hidden="true"
 			class="pointer-events-none absolute -top-16 right-8 h-80 w-80 rounded-full bg-brand-violet/15 blur-3xl animate-float-slow"

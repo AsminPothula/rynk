@@ -29,9 +29,7 @@ $platforms  = rynk_platforms();
 	 * space below it and the next section starts exactly at the fold.
 	 */
 	?>
-	<p class="text-center mt-7 mb-4 font-serif text-5xl md:text-5xl leading-tight tracking-tight text-brand-text">Rynk</p>
-
-	<section class="relative px-6 pt-6 pb-6 md:px-10 md:pb-6 lg:min-h-[700px]">
+	<section class="relative px-6 pt-16 pb-6 md:px-10 md:pt-20 md:pb-6 lg:min-h-[700px]">
 		<div class="pointer-events-none absolute inset-0 bg-grid-brand opacity-60" aria-hidden="true"></div>
 
 		<div class="relative mx-auto h-full max-w-screen-xl">
@@ -44,7 +42,7 @@ $platforms  = rynk_platforms();
 						<h1 class="font-serif text-5xl md:text-6xl font-medium leading-[0.98] tracking-tight animate-rise text-brand-text">
 							Want more sales?
 							<span class="block mt-2 italic text-brand-blueSoft">
-								Get more website visits.
+								Increase website visits.
 							</span>
 						</h1>
 						<p
@@ -105,7 +103,7 @@ $platforms  = rynk_platforms();
 						</div>
 
 						<p class="mb-12 font-serif text-xl md:text-2xl leading-tight tracking-tight text-brand-text text-center">
-							Automated SEO, powered by <span>AI</span>.
+							AI-Powered SEO Automation
 						</p>
 
 						<?php
