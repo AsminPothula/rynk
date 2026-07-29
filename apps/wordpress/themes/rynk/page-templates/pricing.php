@@ -121,8 +121,8 @@ $tier_styles = rynk_tier_styles();
 					class="pointer-events-none absolute -top-16 right-16 h-56 w-56 rounded-full bg-brand-highlight/15 blur-3xl"
 				></div>
 
-				<div class="relative flex flex-col items-center gap-6 text-center">
-					<div class="max-w-2xl">
+				<div class="relative grid gap-8 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] md:items-center">
+					<div>
 						<h2 class="font-serif text-3xl md:text-4xl font-medium leading-[1.05] tracking-tight text-brand-text">
 							Starting from zero?
 							<span class="italic text-brand-highlight">We&rsquo;ll build the site too.</span>
@@ -133,13 +133,15 @@ $tier_styles = rynk_tier_styles();
 						</p>
 					</div>
 
-					<a
-						href="<?php echo esc_url( home_url( '/contact' ) ); ?>"
-						class="group inline-flex h-12 items-center gap-2.5 rounded-full bg-white px-7 font-serif text-[16px] font-medium text-brand-ink transition-all hover:shadow-[0_14px_36px_-14px_rgba(255,255,255,0.4)]"
-					>
-						Get my site built
-						<?php echo rynk_icon( 'arrow-right', 'h-4 w-4 transition-transform group-hover:translate-x-0.5' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-					</a>
+					<div class="flex md:justify-end">
+						<a
+							href="<?php echo esc_url( home_url( '/contact' ) ); ?>"
+							class="group inline-flex h-12 items-center gap-2.5 rounded-full bg-white px-7 font-serif text-[16px] font-medium text-brand-ink transition-all hover:shadow-[0_14px_36px_-14px_rgba(255,255,255,0.4)]"
+						>
+							Get my site built
+							<?php echo rynk_icon( 'arrow-right', 'h-4 w-4 transition-transform group-hover:translate-x-0.5' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						</a>
+					</div>
 				</div>
 			</div>
 		</div>

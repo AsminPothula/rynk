@@ -297,7 +297,7 @@ function rynk_tiers(): array {
 			'href'    => '/sign-in',
 			'accent'  => true,
 			'badge'   => '',
-			'tint'    => 'amber',
+			'tint'    => 'emerald',
 		),
 		array(
 			'name'    => 'Platinum',

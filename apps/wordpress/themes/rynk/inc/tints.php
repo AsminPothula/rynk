@@ -218,13 +218,6 @@ function rynk_tier_styles(): array {
 			'price'   => 'text-brand-emeraldSoft',
 			'ambient' => 'bg-brand-emerald/18',
 		),
-		'amber'   => array(
-			'ring'    => 'ring-brand-amber/45',
-			'topBar'  => 'bg-gradient-to-r from-transparent via-brand-amber to-transparent',
-			'check'   => 'text-brand-amberSoft',
-			'price'   => 'text-brand-amberSoft',
-			'ambient' => 'bg-brand-amber/18',
-		),
 		'violet'  => array(
 			'ring'    => 'ring-brand-violet/50',
 			'topBar'  => 'bg-gradient-to-r from-transparent via-brand-violet to-transparent',

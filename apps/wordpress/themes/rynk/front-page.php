@@ -29,7 +29,7 @@ $platforms  = rynk_platforms();
 	 * space below it and the next section starts exactly at the fold.
 	 */
 	?>
-	<section class="relative px-6 pt-10 pb-6 md:px-10 md:pt-12 md:pb-6 lg:min-h-[700px]">
+	<section class="relative px-6 pt-16 pb-6 md:px-10 md:pt-20 md:pb-6 lg:min-h-[700px]">
 		<div class="pointer-events-none absolute inset-0 bg-grid-brand opacity-60" aria-hidden="true"></div>
 
 		<div class="relative mx-auto h-full max-w-screen-xl">
