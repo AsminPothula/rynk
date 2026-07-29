@@ -92,11 +92,11 @@ $founder_styles = rynk_founder_styles();
 						></div>
 
 						<div class="relative">
-							<div class="overflow-hidden rounded-2xl ring-1 ring-white/10">
+							<div class="aspect-square w-full overflow-hidden rounded-2xl ring-1 ring-white/10">
 								<img
 									src="<?php echo esc_url( get_theme_file_uri( 'assets/img/' . $founder['image'] ) ); ?>"
 									alt="<?php echo esc_attr( $founder['name'] ); ?>"
-									class="block h-auto w-full"
+									class="block h-full w-full object-cover"
 									sizes="(max-width: 768px) 100vw, 50vw"
 									loading="lazy"
 									decoding="async"

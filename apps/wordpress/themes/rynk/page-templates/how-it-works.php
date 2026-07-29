@@ -43,7 +43,7 @@ $tint_styles = rynk_tint_styles();
 	</section>
 
 	<?php // WHAT YOU GET. ?>
-	<section class="relative px-6 pt-6 pb-12 md:px-10 md:pt-8 md:pb-16">
+	<section class="relative px-6 pt-6 pb-24 md:px-10 md:pt-8 md:pb-28">
 		<div class="relative mx-auto max-w-screen-xl">
 			<div class="mb-8">
 				<p class="font-mono text-[11px] uppercase tracking-[0.18em] text-brand-emeraldSoft">
@@ -70,7 +70,7 @@ $tint_styles = rynk_tint_styles();
 	</div>
 
 	<?php // BUILT AROUND FOUR JOBS. ?>
-	<section class="relative px-6 py-14 md:px-10 md:py-16">
+	<section class="relative px-6 pt-24 pb-14 md:px-10 md:pt-28 md:pb-16">
 		<div
 			aria-hidden="true"
 			class="pointer-events-none absolute -top-16 right-8 h-80 w-80 rounded-full bg-brand-violet/15 blur-3xl animate-float-slow"
