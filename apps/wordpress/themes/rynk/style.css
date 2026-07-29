@@ -1,0 +1,21 @@
+/*
+Theme Name: rynk.ai
+Theme URI: https://rynk.ai
+Author: rynk.ai
+Description: Marketing theme for rynk.ai — the landing, how-it-works, pricing, and about pages ported from the Next.js dashboard app. All visual styling is compiled Tailwind in assets/css/theme.css; this file exists for the theme header WordPress requires.
+Version: 1.0.0
+Requires at least: 6.0
+Tested up to: 6.9
+Requires PHP: 8.0
+License: Proprietary
+Text Domain: rynk-ai
+*/
+
+/*
+ * Intentionally empty beyond the header above.
+ *
+ * The real stylesheet is assets/css/theme.css, a Tailwind build produced from
+ * the same tailwind.config.js and globals.css the Next.js app uses. Editing
+ * styles here would put them outside that build and out of sync with the app;
+ * change the source files and re-run the build instead (see README.md).
+ */

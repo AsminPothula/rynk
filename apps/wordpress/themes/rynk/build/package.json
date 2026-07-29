@@ -1,0 +1,15 @@
+{
+  "name": "rynk-ai-theme-build",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tailwind build for the rynk.ai WordPress theme. Run `npm install` here, then `npm run build`; output goes to ../assets/css/theme.css.",
+  "scripts": {
+    "build": "tailwindcss -c ./tailwind.config.js -i ./input.css -o ../assets/css/theme.css --minify",
+    "dev": "tailwindcss -c ./tailwind.config.js -i ./input.css -o ../assets/css/theme.css --watch"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^3.4.17"
+  }
+}
