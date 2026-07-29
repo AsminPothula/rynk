@@ -1,0 +1,22 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/api/context/route": "/api/context",
+  "/api/status/route": "/api/status",
+  "/api/onboard/route": "/api/onboard",
+  "/api/run/route": "/api/run",
+  "/api/pipeline/run/route": "/api/pipeline/run",
+  "/(public)/about/page": "/about",
+  "/(public)/how-it-works/page": "/how-it-works",
+  "/(public)/pricing/page": "/pricing",
+  "/(public)/page": "/",
+  "/(public)/sign-in/page": "/sign-in",
+  "/(public)/contact/page": "/contact",
+  "/(public)/signup/page": "/signup",
+  "/(public)/login/page": "/login",
+  "/(public)/features/page": "/features",
+  "/app/run/[domain]/page": "/app/run/[domain]",
+  "/deck/page": "/deck",
+  "/app/page": "/app",
+  "/app/clients/[domain]/page": "/app/clients/[domain]",
+  "/app/clients/[domain]/execution/page": "/app/clients/[domain]/execution"
+}

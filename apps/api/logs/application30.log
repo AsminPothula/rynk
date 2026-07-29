@@ -1,0 +1,4 @@
+{"context":"REQUEST","level":"info","message":"GET - /v1/client/b0834347-4a49-4ab3-adcd-78c201728b5a/overview: 8ms","timestamp":"2026-07-21T01:59:50.146Z"}
+{"context":"REQUEST","level":"info","message":"GET - /v1/user/profile: 122ms","timestamp":"2026-07-21T02:00:02.080Z"}
+{"context":"REQUEST","level":"info","message":"GET - /v1/client: 104ms","timestamp":"2026-07-21T02:00:02.083Z"}
+{"context":"REQUEST","level":"info","message":"GET - /v1/client/b0834347-4a49-4ab3-adcd-78c201728b5a/overview: 7ms","timestamp":"2026-07-21T02:00:02.118Z"}
