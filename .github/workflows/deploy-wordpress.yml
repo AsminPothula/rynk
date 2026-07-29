@@ -33,3 +33,13 @@ jobs:
           WPE_ENV: rynkai
           SRC_PATH: "apps/wordpress/themes/rynk/"
           REMOTE_PATH: "wp-content/themes/rynk/"
+
+      # WP Engine's OPcache doesn't revalidate on file mtime, so freshly
+      # deployed templates keep serving old bytecode until PHP restarts. This
+      # force-invalidates OPcache for the theme's own files (see
+      # opcache-refresh.php) so the deploy goes live immediately. Non-fatal.
+      - name: Refresh theme OPcache
+        run: |
+          url="https://rynkai.wpengine.com/wp-content/themes/rynk/opcache-refresh.php?token=rynk-refresh&cb=${{ github.run_id }}"
+          echo "Hitting: $url"
+          curl -sS -L -w "\nHTTP %{http_code}\n" "$url" || echo "opcache refresh request failed (non-fatal)"
