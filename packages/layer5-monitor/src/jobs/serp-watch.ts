@@ -61,12 +61,12 @@ export async function runSerpWatch(domain: string, clientContext: ClientContext,
         const date = new Date().toISOString().split("T")[0];
         writeJson(`${runsDir}/${domain}/${date}/monitor/delta/${new Date().toISOString().replace(/:/g, "-")}.json`, delta)
 
-        //maybe trigger restrategy
-        const {triggered,runId} = await maybeTriggerRestrategy(delta, clientContext, runsDir)
-
-        // if the delta leads to restrategy, add to number of resetrats
-        if(triggered) numRestrats++
     }
+
+    // One re-strategy per run covering all the movement — not one per keyword
+    // (each re-strategy is an expensive Layer 2 LLM call).
+    const { triggered } = await maybeTriggerRestrategy(allDeltas, clientContext, runsDir)
+    if (triggered) numRestrats++
 
     log.info("Finished Serp Watch")
 

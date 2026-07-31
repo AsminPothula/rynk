@@ -26,6 +26,12 @@ export interface RunStrategyOptions {
   model?: string;
   /** Hard cap on output tokens. Sonnet 4.6 supports extended output via beta. */
   maxOutputTokens?: number;
+  /**
+   * Monitor findings for a Layer-5-triggered re-strategy — a summary of what
+   * changed in the SERPs since the last plan. When present, the strategy agent
+   * prioritizes defending/recovering the affected positions.
+   */
+  changeContext?: string;
 }
 
 export async function runStrategyAgent(opts: RunStrategyOptions): Promise<StrategyOutput> {
@@ -37,7 +43,7 @@ export async function runStrategyAgent(opts: RunStrategyOptions): Promise<Strate
   const safeContent = truncateToTokenBudget(opts.audit.content, 140_000);
   const safeAudit: AuditInputForPrompt = { ...opts.audit, content: safeContent };
 
-  const userMessage = buildUserMessage(safeAudit, opts.clientContext);
+  const userMessage = buildUserMessage(safeAudit, opts.clientContext, opts.changeContext);
 
   log.info("running strategy agent", {
     model,
