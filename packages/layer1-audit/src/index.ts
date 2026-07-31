@@ -22,6 +22,7 @@ import { enrichKeywordsAndAuthority } from "./utils/keyword-enrichment.js";
 export { runDataCollectionAgent } from "./agents/data-collection-agent.js";
 export { runOffsiteResearchAgent } from "./agents/offsite-research-agent.js";
 export { runSynthesiserAgent } from "./agents/synthesiser-agent.js";
+export { collectPresence, type CollectPresenceOptions } from "./collectors/presence.js";
 export { saveAuditFindings } from "./utils/output-writer.js";
 export {
   makeCrawl4AIClient as makeFirecrawlClient,

@@ -428,10 +428,69 @@ export const EntitySummarySchema = z.object({
   inconsistenciesFound: z.array(z.string()),
 });
 
+/**
+ * Presence & reputation section — the business's off-site footprint, from the
+ * PresenceDataProvider (business listing, reviews, citations, map-pack rank).
+ * General, not "local"-only; stays empty for pure-online businesses.
+ * Optional + defaulted so legacy audits parse unchanged.
+ */
+export const PresenceListingSchema = z.object({
+  claimed: z.boolean().default(false),
+  primaryCategory: z.string().nullable().default(null),
+  rating: z.number().nullable().default(null),
+  reviewCount: z.number().nullable().default(null),
+  photosCount: z.number().nullable().default(null),
+  completeness: z.number().nullable().default(null),
+  /** True once the client has granted listing-manager access. */
+  hasManagerAccess: z.boolean().default(false),
+  insights: z
+    .object({
+      profileViews: z.number(),
+      calls: z.number(),
+      directionRequests: z.number(),
+      websiteClicks: z.number(),
+      bookings: z.number(),
+    })
+    .nullable()
+    .default(null),
+});
+
+export const PresenceReviewsSchema = z.object({
+  totalCount: z.number().default(0),
+  averageRating: z.number().nullable().default(null),
+  unreplied: z.number().default(0),
+  byPlatform: z
+    .array(z.object({ platform: z.string(), count: z.number(), average: z.number().nullable() }))
+    .default([]),
+  themes: z.array(z.string()).default([]),
+});
+
+export const PresenceCitationsSchema = z.object({
+  total: z.number().default(0),
+  consistent: z.number().default(0),
+  issues: z.array(z.object({ directory: z.string(), problem: z.string() })).default([]),
+  missing: z.array(z.string()).default([]),
+  duplicates: z.array(z.string()).default([]),
+});
+
+export const PresenceSectionSchema = z.object({
+  /** Whether this client has any presence footprint to track. */
+  tracked: z.boolean().default(false),
+  listing: PresenceListingSchema.default({}),
+  reviews: PresenceReviewsSchema.default({}),
+  citations: PresenceCitationsSchema.default({}),
+  mapPackRanks: z
+    .array(z.object({ query: z.string(), location: z.string(), rank: z.number().nullable() }))
+    .default([]),
+});
+
 export const AuditFindingsSchema = z.object({
   domain: coerceString,
   auditDate: z.string().describe("ISO 8601 timestamp"),
   auditVersion: z.literal("1.0"),
+
+  /** Off-site presence + reputation (empty for pure-online clients). */
+  presence: PresenceSectionSchema.default({}),
 
   technicalCrawl: TechnicalCrawlSchema,
   onsiteEEAT: OnsiteEEATSchema,
@@ -482,6 +541,7 @@ export type KeywordIntent = z.infer<typeof KeywordIntentSchema>;
 export type KeywordMetricsEnrichment = z.infer<typeof KeywordMetricsEnrichmentSchema>;
 export type DomainAuthorityRecord = z.infer<typeof DomainAuthorityRecordSchema>;
 export type AuthoritySection = z.infer<typeof AuthoritySectionSchema>;
+export type PresenceSection = z.infer<typeof PresenceSectionSchema>;
 export type Severity = z.infer<typeof SeveritySchema>;
 export type Category = z.infer<typeof CategorySchema>;
 export type Owner = z.infer<typeof OwnerSchema>;

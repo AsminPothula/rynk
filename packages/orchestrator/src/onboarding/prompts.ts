@@ -53,6 +53,39 @@ information into a ClientContext JSON object and output ONLY the JSON.
   "cms":                  string | null  // e.g. "WordPress" — null if unknown
   "hosting":              string | null  // e.g. "WP Engine" — null if unknown
   "cdn":                  string | null  // e.g. "Cloudflare" — null if unknown
+  "brand": {                       // identity + voice — fill what the site shows, else leave empty
+    "description":        string   // one line: what the business is / does
+    "valueProposition":   string   // the core promise — why choose them
+    "differentiators":    string[] // what sets them apart (default [])
+    "personas": [ { "name": string, "description": string } ]  // who they serve (default [])
+    "voice": {
+      "tone":             string   // how they sound, e.g. "warm, plain-spoken, confident"
+      "personality":      string[] // adjectives (default [])
+      "avoid":            string[] // words/claims to avoid — only if the site states them (default [])
+    }
+    "contentThemes":      string[] // recurring topics / content pillars (default [])
+    "products": [ { "name": string, "description": string } ]  // named products / services (default [])
+    "guidelines":         string   // explicit brand/writing rules if stated, else ""
+    "languages":          string[] // content languages, e.g. ["en"] (default [])
+    "markets":            string[] // geographic / content markets served (default [])
+    "assets": {
+      "logoUrl":          string   // logo image URL if obvious, else ""
+      "brandColors":      string[] // leave [] — do not guess
+      "photoUrls":        string[] // representative image URLs, else []
+    }
+  }
+  "presence": {                    // physical presence + reputation — leave empty for pure-online businesses
+    "hasPhysicalPresence": boolean // true if there is an address, service area, hours, or booking
+    "locations": [ { "label": string, "address": string, "phone": string } ]  // default []
+    "serviceAreas":       string[] // cities / regions served (default [])
+    "primaryCategory":    string   // business category, GBP-style e.g. "Barber shop", "Italian restaurant"
+    "secondaryCategories":string[] // (default [])
+    "hours": [ { "day": string, "open": string, "close": string } ]  // "Mon", "09:00" (default [])
+    "services": [ { "name": string, "price": string, "description": string } ]  // price is a string ("$30", "from $40"); default []
+    "bookingUrl":         string   // appointment / booking link if present, else ""
+    "reviewProfiles": [ { "platform": string, "url": string } ]  // linked Google/Yelp/Facebook review pages (default [])
+    "directoryListings": [ { "name": string, "url": string } ]  // known directory listings (default [])
+  }
 }
 
 ## Tool use policy
@@ -158,6 +191,42 @@ hosting
 cdn
   Use the value from the TECH DETECTION section if not "unknown".
   Set to null if unknown.
+
+brand
+  Infer identity + voice from the scraped copy. This is important for EVERY
+  client — it drives the dashboard profile and the content generators.
+  - description: one plain sentence of what the business is/does.
+  - valueProposition: the core promise, from the homepage hero / "why us".
+  - differentiators: concrete things that set them apart. [] if none stated.
+  - personas: who they serve, from "who we serve" / testimonials / case studies.
+    Each { name, description }. [] if not clear — do NOT invent personas.
+  - voice.tone: describe how the site actually reads (e.g. "warm and casual"
+    vs "formal and technical"). voice.personality: 2-4 adjectives. voice.avoid:
+    [] unless the site explicitly states words/claims to avoid.
+  - contentThemes: recurring topics from services + blog + navigation.
+  - products: named products/service lines with a short description.
+  - guidelines: "" unless the site states explicit brand or writing rules.
+  - languages: content language(s) you observe (["en"] etc.).
+  - markets: geographies served (countries/regions/cities) if stated.
+  - assets.logoUrl / photoUrls: obvious image URLs from the content; brandColors
+    always []. Never guess a value you cannot see.
+  Leave any field you cannot determine at its empty default. Do NOT fabricate.
+
+presence
+  Physical presence + reputation. Fill it for any business with a location,
+  service area, hours, menu/prices, booking, or review profiles; leave empty
+  for a pure-online business (and set hasPhysicalPresence:false).
+  - hasPhysicalPresence: true if there is an address, service area, hours, or booking link.
+  - locations: from /contact/ and footer (NOT legal pages) — { label, address, phone }.
+  - serviceAreas: explicit cities/regions served ("Plano", "Frisco", "North Dallas").
+  - primaryCategory: the specific business category ("Barber shop", "Family dentist").
+  - secondaryCategories: additional categories/services offered.
+  - hours: opening hours if listed.
+  - services: services with prices if a menu/price list exists (price is a string).
+  - bookingUrl: any "Book now" / appointment / reservation link.
+  - reviewProfiles: links to their Google/Yelp/Facebook review pages if present.
+  - directoryListings: directory links (Yelp, Apple Maps, etc.) found in the content.
+  Do NOT fabricate addresses, hours, prices, or profiles — leave empty if unseen.
 
 ## Output rules
 
