@@ -1,40 +1,38 @@
 import { z } from "zod";
 
-
-//stores the results page for one keyword at a time
+// The SERP results page for one keyword at a single point in time.
 export const SerpSnapshotSchema = z.object({
-  domain: z.string(), //client domain
+  domain: z.string(), // client domain
   keyword: z.string(),
   takenAt: z.string().datetime(),
   results: z.array(
-    z.object({ //SERP page result array
+    z.object({
       position: z.number().int().positive(),
       url: z.string().url(),
       title: z.string(),
       description: z.string().nullable(),
-      domain: z.string(), 
+      domain: z.string(),
     }),
   ),
 });
 
-//stores the website rank for keyword
+// The client's own rank for a keyword on a given engine.
 export const RankSnapshotSchema = z.object({
-  // domain: z.string(), //where client's domain ranks -- is domain necessary here either?
+  domain: z.string(),
   keyword: z.string(),
   takenAt: z.string().datetime(),
   rank: z.number().int().positive().nullable(),
   ai_engine: z.enum(["google", "chatgpt", "perplexity"]),
 });
 
-//google search console data - this is taken weekly
-
+// Google Search Console data — taken weekly.
 export const GscSnapshotSchema = z.object({
   domain: z.string(),
   weekStarting: z.string(),
   impressions: z.number().int().nonnegative(),
   clicks: z.number().int().nonnegative(),
   avgPosition: z.number().nullable(),
-  topQueries: z.array( //which queries led to impressions
+  topQueries: z.array(
     z.object({
       query: z.string(),
       impressions: z.number().int().nonnegative(),
@@ -44,13 +42,13 @@ export const GscSnapshotSchema = z.object({
   ),
 });
 
-//google analytics data 
+// Google Analytics data — taken weekly.
 export const GaSnapshotSchema = z.object({
   domain: z.string(),
-  weekStarting: z.string(), //also weekly data
+  weekStarting: z.string(),
   sessions: z.number().int().nonnegative(),
   conversions: z.number().int().nonnegative(),
-  topPages: z.array( //which pages perform the best
+  topPages: z.array(
     z.object({
       url: z.string().url(),
       sessions: z.number().int().nonnegative(),
@@ -59,15 +57,15 @@ export const GaSnapshotSchema = z.object({
   ),
 });
 
-//stores domain authority
+// Domain Authority score (0-100).
 export const DaSnapshotSchema = z.object({
   domain: z.string(),
   takenAt: z.string().datetime(),
-  da: z.number().min(0).max(100).nullable(), //1-100 score made by Moz
+  da: z.number().min(0).max(100).nullable(),
   source: z.enum(["moz", "ahrefs"]),
 });
 
-//backlink totals and stores the urls that have changed since last check
+// Backlink totals + which referring URLs changed since the last check.
 export const BacklinkSnapshotSchema = z.object({
   domain: z.string(),
   takenAt: z.string().datetime(),
@@ -75,8 +73,8 @@ export const BacklinkSnapshotSchema = z.object({
   referringDomains: z.number().int().nonnegative(),
   newSinceLast: z.array(
     z.object({
-      url: z.string().url(), //url of the web page that referred client  
-      referringDomain: z.string(), //domain of the web page that referred client? idk why necessary
+      url: z.string().url(),
+      referringDomain: z.string(),
       firstSeen: z.string(),
     }),
   ),
@@ -89,7 +87,7 @@ export const BacklinkSnapshotSchema = z.object({
   ),
 });
 
-//compares the delta between two serp snapsshots per keyword
+// The delta between two SERP snapshots for one keyword.
 export const SerpDeltaSchema = z.object({
   keyword: z.string(),
   from: z.string().datetime(),
@@ -103,7 +101,7 @@ export const SerpDeltaSchema = z.object({
   droppedFromTop10: z.array(
     z.object({
       url: z.string().url(),
-      position: z.number().int().positive(),
+      lastPosition: z.number().int().positive(),
     }),
   ),
   positionChanges: z.array(
@@ -113,20 +111,21 @@ export const SerpDeltaSchema = z.object({
       to: z.number().int().positive(),
     }),
   ),
+  // The client's own position change (only meaningful if in top 100 both times).
   domainPositionChange: z.number().nullable(),
   triggerRestrategy: z.boolean(),
   triggerReason: z.string().nullable(),
 });
 
-//this is the summary that we're sending perhaps through email .. maybe will show on dash
+// Weekly summary — for email / the dashboard.
 export const WeeklyDigestSchema = z.object({
   domain: z.string(),
   weekStarting: z.string(),
-  weekEnding: z.string(), //why is this necessary? can't we use weekStarting + 7?
+  weekEnding: z.string(),
   keywordCount: z.number().int().nonnegative(),
   rankGains: z.number().int().nonnegative(),
   rankLosses: z.number().int().nonnegative(),
-  newCompetitors: z.number().int().nonnegative(), //comes from new in rankings
+  newCompetitors: z.number().int().nonnegative(),
   gscTrend: z.enum(["up", "down", "flat"]),
   gaTrend: z.enum(["up", "down", "flat"]),
   daChange: z.number().nullable(),
@@ -139,7 +138,7 @@ export const WeeklyDigestSchema = z.object({
   ),
 });
 
-//types are exported like this so we don't have to redefine these types, infers it from the schema
+// Types inferred from the schemas — single source of truth.
 export type SerpSnapshot = z.infer<typeof SerpSnapshotSchema>;
 export type RankSnapshot = z.infer<typeof RankSnapshotSchema>;
 export type GscSnapshot = z.infer<typeof GscSnapshotSchema>;

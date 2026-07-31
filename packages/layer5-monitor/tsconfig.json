@@ -1,9 +1,10 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "rootDir": "./src",
-    "outDir": "./dist"
-  },
-  "include": ["src/**/*"],
-  "references": [{ "path": "../core" }, { "path": "../clients" }]
-}
+  "name": "@rynk/layer5-monitor",
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+      "rootDir": "./src",
+      "outDir": "./dist"
+    },
+    "include": ["src/**/*"],
+    "references": [{ "path": "../core" }, { "path": "../clients" }]
+  }
