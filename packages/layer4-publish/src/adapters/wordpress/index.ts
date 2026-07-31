@@ -34,12 +34,9 @@ import { applyAddNapBlock } from "./handlers/add-nap-block.js";
 import { applyUpdatePage } from "./handlers/update-page.js";
 import { applyInsertInternalLink } from "./handlers/insert-internal-link.js";
 import { applyCreateAuthor } from "./handlers/create-author.js";
-<<<<<<< HEAD
 import { applyAddRedirect } from "./handlers/add-redirect.js";
 import { applyAssignAuthor } from "./handlers/assign-author.js";
-=======
 import { CachePurger, type CloudflarePurgeConfig } from "../../cache/purger.js";
->>>>>>> d019dfa2f9041e2b75f71c20232cd41fa13af5c4
 
 const log = createLogger("layer4.wordpress");
 

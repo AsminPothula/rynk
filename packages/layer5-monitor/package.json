@@ -1,11 +1,8 @@
 {
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
   "name": "@rynk/layer5-monitor",
   "version": "0.1.0",
   "private": true,
-  "description": "rynk.ai Layer 5 — Monitor Agent",
+  "description": "rynk.ai Layer 5 — Monitor Agent. Monitors and alerts on changes to a client's search presence.",
   "type": "module",
   "exports": {
     "./schema": "./dist/schema/index.js"
@@ -16,44 +13,16 @@
     "start": "tsx src/index.ts",
     "dev": "tsx watch src/index.ts",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
-    "test": "node --env-file=../../.env --import tsx tests/run.ts"
+    "test": "tsx tests/run.ts",
+    "verify": "tsx scripts/verify-metrics-watch.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
     "@rynk/clients": "*",
+    "@rynk/core": "*",
     "@rynk/layer1-audit": "*",
     "@rynk/layer2-strategy": "*",
-    "@rynk/core": "*",
     "dotenv": "^16.4.5",
     "zod": "^3.24.1"
-=======
->>>>>>> d019dfa2f9041e2b75f71c20232cd41fa13af5c4
-    "name": "@rynk/layer5-monitor",
-    "version": "0.1.0",
-    "private": true,
-    "description": "rynk.ai Layer 5 — Monitor Agent. Monitor and alert on changes to a website.",
-    "type": "module",
-    "main": "./dist/index.js",
-    "scripts": {
-      "build": "tsc -b",
-      "start": "tsx src/index.ts",
-      "dev": "tsx watch src/index.ts",
-      "clean": "rm -rf dist tsconfig.tsbuildinfo",
-      "test": "tsx tests/run.ts",
-      "verify": "tsx scripts/verify-metrics-watch.ts"
-    },
-    "dependencies": {
-      "@anthropic-ai/sdk": "^0.39.0",
-      "@rynk/clients": "*",
-      "@rynk/core": "*",
-      "dotenv": "^16.4.5",
-      "zod": "^3.24.1"
-    }
-<<<<<<< HEAD
-  }
-  
-=======
->>>>>>> 817ffb8 (feat(layer5): implement Person 2 metrics snapshots, digest, and metrics-watch)
   }
 }
->>>>>>> d019dfa2f9041e2b75f71c20232cd41fa13af5c4
