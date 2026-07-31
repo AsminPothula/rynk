@@ -213,6 +213,12 @@ export interface AuditInputForPrompt {
 export function buildUserMessage(
   audit: AuditInputForPrompt,
   clientContext: ClientContext,
+  /**
+   * Optional monitor findings — present only when Layer 5 triggers a re-strategy.
+   * Summarizes what changed in the SERPs since the last strategy so this revision
+   * defends/recovers the affected positions instead of re-planning from scratch.
+   */
+  changeContext?: string,
 ): string {
   const auditLabel = audit.format === "json" ? "AUDIT FINDINGS (Layer 1 JSON)" : "AUDIT DOCUMENT";
   const codeFence = audit.format === "json" ? "json" : "";
@@ -237,7 +243,15 @@ ${JSON.stringify(clientContext, null, 2)}
 \`\`\`
 
 ---
+${changeContext ? `
+## MONITOR FINDINGS — WHAT CHANGED SINCE THE LAST STRATEGY
 
+This is a re-strategy triggered by the Layer 5 monitor. The SERP shifts below were detected for the client's tracked keywords since the last plan. Treat them as the priority for this revision: diagnose why the movement likely happened and sequence the sprint plan to defend or recover these positions before anything else.
+
+${changeContext}
+
+---
+` : ""}
 ## YOUR TASK
 
 Produce the complete strategy output JSON as specified in your instructions.
