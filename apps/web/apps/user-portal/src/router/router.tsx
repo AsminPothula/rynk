@@ -41,6 +41,13 @@ const Settings = lazy(() =>
 const Users = lazy(() =>
   import('../pages/Users/Users').then((m) => ({ default: m.Users })),
 );
+const ClientDashboard = lazy(() =>
+  import('../pages/client/ClientDashboard').then((m) => ({ default: m.ClientDashboard })),
+);
+// Dev/demo: view the dashboard with sample data, no auth needed.
+const PreviewDashboard = lazy(() =>
+  import('../pages/client/PreviewDashboard').then((m) => ({ default: m.PreviewDashboard })),
+);
 
 export function Router() {
   const isAuthenticated = useAuthStore(fromAuth.isAuthenticated);
@@ -50,6 +57,9 @@ export function Router() {
       <AuthTokensInterceptor>
         <Suspense>
           <Routes>
+            {/* Always-available dashboard preview (sample data, no auth) */}
+            <Route path="/preview" element={<PreviewDashboard />} />
+            <Route path="/preview/:domain" element={<PreviewDashboard />} />
             {isAuthenticated ? (
               <>
                 <Route
@@ -79,6 +89,7 @@ export function Router() {
                     path={NavigationRoutes.Settings}
                     element={<Settings />}
                   />
+                  <Route path="/clients/:domain" element={<ClientDashboard />} />
                   <Route
                     path="/"
                     element={<Navigate to={NavigationRoutes.Dashboard} />}
