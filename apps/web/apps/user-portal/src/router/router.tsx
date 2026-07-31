@@ -48,6 +48,10 @@ const ClientDashboard = lazy(() =>
 const PreviewDashboard = lazy(() =>
   import('../pages/client/PreviewDashboard').then((m) => ({ default: m.PreviewDashboard })),
 );
+// Public: "Try rynk on your site" instant scan (marketing CTA target).
+const TryRynk = lazy(() =>
+  import('../pages/TryRynk').then((m) => ({ default: m.TryRynk })),
+);
 
 export function Router() {
   const isAuthenticated = useAuthStore(fromAuth.isAuthenticated);
@@ -60,6 +64,8 @@ export function Router() {
             {/* Always-available dashboard preview (sample data, no auth) */}
             <Route path="/preview" element={<PreviewDashboard />} />
             <Route path="/preview/:domain" element={<PreviewDashboard />} />
+            {/* Public "Try rynk on your site" instant scan */}
+            <Route path="/try" element={<TryRynk />} />
             {isAuthenticated ? (
               <>
                 <Route
