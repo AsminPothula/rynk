@@ -1,0 +1,1 @@
+export { AuthTokensInterceptor } from 'shared';

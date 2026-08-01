@@ -14,6 +14,7 @@ import { runStrategyAgent } from "./agents/strategy-agent.js";
 export { runStrategyAgent } from "./agents/strategy-agent.js";
 export { loadAuditInput } from "./utils/audit-loader.js";
 export { saveStrategyOutput } from "./utils/output-writer.js";
+export { ideateKeywords, type IdeatedKeyword, type IdeateKeywordsOptions } from "./keyword-ideation.js";
 
 const log = createLogger("layer2");
 

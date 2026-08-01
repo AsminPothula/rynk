@@ -266,3 +266,8 @@ if (invokedDirectly) {
 
 export { clientJsonPath, clientMdPath, loadClientJson } from "./onboarding/client-store.js";
 export { runOnboardingAgent } from "./onboarding/onboard-agent.js";
+export {
+  runQuickScan,
+  QuickScanResultSchema,
+  type QuickScanResult,
+} from "./quick-scan/quick-scan.js";

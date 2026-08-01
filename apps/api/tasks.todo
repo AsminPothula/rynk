@@ -1,0 +1,88 @@
+tasks:
+  ✔ Remove microstore reference from starter project @done(24-03-07 15:47)
+  ☐ Setup database creation name dynamically
+  ☐ Setup generic file module
+  ☐ Resolve migration files generation with / (slashes) 
+  ☐ Server not restarting after .env changes 
+
+Docker:
+  ☐ volume sync issue.
+
+User Invitaion API Tasks:
+  ✔ Restrict only admin user to call /user-invite API @done(24-03-07 15:36)
+  ✔ Pass user role and permissions while creating new user through inviattion . Update service method to create user with role and permission once they are available @done(24-03-07 15:37)
+  ✔ Forgot password send email. @done(24-03-07 17:59)
+  ☐ Check all MS auth API's to make changes as per need(E-Mails). 
+  ☐ 
+
+
+  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6W10sInN0YXR1cyI6IkFjdGl2ZSIsInBlcm1pc3Npb25MaXN0IjpbXSwic3ViIjoiMGMzMDI0YmEtODA1Ni00NWI0LTkzYmQtNjk1YTc0MmZiZjRjIiwiaWF0IjoxNzIyNDQ5MDQ3LCJleHAiOjE3MjI0NTI2NDd9.FLzS6gmlrTxLCoM5_V4VnZYOZ7C4K7aBhxW6Fye0X3k
+
+
+Tasks:
+[ ] change aws profile name to 7t-nestjs-starter
+[ ] update .env once everything is working
+[ ] edit docker-compose.yml to use 7t-nestjs-starter profile
+[ ] edit bitbucket_pipeline.yml to use 7t-nestjs-starter profile
+[x] remove processsed-svg-file
+[x] move lib-3d constants to constants.ts
+[ ] master/slave param - shiva 
+[ ] test & verify nested transaction runner - shiva
+[x] add cron-keys API
+  - Remove cron-keys API from auth controller and make a cron controller
+[x] remove unused services/events in email.service.ts
+[x] remove salesforce module and remove salesforce from other logic.
+  - [x] create a ticket to add back salesforce logic to starter
+[ ] - multi-media upload file API route
+[ ] potentially update script donwload package versions
+[x] ensure .env.template matches .env file
+[ ] check with shiva to update node version (and potentially Dockerfile)
+[ ] setup test folder for bitbucket pipeline
+[ ] potentially update bitbucket image to v4. if so, extensively test pipeline to ensure stability.
+[ ] zip up node_modules with build bundle and (potentially) modify script generator to use this.
+[ ] see if jest.config.js is needed.
+[ ] clean up dependencies
+[ ] write script to change project name across all files
+
+Issues/Questions:
+[ ] simplify the API logic for sign up and sign in that is only needed for starter project
+  - What does simplified auth look like?
+
+User API Testing:
+[x] GET `v1/user/profile`
+[x] PUT `v1/user/my-profile`
+[x] POST `v1/user/{userId}/deactivate`
+[x] PUT `v1/user/{userId}/profile`
+
+Multi Media API Testing:
+[ ] POST `v1/multi-media/upload-image`
+[ ] GET `v1/multi-media/{id}`
+
+Health API Testing:
+[x] GET `/status`
+
+Auth API Testing:
+[x] GET `v1/auth/check-email/{email}`
+[x] POST `v1/auth/admin/onboard-system-admin`
+[x] POST `v1/auth/resend-verify-email`
+  - Works if emailVerified not checked in DBeaver.
+[x] POST `v1/auth/refresh-token`
+[x] POST `v1/auth/forgot-password`
+[x] POST `v1/auth/sign-up/password`
+[x] POST `v1/auth/sign-in/password`
+[x] POST `v1/auth/set-password`
+[x] POST `v1/auth/change-password`
+[x] GET `v1/auth/verify-email`
+
+System Variable Testing:
+[x] POST `v1/system-variable`
+
+Dev API Key Testing:
+[x] POST `v1/dev-api-key`
+[x] GET `v1/dev-api-key/test-dev-api-key`
+[x] GET `v1/dev-api-key/test-admin-dev-api-key`
+
+Cron:
+[-] POST `v1/auth/cron-keys`
+  - Need to add cron job logic for at least one job.
+  - Make cron key a string, instead of enum, so it gives flexibility to add new cron jobs without changing the code.

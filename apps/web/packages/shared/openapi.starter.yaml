@@ -1,0 +1,364 @@
+openapi: 3.0.3
+info:
+  title: Starter API
+  description: Generic auth and user management API for the react-web-starter
+  version: '1.0'
+
+paths:
+  /auth/sign-in:
+    post:
+      operationId: signIn
+      tags: [Auth]
+      summary: Sign in with email and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignInDto'
+      responses:
+        '200':
+          description: Successful sign-in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignInResponse'
+        '401':
+          description: Invalid credentials
+
+  /auth/sign-up:
+    post:
+      operationId: signUp
+      tags: [Auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignUpDto'
+      responses:
+        '200':
+          description: Successful sign-up
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignInResponse'
+
+  /auth/refresh-token:
+    post:
+      operationId: refreshToken
+      tags: [Auth]
+      summary: Refresh access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenDto'
+      responses:
+        '200':
+          description: Tokens refreshed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignInResponse'
+
+  /auth/forgot-password:
+    post:
+      operationId: forgotPassword
+      tags: [Auth]
+      summary: Request password reset email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordDto'
+      responses:
+        '200':
+          description: Reset email sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  /auth/set-password:
+    post:
+      operationId: setUserPassword
+      tags: [Auth]
+      summary: Set password using reset token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetUserPasswordDto'
+      responses:
+        '200':
+          description: Password set
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  /auth/change-password:
+    post:
+      operationId: changePassword
+      tags: [Auth]
+      summary: Change password for authenticated user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordDto'
+      responses:
+        '200':
+          description: Password changed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  /auth/check-email:
+    get:
+      operationId: checkEmail
+      tags: [Auth]
+      summary: Check if an email is already registered
+      parameters:
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
+            format: email
+      responses:
+        '200':
+          description: Email check result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckUserEmailResponse'
+
+  /user/profile:
+    get:
+      operationId: getMyProfile
+      tags: [User]
+      summary: Get current user profile
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProfileResponse'
+    put:
+      operationId: updateMyProfile
+      tags: [User]
+      summary: Update current user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMyProfileDto'
+      responses:
+        '200':
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProfileResponse'
+
+  /user/users:
+    get:
+      operationId: getUsers
+      tags: [User]
+      summary: Get paginated list of users
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: number
+            default: 20
+        - name: skip
+          in: query
+          required: false
+          schema:
+            type: number
+            default: 0
+      responses:
+        '200':
+          description: Paginated users list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUsersResponse'
+
+components:
+  schemas:
+    SignInDto:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    SignInResponse:
+      type: object
+      required: [accessToken, refreshToken, userId]
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        userId:
+          type: string
+
+    SignUpDto:
+      type: object
+      required: [email, firstName, lastName, phone, password]
+      properties:
+        email:
+          type: string
+          format: email
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          type: string
+        password:
+          type: string
+
+    RefreshTokenDto:
+      type: object
+      required: [refreshToken]
+      properties:
+        refreshToken:
+          type: string
+
+    ForgotPasswordDto:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+          format: email
+
+    SetUserPasswordDto:
+      type: object
+      required: [userId, token, password]
+      properties:
+        userId:
+          type: string
+        token:
+          type: string
+        password:
+          type: string
+
+    ChangePasswordDto:
+      type: object
+      required: [oldPassword, newPassword]
+      properties:
+        oldPassword:
+          type: string
+        newPassword:
+          type: string
+
+    CheckUserEmailResponse:
+      type: object
+      required: [isUserExists]
+      properties:
+        isUserExists:
+          type: boolean
+
+    MessageResponse:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+
+    UserStatus:
+      type: string
+      enum: [Active, Deactivated, Inactive, Invited]
+
+    UserProfileRole:
+      type: string
+      enum: [admin, user, guest]
+
+    GetUserRoleResponse:
+      type: object
+      required: [userRoleId, role]
+      properties:
+        userRoleId:
+          type: string
+        role:
+          $ref: '#/components/schemas/UserProfileRole'
+
+    GetProfileResponse:
+      type: object
+      required:
+        [
+          id,
+          firstName,
+          lastName,
+          email,
+          phone,
+          status,
+          roles,
+          isGuest,
+          isEmailVerified,
+        ]
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        status:
+          $ref: '#/components/schemas/UserStatus'
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetUserRoleResponse'
+        isGuest:
+          type: boolean
+        isEmailVerified:
+          type: boolean
+
+    UpdateMyProfileDto:
+      type: object
+      required: [firstName, lastName]
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+
+    PaginatedUsersResponse:
+      type: object
+      required: [items, total, skip, limit]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetProfileResponse'
+        total:
+          type: number
+        skip:
+          type: number
+        limit:
+          type: number

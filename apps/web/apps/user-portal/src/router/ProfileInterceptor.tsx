@@ -1,0 +1,1 @@
+export { ProfileInterceptor } from 'shared';
