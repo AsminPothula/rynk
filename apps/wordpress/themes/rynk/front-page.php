@@ -67,7 +67,7 @@ $platforms  = rynk_platforms();
 							</div>
 
 							<form
-								action="<?php echo esc_url( home_url( '/sign-in' ) ); ?>"
+								action="<?php echo esc_url( rynk_app_url( '/try' ) ); ?>"
 								class="group relative flex w-full items-center gap-2 rounded-full bg-white/[0.06] ring-1 ring-white/12 py-2 pl-6 pr-2 text-brand-text shadow-[0_20px_50px_-20px_rgba(0,0,0,0.6)]"
 							>
 								<?php echo rynk_icon( 'sparkles', 'h-4 w-4 text-brand-violetSoft' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
