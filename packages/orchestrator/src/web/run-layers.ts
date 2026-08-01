@@ -16,7 +16,7 @@
 import { resolve } from "node:path";
 import { createLogger, moduleDir } from "@rynk/core";
 import { runLayer1 } from "@rynk/layer1-audit";
-import { runStrategyAgent, saveStrategyOutput } from "@rynk/layer2-strategy";
+import { runStrategyAgent, saveStrategyOutput, ideateKeywords } from "@rynk/layer2-strategy";
 import { composeManifest, saveExecutionManifest } from "@rynk/layer3-generate";
 import { loadClientJson, clientJsonExists } from "../onboarding/client-store.js";
 import { writeStatus } from "./run-status.js";
@@ -53,9 +53,25 @@ async function main(): Promise<void> {
     // ── Layer 2 — strategy ───────────────────────────────────────────────
     writeStatus(runsDir, domain, "layer2");
     log.info("Layer 2 start", { domain });
+
+    // Pre-step: ideate + validate keyword opportunities from the full client
+    // context, then feed them into the strategy agent. Non-fatal — if ideation
+    // fails, strategy still runs off the audit + seed keywords alone.
+    let ideatedKeywords;
+    try {
+      ideatedKeywords = await ideateKeywords(client);
+      log.info("keyword ideation done", { domain, count: ideatedKeywords.length });
+    } catch (err) {
+      log.warn("keyword ideation failed — strategy will run without it", {
+        domain,
+        error: (err as Error).message,
+      });
+    }
+
     const strategy = await runStrategyAgent({
       audit: { content: JSON.stringify(findings, null, 2), format: "json" },
       clientContext: client,
+      ideatedKeywords,
     });
     const l2Paths = saveStrategyOutput(strategy, runsDir);
     log.info("Layer 2 done", { domain });

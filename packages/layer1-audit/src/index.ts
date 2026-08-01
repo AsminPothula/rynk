@@ -15,6 +15,7 @@ import { getClientByDomain } from "@rynk/clients";
 import { runDataCollectionAgent } from "./agents/data-collection-agent.js";
 import { runOffsiteResearchAgent } from "./agents/offsite-research-agent.js";
 import { runSynthesiserAgent } from "./agents/synthesiser-agent.js";
+import { collectPresence } from "./collectors/presence.js";
 import { saveAuditFindings, type SaveAuditResult } from "./utils/output-writer.js";
 import { preComputeInventory } from "./utils/crawl-precompute.js";
 import { enrichKeywordsAndAuthority } from "./utils/keyword-enrichment.js";
@@ -131,6 +132,23 @@ export async function runLayer1(opts: RunLayer1Options): Promise<RunLayer1Result
     preComputed,
     enrichment,
   });
+
+  // Presence & reputation section — collected deterministically from the
+  // PresenceDataProvider (not the LLM synthesiser). Runs for any client with an
+  // off-site footprint; returns an empty section for pure-online clients. Never
+  // fail the whole audit if presence collection errors — log and keep empty.
+  try {
+    findings.presence = await collectPresence(client);
+    log.info("presence section collected", {
+      domain: client.domain,
+      tracked: findings.presence.tracked,
+    });
+  } catch (err) {
+    log.warn("presence collection failed — leaving section empty", {
+      domain: client.domain,
+      error: (err as Error).message,
+    });
+  }
 
   const paths = saveAuditFindings(findings, {
     rootDir: opts.rootDir,

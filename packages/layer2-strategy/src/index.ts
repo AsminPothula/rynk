@@ -10,6 +10,7 @@ import {
 import { loadAuditInput } from "./utils/audit-loader.js";
 import { saveStrategyOutput } from "./utils/output-writer.js";
 import { runStrategyAgent } from "./agents/strategy-agent.js";
+import { ideateKeywords } from "./keyword-ideation.js";
 
 export { runStrategyAgent } from "./agents/strategy-agent.js";
 export { loadAuditInput } from "./utils/audit-loader.js";
@@ -105,7 +106,15 @@ async function main(): Promise<void> {
   const clientContext = resolveClientContext(auditPath, audit.content, audit.format);
   log.info("client context resolved", { domain: clientContext.domain });
 
-  const strategy = await runStrategyAgent({ audit, clientContext });
+  let ideatedKeywords;
+  try {
+    ideatedKeywords = await ideateKeywords(clientContext);
+    log.info("keyword ideation done", { count: ideatedKeywords.length });
+  } catch (err) {
+    log.warn("keyword ideation failed — continuing without it", { error: (err as Error).message });
+  }
+
+  const strategy = await runStrategyAgent({ audit, clientContext, ideatedKeywords });
 
   const { jsonPath, mdPath } = saveStrategyOutput(strategy, OUTPUT_ROOT);
   log.info("Layer 2 complete", { jsonPath, mdPath });

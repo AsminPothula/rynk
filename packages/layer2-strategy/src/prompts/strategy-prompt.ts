@@ -1,4 +1,5 @@
 import type { ClientContext } from "@rynk/core";
+import type { IdeatedKeyword } from "../keyword-ideation.js";
 
 export const STRATEGY_AGENT_SYSTEM_PROMPT = `
 You are the rynk.ai Strategy Agent — a senior SEO strategist and content architect.
@@ -210,6 +211,35 @@ export interface AuditInputForPrompt {
   format: "markdown" | "json";
 }
 
+/** Render ideated + validated keyword opportunities as a compact table block. */
+function formatKeywordOpportunities(keywords: IdeatedKeyword[]): string {
+  const rows = keywords
+    .map((k) => {
+      const vol = k.searchVolume ?? "—";
+      const diff = k.difficulty ?? "—";
+      const cpc = k.cpc != null ? `$${k.cpc}` : "—";
+      return `| ${k.keyword} | ${k.intent} | ${vol} | ${diff} | ${cpc} | ${k.rationale} |`;
+    })
+    .join("\n");
+
+  return `
+## KEYWORD OPPORTUNITIES (ideated by rynk, validated with real metrics)
+
+These candidates were generated from the client's full context by an LLM, then
+enriched with real search volume / difficulty / CPC by the keyword data provider.
+Volume/difficulty are real numbers; a "—" means the provider had no data (common
+for genuine long-tail — do not discard those solely for missing volume). Use these
+to seed the topic clusters, pillar/spoke keywords, and content briefs below.
+Prefer high-intent, winnable terms over raw volume.
+
+| keyword | intent | volume | difficulty | cpc | why it fits |
+| --- | --- | --- | --- | --- | --- |
+${rows}
+
+---
+`;
+}
+
 export function buildUserMessage(
   audit: AuditInputForPrompt,
   clientContext: ClientContext,
@@ -219,9 +249,16 @@ export function buildUserMessage(
    * defends/recovers the affected positions instead of re-planning from scratch.
    */
   changeContext?: string,
+  /**
+   * Optional ideated + validated keyword opportunities (Layer 2 pre-step). When
+   * present, they seed the cluster map and content briefs with winnable terms.
+   */
+  ideatedKeywords?: IdeatedKeyword[],
 ): string {
   const auditLabel = audit.format === "json" ? "AUDIT FINDINGS (Layer 1 JSON)" : "AUDIT DOCUMENT";
   const codeFence = audit.format === "json" ? "json" : "";
+  const keywordBlock =
+    ideatedKeywords && ideatedKeywords.length ? formatKeywordOpportunities(ideatedKeywords) : "";
 
   return `
 ## ${auditLabel}
@@ -243,7 +280,7 @@ ${JSON.stringify(clientContext, null, 2)}
 \`\`\`
 
 ---
-${changeContext ? `
+${keywordBlock}${changeContext ? `
 ## MONITOR FINDINGS — WHAT CHANGED SINCE THE LAST STRATEGY
 
 This is a re-strategy triggered by the Layer 5 monitor. The SERP shifts below were detected for the client's tracked keywords since the last plan. Treat them as the priority for this revision: diagnose why the movement likely happened and sequence the sprint plan to defend or recover these positions before anything else.

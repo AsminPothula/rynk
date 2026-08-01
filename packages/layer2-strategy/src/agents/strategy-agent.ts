@@ -17,6 +17,7 @@ import {
   buildUserMessage,
   type AuditInputForPrompt,
 } from "../prompts/strategy-prompt.js";
+import type { IdeatedKeyword } from "../keyword-ideation.js";
 
 const log = createLogger("layer2.strategy");
 
@@ -32,6 +33,12 @@ export interface RunStrategyOptions {
    * prioritizes defending/recovering the affected positions.
    */
   changeContext?: string;
+  /**
+   * Ideated + validated keyword opportunities (Layer 2 pre-step). When present,
+   * they are injected into the prompt to seed clusters and content briefs with
+   * winnable, high-intent terms grounded in real metrics.
+   */
+  ideatedKeywords?: IdeatedKeyword[];
 }
 
 export async function runStrategyAgent(opts: RunStrategyOptions): Promise<StrategyOutput> {
@@ -43,7 +50,12 @@ export async function runStrategyAgent(opts: RunStrategyOptions): Promise<Strate
   const safeContent = truncateToTokenBudget(opts.audit.content, 140_000);
   const safeAudit: AuditInputForPrompt = { ...opts.audit, content: safeContent };
 
-  const userMessage = buildUserMessage(safeAudit, opts.clientContext, opts.changeContext);
+  const userMessage = buildUserMessage(
+    safeAudit,
+    opts.clientContext,
+    opts.changeContext,
+    opts.ideatedKeywords,
+  );
 
   log.info("running strategy agent", {
     model,
