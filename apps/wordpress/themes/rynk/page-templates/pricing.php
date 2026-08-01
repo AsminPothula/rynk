@@ -166,7 +166,7 @@ $tier_styles = rynk_tier_styles();
 				</div>
 
 				<form
-					action="<?php echo esc_url( home_url( '/sign-in' ) ); ?>"
+					action="<?php echo esc_url( rynk_app_url( '/try' ) ); ?>"
 					class="group relative ml-auto min-w-0 flex w-[75%] items-center gap-2 rounded-full bg-white/[0.06] ring-1 ring-white/12 py-2 pl-6 pr-2 text-brand-text"
 				>
 					<?php echo rynk_icon( 'sparkles', 'h-4 w-4 text-brand-violetSoft' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>

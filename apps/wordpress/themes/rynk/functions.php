@@ -99,6 +99,26 @@ function rynk_home_link_class(): string {
 }
 
 /**
+ * URL into the rynk client app (the separate dashboard SPA) — e.g. the
+ * "Try rynk" instant-scan page at /try.
+ *
+ * The dashboard lives on its own host. Set RYNK_APP_URL in wp-config.php to its
+ * base (e.g. "https://app.rynk.ai") once it's deployed. Until then this falls
+ * back to the on-site "coming soon" page so the scan forms never point at a
+ * dead link.
+ *
+ * @param string $path Path within the app, e.g. "/try".
+ * @return string
+ */
+function rynk_app_url( string $path = '' ): string {
+	$base = defined( 'RYNK_APP_URL' ) ? (string) RYNK_APP_URL : '';
+	if ( '' === $base ) {
+		return home_url( '/sign-in' ); // graceful placeholder until the app is live
+	}
+	return rtrim( $base, '/' ) . '/' . ltrim( $path, '/' );
+}
+
+/**
  * Theme supports.
  *
  * @return void
