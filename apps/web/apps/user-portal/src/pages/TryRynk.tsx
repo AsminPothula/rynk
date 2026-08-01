@@ -57,13 +57,8 @@ export function TryRynk() {
         }}
       />
       <header className="border-b border-white/5">
-        <div className="mx-auto flex h-16 max-w-3xl items-center gap-2.5 px-6">
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-brand-blue to-brand-violet">
-            <span className="h-3.5 w-3.5 rounded-sm bg-white/90" />
-          </span>
-          <span className="font-serif text-[19px] font-medium tracking-tight">
-            rynk<span className="text-brand-violetSoft">.ai</span>
-          </span>
+        <div className="mx-auto flex h-16 max-w-3xl items-center px-6">
+          <img src="/rynklogo.png" alt="rynk.ai" className="h-9 w-auto" />
         </div>
       </header>
 
