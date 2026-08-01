@@ -38,7 +38,7 @@ function rynk_logo(): void {
 
 	if ( '' !== $logo ) {
 		printf(
-			'<img src="%s" alt="rynk" class="h-8 w-auto transition-transform group-hover:scale-105" decoding="async" />',
+			'<img src="%s" alt="rynk" class="h-12 w-auto transition-transform group-hover:scale-105" decoding="async" />',
 			esc_url( get_theme_file_uri( $logo ) )
 		);
 		return;

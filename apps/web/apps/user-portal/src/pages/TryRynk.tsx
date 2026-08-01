@@ -58,7 +58,7 @@ export function TryRynk() {
       />
       <header className="border-b border-white/5">
         <div className="mx-auto flex h-16 max-w-3xl items-center px-6">
-          <img src="/rynklogo.png" alt="rynk.ai" className="h-9 w-auto" />
+          <img src="/rynklogo.png" alt="rynk.ai" className="h-12 w-auto" />
         </div>
       </header>
 

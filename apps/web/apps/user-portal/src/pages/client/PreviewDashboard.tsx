@@ -26,7 +26,7 @@ export function PreviewDashboard() {
       <header className="sticky top-0 z-50 border-b border-white/5 bg-brand-ink/70 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-screen-xl items-center justify-between px-6">
           <Link to="/preview" className="flex items-center gap-2.5">
-            <img src="/rynklogo.png" alt="rynk.ai" className="h-9 w-auto" />
+            <img src="/rynklogo.png" alt="rynk.ai" className="h-12 w-auto" />
             <span className="rounded-full bg-white/5 px-2 py-0.5 font-mono text-[10px] text-brand-textMute ring-1 ring-white/10">
               dashboard preview
             </span>

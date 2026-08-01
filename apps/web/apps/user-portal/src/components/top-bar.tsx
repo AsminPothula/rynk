@@ -19,7 +19,7 @@ export function TopBar() {
       <div className="mx-auto flex h-16 max-w-screen-2xl items-center justify-between px-6">
         <div className="flex items-center gap-8">
           <Link to="/dashboard" className="flex items-center">
-            <img src="/rynklogo.png" alt="rynk.ai" className="h-9 w-auto" />
+            <img src="/rynklogo.png" alt="rynk.ai" className="h-12 w-auto" />
           </Link>
           <nav className="flex items-center gap-6">
             {GLOBAL_NAV.map((item) => (
