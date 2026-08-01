@@ -11,7 +11,7 @@
  */
 
 import { z } from "zod";
-import { runAgent, extractJson, createLogger } from "@rynk/core";
+import { runAgent, extractJson, createLogger, type ServerTool } from "@rynk/core";
 import { makeFirecrawlClient } from "@rynk/layer1-audit";
 
 const log = createLogger("quick-scan");
@@ -32,12 +32,26 @@ export const QuickScanStrategyPointSchema = z.object({
   impact: z.enum(["high", "medium", "low"]),
 });
 
+export const QuickScanCompetitorSchema = z.object({
+  name: z.string(),
+  /** Bare domain if known, else "". */
+  domain: z.string().default(""),
+  /** One line on why they're a competitor / what they're winning at. */
+  note: z.string(),
+});
+
 export const QuickScanResultSchema = z.object({
   domain: z.string(),
   scannedAt: z.string(),
   /** One-line hook for the prospect, e.g. "3 quick wins + 2 bigger opportunities." */
   headline: z.string(),
   businessType: z.string(),
+  /** What rynk understood the business does (a taste of onboarding). */
+  summary: z.string(),
+  /** Who rynk understood they serve. */
+  targetCustomer: z.string().default(""),
+  /** 1-2 likely competitors. */
+  competitors: z.array(QuickScanCompetitorSchema).min(1).max(2),
   auditPoints: z.array(QuickScanAuditPointSchema).min(3).max(7),
   strategyPoints: z.array(QuickScanStrategyPointSchema).min(3).max(5),
 });
@@ -81,6 +95,11 @@ Output ONLY this JSON — nothing else:
   "domain": string,
   "headline": string,        // one punchy line, e.g. "4 quick wins and 2 bigger opportunities"
   "businessType": string,    // what kind of business this is, in a few words
+  "summary": string,         // one sentence: what this business does (what rynk understood)
+  "targetCustomer": string,  // one short phrase: who they serve
+  "competitors": [           // 1-2 likely competitors
+    { "name": string, "domain": string, "note": string }
+  ],
   "auditPoints": [           // 5-7 issues visible from a quick scan
     { "severity": "high"|"medium"|"low", "category": string, "title": string, "detail": string }
   ],
@@ -90,6 +109,13 @@ Output ONLY this JSON — nothing else:
 }
 
 Rules:
+- summary + targetCustomer: a quick taste of what rynk understood about the
+  business from its site — one plain sentence each.
+- competitors: 1-2 real businesses competing for the same customers. Use
+  web_search to find them (e.g. "{businessType} in {location}" or "{service}
+  near {city}"), then give the name, bare domain if you find it, and one line on
+  what they seem to be winning at. If you truly can't find any, name one
+  plausible category peer and say so in the note.
 - auditPoints: exactly 5-7. Real, specific issues you can see — missing/weak meta
   titles & descriptions, missing schema/structured data, thin or missing key
   pages, no clear H1, no visible NAP (name/address/phone) or booking/CTA, no
@@ -116,12 +142,19 @@ export async function runQuickScan(domain: string): Promise<QuickScanResult> {
     throw new Error(`Could not read ${domain}. Check the URL is reachable.`);
   }
 
+  // web_search is used only to find 1-2 real competitors; everything else comes
+  // from the scraped pages.
+  const serverTools: ServerTool[] = [
+    { type: "web_search_20250305", name: "web_search", max_uses: 3 },
+  ];
+
   const result = await runAgent({
     system: QUICK_SCAN_PROMPT,
     userMessage: `Domain: ${domain}\n\nScraped pages:\n\n${scraped}\n\nOutput ONLY the quick-scan JSON.`,
     tools: [],
+    serverTools,
     maxOutputTokens: 3_000,
-    maxIterations: 2,
+    maxIterations: 5, // room for a couple web searches + the final JSON
     logger: log,
   });
 

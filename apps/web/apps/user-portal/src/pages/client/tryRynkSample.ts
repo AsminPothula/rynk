@@ -14,11 +14,19 @@ export interface QuickScanStrategyPoint {
   detail: string;
   impact: 'high' | 'medium' | 'low';
 }
+export interface QuickScanCompetitor {
+  name: string;
+  domain: string;
+  note: string;
+}
 export interface QuickScanResult {
   domain: string;
   scannedAt: string;
   headline: string;
   businessType: string;
+  summary: string;
+  targetCustomer: string;
+  competitors: QuickScanCompetitor[];
   auditPoints: QuickScanAuditPoint[];
   strategyPoints: QuickScanStrategyPoint[];
 }
@@ -28,6 +36,12 @@ export const SAMPLE_QUICK_SCAN: QuickScanResult = {
   scannedAt: new Date().toISOString(),
   headline: '5 quick wins and 3 growth opportunities',
   businessType: 'Local barbershop',
+  summary: 'A barbershop in Plano, TX offering fades, beard trims, and hot-towel shaves with online booking.',
+  targetCustomer: 'Men and families in Plano/Frisco looking for a reliable local barber.',
+  competitors: [
+    { name: 'Sharp Line Cuts', domain: 'sharplinecuts.com', note: 'Ranks #1 for "barber Plano" — stronger Google Business Profile and 300+ reviews.' },
+    { name: 'Plano Barber Co.', domain: 'planobarber.co', note: 'Owns several "near me" searches with dedicated service pages you don\'t have yet.' },
+  ],
   auditPoints: [
     { severity: 'high', category: 'Local', title: 'Not showing in the Google map pack', detail: "Google can't confirm your hours, services, or location, so you're missing the local 3-pack where most customers click." },
     { severity: 'high', category: 'Content', title: 'Weak page titles', detail: 'Your homepage title is just "Home" — it should say something like "Barber & Fades in Plano, TX".' },

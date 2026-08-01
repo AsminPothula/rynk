@@ -5,7 +5,8 @@
  * 5-7 audit findings + 3-5 strategy recommendations, then a convert CTA.
  * Sample-data driven for now; wires to the runQuickScan backend once hosted.
  */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { SAMPLE_QUICK_SCAN, type QuickScanResult } from './client/tryRynkSample';
 
@@ -16,19 +17,34 @@ const SEV: Record<string, string> = {
 };
 
 export function TryRynk() {
+  const [searchParams] = useSearchParams();
   const [domain, setDomain] = useState('');
   const [status, setStatus] = useState<'idle' | 'scanning' | 'done'>('idle');
   const [result, setResult] = useState<QuickScanResult | null>(null);
 
-  function scan(e: React.FormEvent) {
-    e.preventDefault();
+  function runScan(d: string) {
     setStatus('scanning');
-    // Demo: real scan calls runQuickScan on the backend. Here we show the sample.
+    // Demo: the real scan calls runQuickScan on the backend. Here we show the sample.
     setTimeout(() => {
-      setResult({ ...SAMPLE_QUICK_SCAN, domain: domain.trim() || SAMPLE_QUICK_SCAN.domain });
+      setResult({ ...SAMPLE_QUICK_SCAN, domain: d.trim() || SAMPLE_QUICK_SCAN.domain });
       setStatus('done');
     }, 1400);
   }
+
+  function scan(e: React.FormEvent) {
+    e.preventDefault();
+    runScan(domain);
+  }
+
+  // The marketing forms link here as /try?domain=... — auto-run the scan.
+  useEffect(() => {
+    const d = searchParams.get('domain');
+    if (d) {
+      setDomain(d);
+      runScan(d);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="relative min-h-screen bg-brand-ink text-brand-text">
@@ -101,6 +117,33 @@ function Results({ result }: { result: QuickScanResult }) {
           {result.businessType} · {result.domain}
         </p>
         <h2 className="mt-2 font-serif text-2xl font-medium tracking-tight">{result.headline}</h2>
+      </div>
+
+      {/* What rynk understood + competitors */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="rounded-2xl bg-white/[0.02] ring-1 ring-white/8 p-5">
+          <h3 className="font-serif text-base font-medium">What we understood</h3>
+          <p className="mt-2 text-[13.5px] leading-relaxed text-brand-textMute">{result.summary}</p>
+          {result.targetCustomer && (
+            <p className="mt-2 text-[12.5px] leading-relaxed text-brand-textMute">
+              <span className="text-brand-text/80">You serve:</span> {result.targetCustomer}
+            </p>
+          )}
+        </div>
+        <div className="rounded-2xl bg-white/[0.02] ring-1 ring-white/8 p-5">
+          <h3 className="font-serif text-base font-medium">Who you're up against</h3>
+          <div className="mt-3 space-y-2.5">
+            {result.competitors.map((c, i) => (
+              <div key={i}>
+                <p className="text-sm text-brand-text">
+                  {c.name}
+                  {c.domain ? <span className="ml-1.5 font-mono text-[11px] text-brand-textMute">{c.domain}</span> : null}
+                </p>
+                <p className="text-[12.5px] leading-relaxed text-brand-textMute">{c.note}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Audit points */}
