@@ -1,22 +1,24 @@
 import { Api, DecodedJwt } from '@decorator';
 import { Body, Controller, Param } from '@nestjs/common';
-import { AppError } from '@types';
+import { AppError, UserPermission } from '@types';
 import { AuthDetail } from '@user/types';
 import { PipelineService } from 'src/pipeline/pipeline.service';
 import {
   ClientOverviewResponse,
   ClientResponse,
+  EditClientProfileDTO,
   OnboardClientDTO,
 } from './client.dto';
 import { ClientNotFoundError } from './client.error';
 import { ClientService } from './client.service';
-import { OnboardClientUseCase } from './initiator';
+import { EditClientProfileUseCase, OnboardClientUseCase } from './initiator';
 
 @Controller('client')
 export class ClientController {
   constructor(
     private _clientService: ClientService,
     private _onboardClientUseCase: OnboardClientUseCase,
+    private _editClientProfileUseCase: EditClientProfileUseCase,
     private _pipeline: PipelineService,
   ) {}
 
@@ -69,6 +71,29 @@ export class ClientController {
     }
     if (!result.isOwnedBy(payload.userId)) {
       throw new ClientNotFoundError();
+    }
+    return new ClientResponse(result);
+  }
+
+  @Api({
+    hasPermission: UserPermission.ManageClient,
+    isPublic: false,
+    path: ':id/profile',
+    verb: 'PATCH',
+    swaggerSuccessResponse: ClientResponse,
+  })
+  async editProfile(
+    @DecodedJwt() payload: AuthDetail,
+    @Param('id') id: string,
+    @Body() body: EditClientProfileDTO,
+  ) {
+    const result = await this._editClientProfileUseCase.execute({
+      clientId: id,
+      actorId: payload.userId,
+      patch: { ...body },
+    });
+    if (result instanceof AppError) {
+      throw result;
     }
     return new ClientResponse(result);
   }

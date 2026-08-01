@@ -1,6 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { spawn } from 'node:child_process';
-import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  statSync,
+  writeFileSync,
+} from 'node:fs';
 import { resolve } from 'node:path';
 import { LogService } from '@logger';
 
@@ -112,6 +119,22 @@ export class PipelineService {
   /** Read the ClientContext the onboarding step wrote (opaque JSON to us). */
   readClientContext(domain: string): Record<string, unknown> | null {
     return this.readJson(resolve(this.runDomainDir(domain), 'client.json'));
+  }
+
+  /**
+   * Persist an edited ClientContext back to runs/{slug}/client.json so the next
+   * pipeline run picks up the profile changes. The DB row is the source of truth
+   * for display; this keeps the file the pipeline reads in sync. Opaque JSON to
+   * us — the caller (dashboard/@rynk/core) owns the schema.
+   */
+  writeClientContext(domain: string, context: Record<string, unknown>): void {
+    const dir = this.runDomainDir(domain);
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(
+      resolve(dir, 'client.json'),
+      JSON.stringify(context, null, 2),
+      'utf8',
+    );
   }
 
   /** Read the current run phase the pipeline wrote. */

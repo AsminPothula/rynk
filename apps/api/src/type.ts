@@ -17,6 +17,8 @@ export enum UserPermission {
   ManageDesigns = 'MD',
   ApproveDesigns = 'AD',
   ManageUser = 'MU',
+  /** Create / edit rynk clients and their onboarding profile (ClientContext). */
+  ManageClient = 'MC',
 }
 export type UserPermissionType = `${UserPermission}`;
 
@@ -28,8 +30,14 @@ export enum UserProfileRole {
 export type UserProfileRoleType = `${UserProfileRole}`;
 
 // TODO: Add more permissions, if needed
-export const AllPermissions = [UserPermission.ManageUser];
-export const AdminPermissions = [UserPermission.ManageUser];
+export const AllPermissions = [
+  UserPermission.ManageUser,
+  UserPermission.ManageClient,
+];
+export const AdminPermissions = [
+  UserPermission.ManageUser,
+  UserPermission.ManageClient,
+];
 export const DeveloperPermissions = [UserPermission.ManageAssets];
 export const SystemPermissions = AllPermissions;
 
@@ -155,6 +163,7 @@ export enum AppErrorType {
   FailedToGetConfigFileError = 'FailedToGetConfigFileError',
   ClientNotFoundError = 'ClientNotFoundError',
   ClientAlreadyExistsError = 'ClientAlreadyExistsError',
+  ClientNotOnboardedError = 'ClientNotOnboardedError',
   RunNotFoundError = 'RunNotFoundError',
   PipelineFailedError = 'PipelineFailedError',
 }

@@ -1,5 +1,6 @@
 import { DtoProperty } from '@decorator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional, ApiProperty } from '@nestjs/swagger';
+import { IsObject, IsOptional } from 'class-validator';
 import { Client } from './client.types';
 
 export class OnboardClientDTO {
@@ -9,6 +10,50 @@ export class OnboardClientDTO {
     swaggerSampleValue: 'itechdata.ai',
   })
   url: string;
+}
+
+/**
+ * Partial edit of a client's onboarding profile (ClientContext). Every field is
+ * optional — the dashboard Profile tab sends only what changed. Scalars/arrays
+ * replace; `brand` and `presence` are deep-merged branch-wise on the server, so
+ * a partial `brand` patch only touches the keys it names.
+ */
+export class EditClientProfileDTO {
+  @DtoProperty({ type: 'String', isOptional: true })
+  industry?: string;
+
+  @DtoProperty({ type: 'String', isOptional: true })
+  icp?: string;
+
+  @DtoProperty({ type: 'String', isArray: true, isOptional: true })
+  verticals?: string[];
+
+  @DtoProperty({ type: 'String', isArray: true, isOptional: true })
+  competitors?: string[];
+
+  @DtoProperty({ type: 'String', isArray: true, isOptional: true })
+  goals?: string[];
+
+  @DtoProperty({ type: 'String', isArray: true, isOptional: true })
+  seedKeywords?: string[];
+
+  @IsOptional()
+  @IsObject()
+  @ApiPropertyOptional({
+    type: 'object',
+    additionalProperties: true,
+    description: 'Partial brand block — deep-merged into context.brand.',
+  })
+  brand?: Record<string, unknown>;
+
+  @IsOptional()
+  @IsObject()
+  @ApiPropertyOptional({
+    type: 'object',
+    additionalProperties: true,
+    description: 'Partial presence block — deep-merged into context.presence.',
+  })
+  presence?: Record<string, unknown>;
 }
 
 export class ClientResponse {

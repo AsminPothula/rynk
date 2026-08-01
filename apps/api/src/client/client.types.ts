@@ -105,9 +105,57 @@ export class Client {
     return this;
   }
 
+  /**
+   * Apply a partial profile edit to the stored ClientContext.
+   *
+   * Deep-merges plain-object branches (so a `brand` or `presence` patch only
+   * touches the fields it names) while replacing scalars and arrays wholesale
+   * (editing `competitors` or `goals` replaces the whole list, as the UI sends
+   * the full new array). Also mirrors `legalEntity`/`name` onto the display
+   * name so the clients list stays in sync. Returns the merged context so the
+   * caller can persist it to client.json for the pipeline.
+   */
+  updateProfile(patch: Record<string, unknown>): Record<string, unknown> {
+    const base = this._context ?? {};
+    const merged = deepMerge(base, patch);
+    this._context = merged;
+    this._updatedAt = new Date();
+
+    const legalEntity = merged['legalEntity'];
+    if (typeof legalEntity === 'string' && legalEntity.trim()) {
+      this._name = legalEntity;
+    }
+    return merged;
+  }
+
   isOwnedBy(userId: string) {
     return this._ownerId === userId;
   }
+}
+
+/** Plain-object check (not arrays, not null). */
+function isPlainObject(v: unknown): v is Record<string, unknown> {
+  return typeof v === 'object' && v !== null && !Array.isArray(v);
+}
+
+/** Recursively merge `patch` into `base`; arrays and scalars replace. */
+function deepMerge(
+  base: Record<string, unknown>,
+  patch: Record<string, unknown>,
+): Record<string, unknown> {
+  const out: Record<string, unknown> = { ...base };
+  for (const [key, value] of Object.entries(patch)) {
+    if (value === undefined) {
+      continue;
+    }
+    const existing = out[key];
+    if (isPlainObject(existing) && isPlainObject(value)) {
+      out[key] = deepMerge(existing, value);
+    } else {
+      out[key] = value;
+    }
+  }
+  return out;
 }
 
 export class FindClientSpecs {
