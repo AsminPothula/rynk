@@ -1,0 +1,24 @@
+#!/bin/bash
+
+## To load path for installed packages and global node_modules
+source ~/.bash_profile
+
+## Change project folder ownership from root to ec2-user
+sudo chown ec2-user:ec2-user -R $HOME/__EC2_FOLDER_NAME__
+
+## Make a folder for logs as set in .env with ec2-user as owner
+mkdir -p $HOME/logs
+sudo chown ec2-user:ec2-user -R $HOME/logs
+
+## Set cwd to project folder
+cd $HOME/__EC2_FOLDER_NAME__
+
+## Install and use node from version defined in .nvmrc
+nvm install
+nvm use
+
+## Install node packages (for build)
+npm install
+
+## Install pm2 globally
+npm i -g pm2

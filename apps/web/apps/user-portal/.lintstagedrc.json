@@ -1,0 +1,6 @@
+{
+  "**/*.{js,jsx,ts,tsx}": [
+    "eslint . --ext ts,tsx --report-unused-disable-directives",
+    "echo 'User Portal - Lint Completed'"
+  ]
+}

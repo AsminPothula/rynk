@@ -158,6 +158,29 @@ export const PolicyPageSchema = z.object({
   issues: z.array(z.string()).default([]),
 });
 
+/**
+ * Coerce a single NAP inconsistency (which the model may return as a string
+ * OR a structured object) into a readable string. Handles the common object
+ * shapes and falls back to compact JSON so nothing is ever dropped.
+ */
+function coerceInconsistency(v: unknown): string {
+  if (typeof v === "string") return v;
+  if (v && typeof v === "object") {
+    const o = v as Record<string, unknown>;
+    const where = o["directory"] ?? o["source"] ?? o["platform"] ?? o["site"];
+    const found = o["found"] ?? o["value"] ?? o["actual"] ?? o["address"] ?? o["phone"];
+    const expected = o["expected"] ?? o["canonical"] ?? o["shouldBe"];
+    const parts = [
+      where ? `${String(where)}:` : null,
+      found ? `found "${String(found)}"` : null,
+      expected ? `expected "${String(expected)}"` : null,
+    ].filter(Boolean);
+    if (parts.length > 0) return parts.join(" ");
+    return JSON.stringify(v);
+  }
+  return String(v);
+}
+
 export const NAPRecordSchema = z.object({
   // Use .default(null) so a missing key (not just null) is also accepted.
   address: z.string().nullable().default(null),
@@ -280,7 +303,13 @@ export const OffsiteEEATSchema = z.object({
     zoomInfo: NAPRecordSchema.optional(),
     rocketReach: NAPRecordSchema.optional(),
     yelp: NAPRecordSchema.extend({ entityName: z.string().nullable().default(null) }).optional(),
-    inconsistenciesVsCanonical: z.array(z.string()),
+    // The model sometimes returns each inconsistency as a structured object
+    // ({ directory, found, expected }) instead of a flat string. Accept any
+    // element shape and coerce to a readable string so validation never fails
+    // on this across arbitrary sites. Downstream consumers still get string[].
+    inconsistenciesVsCanonical: z
+      .array(z.unknown())
+      .transform((arr) => arr.map(coerceInconsistency)),
   }),
 });
 
@@ -399,10 +428,69 @@ export const EntitySummarySchema = z.object({
   inconsistenciesFound: z.array(z.string()),
 });
 
+/**
+ * Presence & reputation section — the business's off-site footprint, from the
+ * PresenceDataProvider (business listing, reviews, citations, map-pack rank).
+ * General, not "local"-only; stays empty for pure-online businesses.
+ * Optional + defaulted so legacy audits parse unchanged.
+ */
+export const PresenceListingSchema = z.object({
+  claimed: z.boolean().default(false),
+  primaryCategory: z.string().nullable().default(null),
+  rating: z.number().nullable().default(null),
+  reviewCount: z.number().nullable().default(null),
+  photosCount: z.number().nullable().default(null),
+  completeness: z.number().nullable().default(null),
+  /** True once the client has granted listing-manager access. */
+  hasManagerAccess: z.boolean().default(false),
+  insights: z
+    .object({
+      profileViews: z.number(),
+      calls: z.number(),
+      directionRequests: z.number(),
+      websiteClicks: z.number(),
+      bookings: z.number(),
+    })
+    .nullable()
+    .default(null),
+});
+
+export const PresenceReviewsSchema = z.object({
+  totalCount: z.number().default(0),
+  averageRating: z.number().nullable().default(null),
+  unreplied: z.number().default(0),
+  byPlatform: z
+    .array(z.object({ platform: z.string(), count: z.number(), average: z.number().nullable() }))
+    .default([]),
+  themes: z.array(z.string()).default([]),
+});
+
+export const PresenceCitationsSchema = z.object({
+  total: z.number().default(0),
+  consistent: z.number().default(0),
+  issues: z.array(z.object({ directory: z.string(), problem: z.string() })).default([]),
+  missing: z.array(z.string()).default([]),
+  duplicates: z.array(z.string()).default([]),
+});
+
+export const PresenceSectionSchema = z.object({
+  /** Whether this client has any presence footprint to track. */
+  tracked: z.boolean().default(false),
+  listing: PresenceListingSchema.default({}),
+  reviews: PresenceReviewsSchema.default({}),
+  citations: PresenceCitationsSchema.default({}),
+  mapPackRanks: z
+    .array(z.object({ query: z.string(), location: z.string(), rank: z.number().nullable() }))
+    .default([]),
+});
+
 export const AuditFindingsSchema = z.object({
   domain: coerceString,
   auditDate: z.string().describe("ISO 8601 timestamp"),
   auditVersion: z.literal("1.0"),
+
+  /** Off-site presence + reputation (empty for pure-online clients). */
+  presence: PresenceSectionSchema.default({}),
 
   technicalCrawl: TechnicalCrawlSchema,
   onsiteEEAT: OnsiteEEATSchema,
@@ -453,6 +541,7 @@ export type KeywordIntent = z.infer<typeof KeywordIntentSchema>;
 export type KeywordMetricsEnrichment = z.infer<typeof KeywordMetricsEnrichmentSchema>;
 export type DomainAuthorityRecord = z.infer<typeof DomainAuthorityRecordSchema>;
 export type AuthoritySection = z.infer<typeof AuthoritySectionSchema>;
+export type PresenceSection = z.infer<typeof PresenceSectionSchema>;
 export type Severity = z.infer<typeof SeveritySchema>;
 export type Category = z.infer<typeof CategorySchema>;
 export type Owner = z.infer<typeof OwnerSchema>;

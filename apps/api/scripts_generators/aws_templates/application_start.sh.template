@@ -1,0 +1,34 @@
+#!/bin/bash
+
+## Load path of all installed packages
+source ~/.bash_profile
+
+## Set cwd to project
+cd $HOME/__EC2_FOLDER_NAME__
+
+## Install and use node from version defined in .nvmrc
+nvm install
+nvm use
+
+## Run DB Migrations
+npm run migration:run:prod
+
+## Delete and recreate all processes
+
+# A hack to delete legacy pm2 processes created before ec2 folder change
+pm2 delete __PM2_CLEANUP_NAMES__
+
+# Delete process with current name and start again
+pm2 delete __EC2_FOLDER_NAME__
+pm2 start npm --name=__EC2_FOLDER_NAME__ -- run start:prod -i max
+
+# # Alternative: Use if need to find and restart pm2 process by id
+# pm2 id __EC2_FOLDER_NAME__ | grep "\[\]" &&
+#
+#   # start new
+#   pm2 start build/.bin/listen.js --node-args='--preserve-symlinks' --name=__EC2_FOLDER_NAME__ ||
+#   # restart existing
+#   (pm2 restart __EC2_FOLDER_NAME__ && pm2 reset __EC2_FOLDER_NAME__)
+
+## Add current pm2 process list to startup
+pm2 startup | bash && pm2 save

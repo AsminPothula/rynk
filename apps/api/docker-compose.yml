@@ -1,0 +1,16 @@
+name: "rynk-api"
+services:
+  postgres:
+    image: postgres:15.5
+    platform: linux/x86_64
+    stdin_open: true
+    tty: true
+    environment:
+      POSTGRES_PASSWORD: "rynk"
+      POSTGRES_USER: "rynk"
+      POSTGRES_DB: "rynk"
+    ports:
+      - "5433:5432"
+    volumes:
+      - "./dev/postgres/data:/var/lib/postgresql/data"
+    container_name: rynk-postgres

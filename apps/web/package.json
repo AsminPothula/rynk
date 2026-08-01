@@ -1,0 +1,66 @@
+{
+  "name": "react-web-starter",
+  "private": true,
+  "packageManager": "npm@10.2.4",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "prepare": "true",
+    "user:dev": "turbo run --ui tui --filter user-portal dev",
+    "admin:dev": "turbo run --ui tui --filter admin-portal dev",
+    "all:dev": "turbo run --ui tui dev --filter *portal",
+    "user:preview": "turbo run --ui tui --filter user-portal preview",
+    "admin:preview": "turbo run --ui tui --filter admin-portal preview",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "bitbucket:env:generate": "turbo run bitbucket:env:generate",
+    "generate-api": "turbo run generate-api --filter shared",
+    "storybook": "npm run storybook -w packages/shared",
+    "rebase": "bash ./dev/script/rebase.sh",
+    "dev:start": "docker compose up -d --build && npm run dev:logs",
+    "dev:logs": "docker compose logs -f",
+    "dev:stop": "docker compose down --remove-orphans",
+    "dev:restart": "npm run dev:stop && npm run dev:start",
+    "test:e2e": "npx playwright test",
+    "test:e2e:user": "npx playwright test --project=user-portal",
+    "test:e2e:admin": "npx playwright test --project=admin-portal",
+    "test:e2e:inactivity": "E2E_INACTIVITY_ENABLED=true npx playwright test --project=user-portal-inactivity",
+    "test:e2e:all": "E2E_INACTIVITY_ENABLED=true npx playwright test",
+    "test:e2e:ui": "bash dev/script/e2e.sh"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@playwright/test": "^1.58.2",
+    "@types/blob-stream": "^0.1.33",
+    "@types/crypto-js": "^4.2.2",
+    "@types/hull.js": "^1.0.4",
+    "@types/matter-js": "^0.19.8",
+    "@types/nearest-color": "^0.4.1",
+    "@types/polylabel": "^1.1.3",
+    "@types/regression": "^2.0.6",
+    "@types/svg-to-pdfkit": "^0.1.3",
+    "@types/underscore": "^1.11.15",
+    "eslint": "^9.0.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "husky": "^9.0.10",
+    "lint-staged": "^15.2.2",
+    "prettier": "^3.5.0",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "pretty-quick": "^4.0.0",
+    "turbo": "^2.4.0",
+    "typescript": "5.4.2",
+    "typescript-eslint": "^8.0.0"
+  },
+  "msw": {
+    "workerDirectory": [
+      "apps/user-portal/public",
+      "apps/admin-portal/public"
+    ]
+  },
+  "overrides": {
+    "vite": "^6.2.0"
+  }
+}

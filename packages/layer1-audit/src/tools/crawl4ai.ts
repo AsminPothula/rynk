@@ -120,7 +120,8 @@ async function crawl4aiFetch<T>(
           `Crawl4AI server not reachable at ${baseUrl}.\n` +
             `Is the Docker container running?\n` +
             `Start it with:\n` +
-            `  docker run -d -p 11235:11235 --name crawl4ai unclecode/crawl4ai:latest`,
+              `  docker run -d -p 11235:11235 --name crawl4ai unclecode/crawl4ai:0.8.5\n` +
+            `(pin the version — :latest requires an auth token our client doesn't send)`,
         );
         (helpfulErr as unknown as { status: number }).status = 0;
         throw helpfulErr;

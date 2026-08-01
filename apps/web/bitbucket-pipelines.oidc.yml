@@ -1,0 +1,131 @@
+# nvm and zip included in the image
+image: atlassian/default-image:4
+
+definitions:
+  steps:
+    # ready-for-build: Dummy step to allow for manual build & deploy to be the first step
+    - step: &ready-for-build
+        name: Ready for Build
+        max-time: 5
+        script:
+          - echo "Ready!"
+
+    - step: &lint-build
+        name: Lint, Build
+        max-time: 15
+        caches:
+          # This caches node_modules/ for every pipeline run for a week
+          - node
+        script:
+          - nvm install
+          - nvm use
+          - npm install
+          - npm run lint
+          - npm run bitbucket:env:generate
+          - npm run build
+          # - cat .env #NOTE:The output shown in this step will have all secured variables replaced by bitbucket in its console.
+        artifacts:
+          - build/**
+
+    - step: &build-upload-deploy
+        name: Build, Upload & Deploy
+        max-time: 22
+        size: 2x
+        caches:
+          # This caches node_modules/ for every pipeline run for a week
+          - node
+        script:
+          # Set AWS region to avoid interactive prompts
+          - export AWS_DEFAULT_REGION=$CD_AWS_DEFAULT_REGION
+          # Assume the app deployment role
+          - export AWS_REGION=$CD_AWS_DEFAULT_REGION
+          - export AWS_ROLE_ARN=$CD_PORTAL_OIDC_ROLE_ARN
+          - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
+          - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
+          # Set timezone to avoid interactive prompts during package installation
+          - export DEBIAN_FRONTEND=noninteractive
+          - export TZ=UTC
+          - ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+          # Install AWS CLI and required tools
+          - apt-get update
+          - apt-get install -y awscli jq zip
+          # npm packages
+          - nvm install
+          - nvm use
+          - npm install
+          - npm run bitbucket:env:generate
+          - npm run build
+          # - cat .env #NOTE:The output shown in this step will have all secured variables replaced by bitbucket in its console.
+          - mkdir -p build/web/user-portal build/web/admin-portal
+          - mv apps/user-portal/dist build/web/user-portal/dist
+          - mv apps/admin-portal/dist build/web/admin-portal/dist
+          # User Portal - S3 Upload
+          - pipe: atlassian/aws-s3-deploy:2.1.0
+            variables:
+              AWS_DEFAULT_REGION: $AWS_REGION
+              AWS_OIDC_ROLE_ARN: $AWS_ROLE_ARN
+              S3_BUCKET: $CD_S3_BUCKET_NAME/$CD_ENVIRONMENT/$CD__USER_PORTAL__APPLICATION_NAME/main
+              COMMAND: "upload"
+              LOCAL_PATH: "build/web/user-portal/dist"
+              DELETE_FLAG: "true"
+          # User Portal - CloudFront Invalidation
+          - pipe: atlassian/aws-cloudfront-invalidate:0.6.0
+            variables:
+              AWS_OIDC_ROLE_ARN: $AWS_ROLE_ARN
+              AWS_DEFAULT_REGION: $AWS_REGION
+              DISTRIBUTION_ID: $CD__USER_PORTAL__DISTRIBUTION_ID
+          # Admin Portal - S3 Upload
+          - pipe: atlassian/aws-s3-deploy:2.1.0
+            variables:
+              AWS_DEFAULT_REGION: $AWS_REGION
+              AWS_OIDC_ROLE_ARN: $AWS_ROLE_ARN
+              S3_BUCKET: $CD_S3_BUCKET_NAME/$CD_ENVIRONMENT/$CD__ADMIN_PORTAL__APPLICATION_NAME/main
+              COMMAND: "upload"
+              LOCAL_PATH: "build/web/admin-portal/dist"
+              DELETE_FLAG: "true"
+          # Admin Portal - CloudFront Invalidation
+          - pipe: atlassian/aws-cloudfront-invalidate:0.6.0
+            variables:
+              AWS_OIDC_ROLE_ARN: $AWS_ROLE_ARN
+              AWS_DEFAULT_REGION: $AWS_REGION
+              DISTRIBUTION_ID: $CD__ADMIN_PORTAL__DISTRIBUTION_ID
+        artifacts:
+          - build/**
+
+pipelines:
+  branches:
+    development:
+      - step: *ready-for-build
+      - step:
+          <<: *build-upload-deploy
+          # trigger: manual
+          name: Deploy to Development
+          deployment: development
+    staging:
+      - step: *ready-for-build
+      - step:
+          <<: *build-upload-deploy
+          # trigger: manual
+          name: Deploy to Staging
+          deployment: staging
+    qa:
+      - step: *ready-for-build
+      - step:
+          <<: *build-upload-deploy
+          # trigger: manual
+          name: Deploy to Qa
+          deployment: qa
+    production:
+      - step: *ready-for-build
+      - step:
+          <<: *build-upload-deploy
+          # trigger: manual
+          name: Deploy to Production
+          deployment: production
+
+  default:
+    - step:
+        <<: *lint-build
+        trigger: automatic
+        name: Lint and Build Check
+        deployment: ci

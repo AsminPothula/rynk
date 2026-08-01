@@ -1,0 +1,121 @@
+# nvm and zip included in the image
+image: atlassian/default-image:4
+
+definitions:
+  steps:
+    # ready-for-build: Dummy step to allow for manual build & deploy to be the first step
+    - step: &ready-for-build
+        name: Ready for Build
+        max-time: 5
+        script:
+          - echo "Ready!"
+
+    - step: &lint-build
+        name: Lint, Build
+        max-time: 15
+        caches:
+          # This caches node_modules/ for every pipeline run for a week
+          - node
+        script:
+          - nvm install
+          - nvm use
+          - npm install
+          - npm run lint
+          - npm run bitbucket:env:generate
+          - npm run build
+          # - npm run apple-site-association:generate
+          # - npm run android-assetlinks:generate
+          # - cat .env #NOTE:The output shown in this step will have all secured variables replaced by bitbucket in its console.
+        artifacts:
+          - build/**
+
+    - step: &build-upload-deploy
+        name: Build, Upload & Deploy
+        max-time: 22
+        size: 2x
+        caches:
+          # This caches node_modules/ for every pipeline run for a week
+          - node
+        script:
+          - apt-get update
+          - nvm install
+          - nvm use
+          - npm install
+          - npm run bitbucket:env:generate
+          - npm run build
+          # - npm run apple-site-association:generate
+          # - npm run android-assetlinks:generate
+          # - cat .env #NOTE:The output shown in this step will have all secured variables replaced by bitbucket in its console.
+          - mkdir -p build/web/user-portal build/web/admin-portal
+          - mv apps/user-portal/dist build/web/user-portal/dist
+          - mv apps/admin-portal/dist build/web/admin-portal/dist
+          - pipe: atlassian/aws-s3-deploy:1.1.0
+            variables:
+              AWS_DEFAULT_REGION: $CD_AWS_DEFAULT_REGION
+              AWS_ACCESS_KEY_ID: $CD_AWS_ACCESS_KEY_ID
+              AWS_SECRET_ACCESS_KEY: $CD_AWS_SECRET_ACCESS_KEY
+              S3_BUCKET: $CD_S3_BUCKET_NAME/$CD__USER_PORTAL__APPLICATION_NAME/$CD_DEPLOYMENT_GROUP/main
+              COMMAND: "upload"
+              LOCAL_PATH: "build/web/user-portal/dist"
+              DELETE_FLAG: "true"
+          - pipe: atlassian/aws-cloudfront-invalidate:0.6.0
+            variables:
+              AWS_ACCESS_KEY_ID: $CD_AWS_ACCESS_KEY_ID
+              AWS_SECRET_ACCESS_KEY: $CD_AWS_SECRET_ACCESS_KEY
+              AWS_DEFAULT_REGION: $CD_AWS_DEFAULT_REGION
+              DISTRIBUTION_ID: $CD__USER_PORTAL__DISTRIBUTION_ID
+          - pipe: atlassian/aws-s3-deploy:1.1.0
+            variables:
+              AWS_DEFAULT_REGION: $CD_AWS_DEFAULT_REGION
+              AWS_ACCESS_KEY_ID: $CD_AWS_ACCESS_KEY_ID
+              AWS_SECRET_ACCESS_KEY: $CD_AWS_SECRET_ACCESS_KEY
+              S3_BUCKET: $CD_S3_BUCKET_NAME/$CD__ADMIN_PORTAL__APPLICATION_NAME/$CD_DEPLOYMENT_GROUP/main
+              COMMAND: "upload"
+              LOCAL_PATH: "build/web/admin-portal/dist"
+              DELETE_FLAG: "true"
+          - pipe: atlassian/aws-cloudfront-invalidate:0.6.0
+            variables:
+              AWS_ACCESS_KEY_ID: $CD_AWS_ACCESS_KEY_ID
+              AWS_SECRET_ACCESS_KEY: $CD_AWS_SECRET_ACCESS_KEY
+              AWS_DEFAULT_REGION: $CD_AWS_DEFAULT_REGION
+              DISTRIBUTION_ID: $CD__ADMIN_PORTAL__DISTRIBUTION_ID
+        artifacts:
+          - build/**
+
+pipelines:
+  branches:
+    development:
+      - step: *ready-for-build
+      - step:
+          <<: *build-upload-deploy
+          # trigger: manual
+          name: Deploy to Development
+          deployment: development
+    staging:
+      - step: *ready-for-build
+      - step:
+          <<: *build-upload-deploy
+          # trigger: manual
+          name: Deploy to Staging
+          deployment: staging
+    qa:
+      - step: *ready-for-build
+      - step:
+          <<: *build-upload-deploy
+          # trigger: manual
+          name: Deploy to Qa
+          deployment: qa
+    production:
+      - step: *ready-for-build
+      - step:
+          <<: *build-upload-deploy
+          # trigger: manual
+          name: Deploy to Production
+          deployment: production
+
+  default:
+    - step:
+        <<: *lint-build
+        trigger: automatic
+        name: Lint and Build Check
+        deployment: ci
