@@ -260,6 +260,19 @@ function rynk_scaffold_pages(): void {
 			continue;
 		}
 
+		// Self-heal: an existing page might be a draft (invisible to the public,
+		// visible to logged-in editors — the exact "I see it, incognito 404s"
+		// symptom) or have lost its template meta. Force it back to a published
+		// page on the intended template every time we scaffold.
+		if ( $existing instanceof WP_Post && 'publish' !== $existing->post_status ) {
+			wp_update_post(
+				array(
+					'ID'          => $page_id,
+					'post_status' => 'publish',
+				)
+			);
+		}
+
 		update_post_meta( $page_id, '_wp_page_template', $page['template'] );
 	}
 
@@ -290,7 +303,7 @@ add_action( 'after_switch_theme', 'rynk_scaffold_pages' );
  * Scaffold version. Bump whenever rynk_pages() gains a page so the new pages
  * are created on the next request without a manual theme re-activation.
  */
-const RYNK_SCAFFOLD_VERSION = '2';
+const RYNK_SCAFFOLD_VERSION = '3';
 
 /**
  * Re-run scaffolding once after a deploy that changed the page set.
@@ -310,6 +323,13 @@ function rynk_maybe_scaffold_pages(): void {
 	}
 
 	rynk_scaffold_pages();
+
+	// A page created via wp_insert_post() before the rewrite rules were built
+	// can 404 on its pretty permalink for the public until the rules are
+	// regenerated. Flush once per version bump so /privacy-policy/ (and any
+	// other scaffolded page) resolves for logged-out visitors.
+	flush_rewrite_rules( false );
+
 	update_option( 'rynk_scaffold_version', RYNK_SCAFFOLD_VERSION );
 }
 add_action( 'init', 'rynk_maybe_scaffold_pages' );
