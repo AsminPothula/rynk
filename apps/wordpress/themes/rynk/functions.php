@@ -199,6 +199,40 @@ remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
 remove_action( 'wp_print_styles', 'print_emoji_styles' );
 
 /**
+ * Emit the rynk favicon / browser-tab icon.
+ *
+ * Uses the theme's own icon assets (assets/img/favicon-*.png) so no WordPress
+ * "Site Icon" needs to be set in the admin — the tab icon ships with the theme.
+ * Each file is a navy rounded-square with the rynk "R" mark. Guarded so the
+ * head stays clean if the assets are ever missing.
+ *
+ * @return void
+ */
+function rynk_favicon_links(): void {
+	$icons = array(
+		'32'  => 'assets/img/favicon-32.png',
+		'180' => 'assets/img/favicon-180.png',
+		'512' => 'assets/img/favicon-512.png',
+	);
+	if ( ! file_exists( get_theme_file_path( $icons['512'] ) ) ) {
+		return;
+	}
+	printf(
+		'<link rel="icon" type="image/png" sizes="32x32" href="%s" />' . "\n",
+		esc_url( get_theme_file_uri( $icons['32'] ) )
+	);
+	printf(
+		'<link rel="icon" type="image/png" sizes="512x512" href="%s" />' . "\n",
+		esc_url( get_theme_file_uri( $icons['512'] ) )
+	);
+	printf(
+		'<link rel="apple-touch-icon" sizes="180x180" href="%s" />' . "\n",
+		esc_url( get_theme_file_uri( $icons['180'] ) )
+	);
+}
+add_action( 'wp_head', 'rynk_favicon_links', 5 );
+
+/**
  * Create the marketing pages and point the front page at the landing template.
  *
  * Runs on activation, and is safe to run again — an existing page with the
