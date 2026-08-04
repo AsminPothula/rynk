@@ -31,16 +31,15 @@ export function PreviewDashboard() {
               dashboard preview
             </span>
           </Link>
-          {domain && (
-            <Link to="/preview" className="font-mono text-[11px] text-brand-blueSoft hover:text-brand-text">
-              ← all clients
-            </Link>
-          )}
         </div>
       </header>
 
       <main className="mx-auto max-w-screen-xl px-6 py-8">
-        {domain ? <ClientDashboard /> : <ClientsList basePath="/preview" />}
+        {domain ? (
+          <ClientDashboard backHref="/preview" backLabel="all clients" />
+        ) : (
+          <ClientsList basePath="/preview" />
+        )}
       </main>
     </div>
   );

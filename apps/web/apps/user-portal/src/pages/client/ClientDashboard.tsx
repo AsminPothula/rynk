@@ -9,8 +9,8 @@
  * and authority.
  */
 import { useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Bell } from 'lucide-react';
+import { Link, useParams } from 'react-router-dom';
+import { ArrowLeft, Bell } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getSampleClient, type ClientData, type ActionItem } from './sampleData';
 import {
@@ -32,7 +32,13 @@ import {
 const TABS = ['Overview', 'Search Visibility', 'AI Visibility', 'Actions', 'Content', 'Reports', 'Profile', 'Settings'] as const;
 type Tab = (typeof TABS)[number];
 
-export function ClientDashboard() {
+export function ClientDashboard({
+  backHref = '/preview',
+  backLabel = 'all clients',
+}: {
+  backHref?: string;
+  backLabel?: string;
+}) {
   const { domain = 'fadelabbarbers.com' } = useParams();
   const client = useMemo(() => getSampleClient(domain), [domain]);
   const [tab, setTab] = useState<Tab>('Overview');
@@ -40,6 +46,15 @@ export function ClientDashboard() {
 
   return (
     <div className="text-brand-text">
+      {/* Back to the company list — left-aligned above the client title. */}
+      <Link
+        to={backHref}
+        className="mb-4 inline-flex items-center gap-1.5 font-mono text-[11px] text-brand-blueSoft transition-colors hover:text-brand-text"
+      >
+        <ArrowLeft className="h-3.5 w-3.5" />
+        {backLabel}
+      </Link>
+
       {/* Client context header */}
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
