@@ -8,12 +8,13 @@
  * (GBP / citations / reviews / map pack); `content` clients lead with keywords
  * and authority.
  */
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Bell, Eye } from 'lucide-react';
+import { ArrowLeft, Bell, Eye, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getSampleClient, type ClientData, type ActionItem } from './sampleData';
 import { getArticle } from './sampleContent';
+import { EditProvider, useEdit, SaveBar, EField, EText, EChips, ERowList } from './editable';
 import {
   Panel,
   SectionHeading,
@@ -33,20 +34,53 @@ import {
 const TABS = ['Overview', 'Search Visibility', 'AI Visibility', 'Actions', 'Content', 'Reports', 'Profile', 'Settings'] as const;
 type Tab = (typeof TABS)[number];
 
-export function ClientDashboard({
+export function ClientDashboard(props: { backHref?: string; backLabel?: string }) {
+  const { domain = 'fadelabbarbers.com' } = useParams();
+  const client = useMemo(() => getSampleClient(domain), [domain]);
+  // Key by client id so the edit draft resets when switching clients.
+  return (
+    <EditProvider key={client.id} client={client}>
+      <ClientDashboardInner client={client} {...props} />
+    </EditProvider>
+  );
+}
+
+function ClientDashboardInner({
+  client,
   backHref = '/preview',
   backLabel = 'all clients',
 }: {
+  client: ClientData;
   backHref?: string;
   backLabel?: string;
 }) {
-  const { domain = 'fadelabbarbers.com' } = useParams();
-  const client = useMemo(() => getSampleClient(domain), [domain]);
   const [tab, setTab] = useState<Tab>('Overview');
   const waiting = client.waitingOnYou.length;
+  const { dirty, discard } = useEdit();
+
+  // Guard tab switches when there are unsaved edits.
+  function requestTab(next: Tab) {
+    if (next === tab) return;
+    if (dirty && !window.confirm('You have unsaved changes. Leave this tab without saving?\n\nUse “Save changes” at the bottom to keep them.')) {
+      return;
+    }
+    if (dirty) discard();
+    setTab(next);
+  }
+
+  // Guard leaving the page (reload / close) with unsaved edits.
+  useEffect(() => {
+    if (!dirty) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [dirty]);
 
   return (
-    <div className="text-brand-text">
+    <div className="pb-24 text-brand-text">
       {/* Back to the company list — left-aligned above the client title. */}
       <Link
         to={backHref}
@@ -94,7 +128,7 @@ export function ClientDashboard({
           <button
             key={t}
             type="button"
-            onClick={() => setTab(t)}
+            onClick={() => requestTab(t)}
             className={cn(
               'whitespace-nowrap border-b-2 pb-2.5 font-serif text-[15px] transition-colors',
               tab === t ? 'border-brand-blue text-brand-text' : 'border-transparent text-brand-textMute hover:text-brand-text',
@@ -110,9 +144,11 @@ export function ClientDashboard({
       {tab === 'AI Visibility' && <AIVisibility c={client} />}
       {tab === 'Actions' && <Actions c={client} />}
       {tab === 'Content' && <Content c={client} />}
-      {tab === 'Reports' && <Reports c={client} />}
-      {tab === 'Profile' && <Profile c={client} />}
+      {tab === 'Reports' && <Reports />}
+      {tab === 'Profile' && <Profile />}
       {tab === 'Settings' && <Settings c={client} />}
+
+      <SaveBar />
     </div>
   );
 }
@@ -618,7 +654,7 @@ function Content({ c }: { c: ClientData }) {
 
 // ── Reports ──────────────────────────────────────────────────────────────────
 
-function Reports({ c }: { c: ClientData }) {
+function Reports() {
   const weeks = ['Week of Jun 23', 'Week of Jun 16', 'Week of Jun 9', 'Week of Jun 2'];
   return (
     <div className="space-y-8">
@@ -662,128 +698,141 @@ function Reports({ c }: { c: ClientData }) {
 
 // ── Profile ──────────────────────────────────────────────────────────────────
 
-function Profile({ c }: { c: ClientData }) {
-  const p = c.profile;
-  const canEdit = true; // RBAC: owner/admin only (stubbed on for preview)
+function Profile() {
+  const { draft, update } = useEdit();
+  const p = draft.profile;
   return (
     <div className="space-y-6">
-      <Panel accent="via-brand-violet" className="flex items-start justify-between gap-4 bg-white/[0.015]">
+      <Panel accent="via-brand-violet" className="bg-white/[0.015]">
         <p className="max-w-2xl text-sm leading-relaxed text-brand-textMute">
-          <span className="text-brand-text">What rynk understands about your business.</span> Drafted from your website during onboarding — anything blank, we couldn't find. Edit anything; it steers the content rynk writes and the keywords it targets.
+          <span className="text-brand-text">What rynk understands about your business.</span> Drafted from your website during onboarding — anything blank, we couldn't find. Edit anything inline; it steers the content rynk writes and the keywords it targets. Save from the bar at the bottom.
         </p>
-        {canEdit && <button className="shrink-0 rounded-full bg-white px-4 py-1.5 font-serif text-xs font-medium text-brand-ink">Edit</button>}
       </Panel>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <PPanel title="What you do">
-          <PField label="In a line" value={p.description} />
-          <PField label="The promise" value={p.valueProposition} />
+          <EField label="In a line" value={p.description} onChange={(v) => update((d) => { d.profile.description = v; })} />
+          <EField label="The promise" value={p.valueProposition} onChange={(v) => update((d) => { d.profile.valueProposition = v; })} multiline />
         </PPanel>
         <PPanel title="What sets you apart">
-          <PChips items={p.differentiators} />
+          <EChips items={p.differentiators} onChange={(items) => update((d) => { d.profile.differentiators = items; })} />
         </PPanel>
         <PPanel title="Who you serve">
-          {p.personas.length === 0 ? <NotSet /> : (
-            <div className="space-y-3">
-              {p.personas.map((x) => (
-                <div key={x.name}>
-                  <p className="text-sm text-brand-text">{x.name}</p>
-                  <p className="text-[12.5px] leading-relaxed text-brand-textMute">{x.description}</p>
-                </div>
-              ))}
-            </div>
-          )}
+          <ERowList
+            rows={p.personas}
+            onChange={(rows) => update((d) => { d.profile.personas = rows; })}
+            blank={() => ({ name: '', description: '' })}
+            addLabel="Add a persona"
+            render={(row, set) => (
+              <div className="space-y-1">
+                <EText value={row.name} onChange={(v) => set({ name: v })} placeholder="Name" />
+                <EText value={row.description} onChange={(v) => set({ description: v })} placeholder="Who they are / what they need" />
+              </div>
+            )}
+          />
         </PPanel>
         <PPanel title="How you sound">
-          <PField label="Tone" value={p.voice.tone} />
+          <EField label="Tone" value={p.voice.tone} onChange={(v) => update((d) => { d.profile.voice.tone = v; })} />
           <div className="mt-3">
             <p className="mb-1.5 text-[11px] text-brand-textMute">Personality</p>
-            <PChips items={p.voice.personality} />
+            <EChips items={p.voice.personality} onChange={(items) => update((d) => { d.profile.voice.personality = items; })} />
           </div>
           <div className="mt-3">
             <p className="mb-1.5 text-[11px] text-brand-textMute">Avoid</p>
-            <PChips items={p.voice.avoid} tone="warn" />
+            <EChips items={p.voice.avoid} onChange={(items) => update((d) => { d.profile.voice.avoid = items; })} tone="warn" />
           </div>
         </PPanel>
         <PPanel title="Topics we'll cover">
-          <PChips items={p.contentThemes} />
+          <EChips items={p.contentThemes} onChange={(items) => update((d) => { d.profile.contentThemes = items; })} />
         </PPanel>
         <PPanel title="Products & services">
-          {p.products.length === 0 ? <NotSet /> : (
-            <div className="space-y-2.5">
-              {p.products.map((x) => (
-                <div key={x.name}>
-                  <p className="text-sm text-brand-text">{x.name}</p>
-                  <p className="text-[12.5px] leading-relaxed text-brand-textMute">{x.description}</p>
-                </div>
-              ))}
-            </div>
-          )}
+          <ERowList
+            rows={p.products}
+            onChange={(rows) => update((d) => { d.profile.products = rows; })}
+            blank={() => ({ name: '', description: '' })}
+            addLabel="Add a product / service"
+            render={(row, set) => (
+              <div className="space-y-1">
+                <EText value={row.name} onChange={(v) => set({ name: v })} placeholder="Name" />
+                <EText value={row.description} onChange={(v) => set({ description: v })} placeholder="Short description" />
+              </div>
+            )}
+          />
         </PPanel>
       </div>
 
       <SectionHeading eyebrow="Presence" title="Where & how you operate" />
       <div className="grid gap-4 lg:grid-cols-2">
         <PPanel title="Business details">
-          <PField label="Category" value={p.primaryCategory} />
+          <EField label="Category" value={p.primaryCategory} onChange={(v) => update((d) => { d.profile.primaryCategory = v; })} />
           <div className="mt-3">
             <p className="mb-1.5 text-[11px] text-brand-textMute">Service areas</p>
-            <PChips items={p.serviceAreas} />
+            <EChips items={p.serviceAreas} onChange={(items) => update((d) => { d.profile.serviceAreas = items; })} />
           </div>
           <div className="mt-3">
             <p className="mb-1.5 text-[11px] text-brand-textMute">Markets</p>
-            <PChips items={p.markets} />
+            <EChips items={p.markets} onChange={(items) => update((d) => { d.profile.markets = items; })} />
           </div>
           <div className="mt-3">
             <p className="mb-1.5 text-[11px] text-brand-textMute">Languages</p>
-            <PChips items={p.languages} />
+            <EChips items={p.languages} onChange={(items) => update((d) => { d.profile.languages = items; })} />
           </div>
-          <PField label="Booking link" value={p.bookingUrl} />
+          <EField label="Booking link" value={p.bookingUrl} onChange={(v) => update((d) => { d.profile.bookingUrl = v; })} />
         </PPanel>
         <PPanel title="Hours & services">
-          {p.hours.length === 0 && p.services.length === 0 ? (
-            <NotSet />
-          ) : (
-            <div className="space-y-4">
-              {p.hours.length > 0 && (
-                <div className="space-y-1">
-                  {p.hours.map((h) => (
-                    <div key={h.day} className="flex justify-between text-[13px]">
-                      <span className="text-brand-textMute">{h.day}</span>
-                      <span className="font-mono text-brand-text/90">{h.open}–{h.close}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {p.services.length > 0 && (
-                <div className="space-y-1 border-t border-white/8 pt-3">
-                  {p.services.map((s) => (
-                    <div key={s.name} className="flex justify-between text-[13px]">
-                      <span className="text-brand-text/90">{s.name}</span>
-                      <span className="font-mono text-brand-text">{s.price}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
+          <div className="space-y-4">
+            <div>
+              <p className="mb-1.5 text-[11px] text-brand-textMute">Hours</p>
+              <ERowList
+                rows={p.hours}
+                onChange={(rows) => update((d) => { d.profile.hours = rows; })}
+                blank={() => ({ day: '', open: '', close: '' })}
+                addLabel="Add hours"
+                render={(row, set) => (
+                  <div className="flex gap-2">
+                    <EText value={row.day} onChange={(v) => set({ day: v })} placeholder="Day" />
+                    <EText value={row.open} onChange={(v) => set({ open: v })} placeholder="Open" />
+                    <EText value={row.close} onChange={(v) => set({ close: v })} placeholder="Close" />
+                  </div>
+                )}
+              />
             </div>
-          )}
+            <div className="border-t border-white/8 pt-3">
+              <p className="mb-1.5 text-[11px] text-brand-textMute">Services</p>
+              <ERowList
+                rows={p.services}
+                onChange={(rows) => update((d) => { d.profile.services = rows; })}
+                blank={() => ({ name: '', price: '' })}
+                addLabel="Add a service"
+                render={(row, set) => (
+                  <div className="flex gap-2">
+                    <EText value={row.name} onChange={(v) => set({ name: v })} placeholder="Service" />
+                    <EText value={row.price} onChange={(v) => set({ price: v })} placeholder="Price" />
+                  </div>
+                )}
+              />
+            </div>
+          </div>
         </PPanel>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <PPanel title="Review profiles">
-          {p.reviewProfiles.length === 0 ? (
-            <NotSet />
-          ) : (
-            <div className="flex flex-wrap gap-2">
-              {p.reviewProfiles.map((r) => (
-                <span key={r.platform} className="rounded-full bg-white/5 px-3 py-1 text-[12px] text-brand-text/90 ring-1 ring-white/10">{r.platform}</span>
-              ))}
-            </div>
-          )}
+          <ERowList
+            rows={p.reviewProfiles}
+            onChange={(rows) => update((d) => { d.profile.reviewProfiles = rows; })}
+            blank={() => ({ platform: '', url: '' })}
+            addLabel="Add a review profile"
+            render={(row, set) => (
+              <div className="flex gap-2">
+                <EText value={row.platform} onChange={(v) => set({ platform: v })} placeholder="Platform" />
+                <EText value={row.url} onChange={(v) => set({ url: v })} placeholder="URL" />
+              </div>
+            )}
+          />
         </PPanel>
         <PPanel title="Writing guidelines">
-          <PField label="" value={p.guidelines} />
+          <EText value={p.guidelines} onChange={(v) => update((d) => { d.profile.guidelines = v; })} multiline placeholder="Any explicit brand or writing rules…" />
         </PPanel>
       </div>
     </div>
@@ -799,46 +848,16 @@ function PPanel({ title, children }: { title: string; children: React.ReactNode 
   );
 }
 
-function PField({ label, value }: { label: string; value: string }) {
-  return (
-    <div className={label ? 'mt-3 first:mt-0' : ''}>
-      {label && <p className="mb-0.5 text-[11px] text-brand-textMute">{label}</p>}
-      {value ? <p className="text-sm leading-relaxed text-brand-text/90">{value}</p> : <NotSet />}
-    </div>
-  );
-}
-
-function PChips({ items, tone }: { items: string[]; tone?: 'warn' }) {
-  if (items.length === 0) return <NotSet />;
-  return (
-    <div className="flex flex-wrap gap-1.5">
-      {items.map((x) => (
-        <span
-          key={x}
-          className={cn(
-            'rounded-full px-2.5 py-1 text-[12px] ring-1',
-            tone === 'warn' ? 'bg-brand-highlight/10 text-brand-highlight ring-brand-highlight/25' : 'bg-white/5 text-brand-text/90 ring-white/10',
-          )}
-        >
-          {x}
-        </span>
-      ))}
-    </div>
-  );
-}
-
-function NotSet() {
-  return <span className="text-[13px] italic text-brand-textMute/70">Not set yet</span>;
-}
-
 // ── Settings ─────────────────────────────────────────────────────────────────
 
 function Settings({ c }: { c: ClientData }) {
+  const { draft, update } = useEdit();
+  const b = draft.business;
   const integrations = [
-    { name: 'Website / CMS', status: 'Connected · WordPress' },
-    { name: 'Google Business Profile', status: c.kind === 'local' ? 'Connected' : 'Not applicable' },
-    { name: 'Google Search Console', status: 'Not connected' },
-    { name: 'Google Analytics', status: 'Not connected' },
+    { name: 'Website / CMS', status: 'Connected · WordPress', href: `https://${c.domain}/wp-admin`, cta: 'Manage in WordPress' },
+    { name: 'Google Business Profile', status: c.kind === 'local' ? 'Connected' : 'Not applicable', href: 'https://business.google.com/', cta: 'Open Business Profile' },
+    { name: 'Google Search Console', status: 'Not connected', href: `https://search.google.com/search-console?resource_id=sc-domain:${c.domain}`, cta: 'Open Search Console' },
+    { name: 'Google Analytics', status: 'Not connected', href: 'https://analytics.google.com/', cta: 'Open Analytics' },
   ];
   const autoTypes = ['Meta titles & descriptions', 'Schema markup', 'Internal links', 'Image alt text'];
   return (
@@ -846,10 +865,10 @@ function Settings({ c }: { c: ClientData }) {
       <section>
         <SectionHeading title="Business info" />
         <div className="grid gap-3 sm:grid-cols-2">
-          <Field label="Name" value={c.name} />
+          <EPanelField label="Name" value={b.name} onChange={(v) => update((d) => { d.business.name = v; })} />
           <Field label="Website" value={c.domain} />
-          <Field label="Industry" value={c.industry} />
-          <Field label="Location" value={c.location ?? '—'} />
+          <EPanelField label="Industry" value={b.industry} onChange={(v) => update((d) => { d.business.industry = v; })} />
+          <EPanelField label="Location" value={b.location} onChange={(v) => update((d) => { d.business.location = v; })} placeholder="City, State" />
         </div>
       </section>
 
@@ -857,14 +876,27 @@ function Settings({ c }: { c: ClientData }) {
         <SectionHeading title="Integrations" />
         <Panel className="p-0">
           <div className="divide-y divide-white/6">
-            {integrations.map((i) => (
-              <div key={i.name} className="flex items-center justify-between px-5 py-3 text-sm">
-                <span className="text-brand-text">{i.name}</span>
-                <span className={cn('font-mono text-xs', i.status.startsWith('Connected') ? 'text-brand-emeraldSoft' : 'text-brand-textMute')}>{i.status}</span>
-              </div>
-            ))}
+            {integrations.map((i) => {
+              const connected = i.status.startsWith('Connected');
+              return (
+                <div key={i.name} className="flex items-center justify-between gap-3 px-5 py-3 text-sm">
+                  <div className="min-w-0">
+                    <span className="text-brand-text">{i.name}</span>
+                    <span className={cn('ml-2 font-mono text-xs', connected ? 'text-brand-emeraldSoft' : 'text-brand-textMute')}>{i.status}</span>
+                  </div>
+                  {i.status === 'Not applicable' ? null : connected ? (
+                    <a href={i.href} target="_blank" rel="noreferrer" className="inline-flex shrink-0 items-center gap-1.5 font-mono text-[11px] text-brand-blueSoft transition-colors hover:text-brand-text">
+                      {i.cta} <ExternalLink className="h-3 w-3" />
+                    </a>
+                  ) : (
+                    <button type="button" className="shrink-0 rounded-full bg-white/5 px-3 py-1 font-serif text-xs text-brand-text ring-1 ring-white/12">Connect</button>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </Panel>
+        <p className="mt-2 text-[12px] leading-relaxed text-brand-textMute">Deep links open each platform in a new tab so you can view your own data directly. Once connected, these metrics flow into your Overview.</p>
       </section>
 
       <section>
@@ -875,7 +907,7 @@ function Settings({ c }: { c: ClientData }) {
             {autoTypes.map((t, i) => (
               <label key={t} className="flex items-center justify-between text-sm">
                 <span className="text-brand-text/90">{t}</span>
-                <Toggle defaultOn={i < 3} />
+                <Toggle on={draft.autoPublish[i]} onChange={(v) => update((d) => { d.autoPublish[i] = v; })} />
               </label>
             ))}
           </div>
@@ -887,15 +919,21 @@ function Settings({ c }: { c: ClientData }) {
   );
 }
 
-function Toggle({ defaultOn }: { defaultOn?: boolean }) {
-  const [on, setOn] = useState(!!defaultOn);
+function Toggle({ defaultOn, on, onChange }: { defaultOn?: boolean; on?: boolean; onChange?: (v: boolean) => void }) {
+  const [internal, setInternal] = useState(!!defaultOn);
+  const isOn = on ?? internal;
+  function toggle() {
+    const next = !isOn;
+    if (onChange) onChange(next);
+    else setInternal(next);
+  }
   return (
     <button
       type="button"
-      onClick={() => setOn((o) => !o)}
-      className={cn('relative h-5 w-9 rounded-full transition-colors', on ? 'bg-brand-blue' : 'bg-white/12')}
+      onClick={toggle}
+      className={cn('relative h-5 w-9 rounded-full transition-colors', isOn ? 'bg-brand-blue' : 'bg-white/12')}
     >
-      <span className={cn('absolute top-0.5 h-4 w-4 rounded-full bg-white transition-all', on ? 'left-[18px]' : 'left-0.5')} />
+      <span className={cn('absolute top-0.5 h-4 w-4 rounded-full bg-white transition-all', isOn ? 'left-[18px]' : 'left-0.5')} />
     </button>
   );
 }
@@ -905,6 +943,17 @@ function Field({ label, value }: { label: string; value: React.ReactNode }) {
     <Panel className="p-4">
       <p className="text-[11px] text-brand-textMute">{label}</p>
       <p className="mt-0.5 text-sm text-brand-text">{value}</p>
+    </Panel>
+  );
+}
+
+function EPanelField({ label, value, onChange, placeholder }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string }) {
+  return (
+    <Panel className="p-4">
+      <p className="text-[11px] text-brand-textMute">{label}</p>
+      <div className="mt-0.5">
+        <EText value={value} onChange={onChange} placeholder={placeholder} />
+      </div>
     </Panel>
   );
 }
