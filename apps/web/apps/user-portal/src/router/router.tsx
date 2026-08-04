@@ -52,6 +52,10 @@ const PreviewDashboard = lazy(() =>
 const TryRynk = lazy(() =>
   import('../pages/TryRynk').then((m) => ({ default: m.TryRynk })),
 );
+// Full-page preview of a content draft as it would publish to the client's site.
+const ContentPreview = lazy(() =>
+  import('../pages/client/ContentPreview').then((m) => ({ default: m.ContentPreview })),
+);
 
 export function Router() {
   const isAuthenticated = useAuthStore(fromAuth.isAuthenticated);
@@ -64,6 +68,8 @@ export function Router() {
             {/* Always-available dashboard preview (sample data, no auth) */}
             <Route path="/preview" element={<PreviewDashboard />} />
             <Route path="/preview/:domain" element={<PreviewDashboard />} />
+            {/* Full-page content-draft preview (sample data, no auth) */}
+            <Route path="/preview/content/:id" element={<ContentPreview />} />
             {/* Public "Try rynk on your site" instant scan */}
             <Route path="/try" element={<TryRynk />} />
             {isAuthenticated ? (

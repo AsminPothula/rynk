@@ -10,9 +10,10 @@
  */
 import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Bell } from 'lucide-react';
+import { ArrowLeft, Bell, Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getSampleClient, type ClientData, type ActionItem } from './sampleData';
+import { getArticle } from './sampleContent';
 import {
   Panel,
   SectionHeading,
@@ -590,6 +591,15 @@ function Content({ c }: { c: ClientData }) {
                     </div>
                     <h3 className="mt-1.5 font-serif text-base font-medium text-brand-text">{d.title}</h3>
                     <p className="mt-1 line-clamp-2 text-[13px] leading-relaxed text-brand-textMute">{d.preview}</p>
+                    {getArticle(d.id) && (
+                      <Link
+                        to={`/preview/content/${d.id}`}
+                        className="mt-2 inline-flex items-center gap-1.5 font-mono text-[11px] text-brand-blueSoft transition-colors hover:text-brand-text"
+                      >
+                        <Eye className="h-3.5 w-3.5" />
+                        Preview page
+                      </Link>
+                    )}
                   </div>
                   <div className="flex shrink-0 flex-col gap-2">
                     <button className="rounded-full bg-white px-4 py-1 font-serif text-xs font-medium text-brand-ink">Approve</button>
