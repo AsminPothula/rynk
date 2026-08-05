@@ -524,34 +524,8 @@ function Actions({ c }: { c: ClientData }) {
         </div>
       </section>
 
-      {/* Waiting on you — prioritized, always on top */}
-      <section>
-        <SectionHeading title="Waiting on you" />
-        {needsYou.length === 0 ? (
-          <Panel><EmptyNote>Nothing needs your sign-off right now.</EmptyNote></Panel>
-        ) : (
-          <Panel accent="via-brand-highlight" className="p-0">
-            <div className="divide-y divide-white/6">
-              {needsYou.map((a) => (
-                <div key={a.id} className="flex items-start justify-between gap-4 px-5 py-3.5">
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <ChannelChip channel={a.channel} />
-                      <StatusPill status={a.status} />
-                    </div>
-                    <p className="mt-1.5 text-sm text-brand-text">{a.title}</p>
-                    {a.detail && <p className="mt-0.5 text-[12px] text-brand-textMute">{a.detail}</p>}
-                  </div>
-                  <div className="flex shrink-0 gap-2">
-                    <button className="rounded-full bg-white px-3 py-1 font-serif text-xs font-medium text-brand-ink">Approve</button>
-                    <button className="rounded-full px-3 py-1 font-serif text-xs text-brand-textMute ring-1 ring-white/12">Details</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Panel>
-        )}
-      </section>
+      {/* Approval queue — nothing visible goes live without the client's OK */}
+      <ApprovalQueue items={needsYou} />
 
       {/* Done by rynk — grouped, collapsible by channel */}
       <section>
@@ -563,6 +537,82 @@ function Actions({ c }: { c: ClientData }) {
         </div>
       </section>
     </div>
+  );
+}
+
+function ApprovalQueue({ items }: { items: ActionItem[] }) {
+  const [decided, setDecided] = useState<Record<string, 'approved' | 'rejected'>>({});
+  const [publishing, setPublishing] = useState<'idle' | 'publishing' | 'done'>('idle');
+
+  const pending = items.filter((a) => !decided[a.id]);
+  const approvedCount = Object.values(decided).filter((v) => v === 'approved').length;
+
+  function decide(id: string, d: 'approved' | 'rejected') {
+    setDecided((prev) => ({ ...prev, [id]: d }));
+  }
+  function publish() {
+    setPublishing('publishing');
+    // Real path: POST /client/:id/publish → runLayer4 applies the approved
+    // actions. Simulated here in the sample preview.
+    window.setTimeout(() => setPublishing('done'), 1400);
+  }
+
+  return (
+    <section>
+      <SectionHeading eyebrow="Nothing visible goes live without your OK" title={`Waiting for your approval${pending.length ? ` · ${pending.length}` : ''}`} />
+
+      {pending.length === 0 ? (
+        <Panel><EmptyNote>All caught up — nothing waiting for sign-off.</EmptyNote></Panel>
+      ) : (
+        <div className="space-y-3">
+          {pending.map((a) => (
+            <Panel key={a.id} accent="via-brand-highlight">
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <ChannelChip channel={a.channel} />
+                    {a.impact && (
+                      <span className="rounded-full bg-brand-emerald/12 px-2 py-0.5 font-mono text-[10px] text-brand-emeraldSoft ring-1 ring-brand-emerald/25">{a.impact}</span>
+                    )}
+                  </div>
+                  <p className="mt-2 font-serif text-[15px] text-brand-text">{a.title}</p>
+                  {a.detail && <p className="mt-0.5 text-[12.5px] text-brand-textMute">{a.detail}</p>}
+                  {a.why && (
+                    <p className="mt-2 border-l-2 border-brand-violet/40 pl-3 text-[12.5px] leading-relaxed text-brand-textMute">
+                      <span className="text-brand-text/80">Why rynk recommends this:</span> {a.why}
+                    </p>
+                  )}
+                </div>
+                <div className="flex shrink-0 flex-col gap-2">
+                  <button onClick={() => decide(a.id, 'approved')} className="rounded-full bg-white px-4 py-1 font-serif text-xs font-medium text-brand-ink">Approve</button>
+                  <button className="rounded-full px-4 py-1 font-serif text-xs text-brand-text ring-1 ring-white/12">Edit</button>
+                  <button onClick={() => decide(a.id, 'rejected')} className="rounded-full px-4 py-1 font-serif text-xs text-brand-textMute ring-1 ring-white/8">Reject</button>
+                </div>
+              </div>
+            </Panel>
+          ))}
+        </div>
+      )}
+
+      {approvedCount > 0 && (
+        <div className="mt-3 flex items-center justify-between gap-3 rounded-2xl bg-brand-emerald/8 px-5 py-3 ring-1 ring-brand-emerald/20">
+          <p className="text-sm text-brand-text">
+            {publishing === 'done'
+              ? `${approvedCount} approved change${approvedCount > 1 ? 's' : ''} published — rynk is rolling ${approvedCount > 1 ? 'them' : 'it'} out.`
+              : `${approvedCount} approved · ready to publish`}
+          </p>
+          {publishing !== 'done' && (
+            <button
+              onClick={publish}
+              disabled={publishing === 'publishing'}
+              className="shrink-0 rounded-full bg-white px-5 py-1.5 font-serif text-sm font-medium text-brand-ink transition-all hover:shadow-[0_10px_28px_-10px_rgba(255,255,255,0.4)] disabled:opacity-60"
+            >
+              {publishing === 'publishing' ? 'Publishing…' : 'Publish approved'}
+            </button>
+          )}
+        </div>
+      )}
+    </section>
   );
 }
 
