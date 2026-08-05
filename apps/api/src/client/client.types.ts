@@ -10,6 +10,26 @@ export enum ClientStatus {
 }
 export type ClientStatusType = `${ClientStatus}`;
 
+/**
+ * Entitlement / access status for a company — decides whether the client can
+ * use it. Separate from the pipeline `status` above. Payment (self-serve) sets
+ * `active`; a rynk admin can grant `comp` (beta / free) without payment.
+ */
+export enum AccessStatus {
+  Active = 'active',
+  Trialing = 'trialing',
+  Comp = 'comp',
+  None = 'none',
+}
+export type AccessStatusType = `${AccessStatus}`;
+
+/** Statuses that grant access to a company. */
+export const USABLE_ACCESS: AccessStatusType[] = [
+  AccessStatus.Active,
+  AccessStatus.Trialing,
+  AccessStatus.Comp,
+];
+
 /** A client is one onboarded domain, owned by a rynk user. */
 export class Client {
   private constructor(
@@ -18,6 +38,7 @@ export class Client {
     private _name: string,
     private _ownerId: string,
     private _status: ClientStatusType,
+    private _accessStatus: AccessStatusType,
     private _context: Record<string, unknown> | null,
     private _createdAt?: Date,
     private _updatedAt?: Date,
@@ -32,6 +53,8 @@ export class Client {
       name: name ?? domain,
       ownerId,
       status: ClientStatus.Onboarding,
+      // New companies are locked until paid (self-serve) or comped by an admin.
+      accessStatus: AccessStatus.None,
       context: null,
     });
   }
@@ -42,6 +65,7 @@ export class Client {
     name: string;
     ownerId: string;
     status: ClientStatusType;
+    accessStatus?: AccessStatusType;
     context: Record<string, unknown> | null;
     createdAt?: Date;
     updatedAt?: Date;
@@ -53,6 +77,7 @@ export class Client {
       params.name,
       params.ownerId,
       params.status,
+      params.accessStatus ?? AccessStatus.None,
       params.context,
       params.createdAt,
       params.updatedAt,
@@ -74,6 +99,9 @@ export class Client {
   }
   get status() {
     return this._status;
+  }
+  get accessStatus() {
+    return this._accessStatus;
   }
   get context() {
     return this._context;
@@ -130,6 +158,17 @@ export class Client {
 
   isOwnedBy(userId: string) {
     return this._ownerId === userId;
+  }
+
+  /** Admin sets the entitlement — e.g. `comp` for a beta client, `active` on payment. */
+  setAccessStatus(status: AccessStatusType) {
+    this._accessStatus = status;
+    return this;
+  }
+
+  /** Whether this company is currently usable (paid, trialing, or comped). */
+  isUsable() {
+    return USABLE_ACCESS.includes(this._accessStatus);
   }
 }
 

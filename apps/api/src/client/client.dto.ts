@@ -1,7 +1,7 @@
 import { DtoProperty } from '@decorator';
 import { ApiPropertyOptional, ApiProperty } from '@nestjs/swagger';
 import { IsObject, IsOptional } from 'class-validator';
-import { Client } from './client.types';
+import { AccessStatus, Client } from './client.types';
 
 export class OnboardClientDTO {
   @DtoProperty({
@@ -10,6 +10,16 @@ export class OnboardClientDTO {
     swaggerSampleValue: 'itechdata.ai',
   })
   url: string;
+}
+
+/** Admin-only: set a company's entitlement (e.g. `comp` for a beta client). */
+export class SetClientAccessStatusDTO {
+  @DtoProperty({
+    type: 'OneOf',
+    possibleValues: Object.values(AccessStatus),
+    isNotEmpty: true,
+  })
+  accessStatus: AccessStatus;
 }
 
 /**
@@ -69,6 +79,9 @@ export class ClientResponse {
   @ApiProperty({ example: 'Onboarded' })
   status: string;
 
+  @ApiProperty({ example: 'comp', description: 'Entitlement: active | trialing | comp | none.' })
+  accessStatus: string;
+
   @ApiProperty({
     type: 'object',
     additionalProperties: true,
@@ -85,6 +98,7 @@ export class ClientResponse {
     this.domain = client.domain;
     this.name = client.name;
     this.status = client.status;
+    this.accessStatus = client.accessStatus;
     this.context = client.context;
     this.createdAt = client.createdAt;
   }

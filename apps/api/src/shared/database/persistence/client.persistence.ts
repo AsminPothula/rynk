@@ -27,6 +27,10 @@ export class ClientPersistence {
   @Column({ default: 'Onboarding' })
   status: string;
 
+  /** Entitlement/access status (active | trialing | comp | none). */
+  @Column({ default: 'none' })
+  accessStatus: string;
+
   @Column({ type: 'jsonb', nullable: true })
   context: Record<string, unknown> | null;
 

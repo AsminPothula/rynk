@@ -29,4 +29,9 @@ export class ClientService {
   async listForOwner(ownerId: string) {
     return this.findMany(new FindClientSpecs().setOwnerId(ownerId));
   }
+
+  /** Every client — rynk-admin view (no ownership filter). */
+  async listAll() {
+    return this.findMany(new FindClientSpecs());
+  }
 }

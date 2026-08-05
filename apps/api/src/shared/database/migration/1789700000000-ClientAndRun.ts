@@ -10,7 +10,7 @@ export class ClientAndRun1789700000000 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TABLE "Client" ("id" uuid NOT NULL, "domain" character varying NOT NULL, "name" character varying NOT NULL, "ownerId" uuid NOT NULL, "status" character varying NOT NULL DEFAULT 'Onboarding', "context" jsonb, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, CONSTRAINT "UQ_client_domain" UNIQUE ("domain"), CONSTRAINT "PK_client_id" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "Client" ("id" uuid NOT NULL, "domain" character varying NOT NULL, "name" character varying NOT NULL, "ownerId" uuid NOT NULL, "status" character varying NOT NULL DEFAULT 'Onboarding', "accessStatus" character varying NOT NULL DEFAULT 'none', "context" jsonb, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, CONSTRAINT "UQ_client_domain" UNIQUE ("domain"), CONSTRAINT "PK_client_id" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE INDEX "IDX_client_ownerId" ON "Client" ("ownerId")`,

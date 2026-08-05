@@ -1,5 +1,5 @@
 import { ClientPersistence } from '@persistence/client.persistence';
-import { Client, ClientStatusType } from 'src/client/client.types';
+import { AccessStatusType, Client, ClientStatusType } from 'src/client/client.types';
 
 export class ClientMapper {
   static toDomain(data: ClientPersistence): Client {
@@ -9,6 +9,7 @@ export class ClientMapper {
       name: data.name,
       ownerId: data.ownerId,
       status: data.status as ClientStatusType,
+      accessStatus: (data.accessStatus ?? 'none') as AccessStatusType,
       context: data.context ?? null,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
@@ -24,6 +25,7 @@ export class ClientMapper {
       name: data.name,
       ownerId: data.ownerId,
       status: data.status,
+      accessStatus: data.accessStatus,
       context: data.context,
     });
     return persistence;

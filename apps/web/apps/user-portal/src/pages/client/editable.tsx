@@ -70,8 +70,12 @@ export function EditProvider({ client, children }: { client: ClientData; childre
 
   const save = useCallback(() => {
     setStatus('saving');
-    // TODO(rynk): PATCH /client/:id/profile with the diff, then kick a
-    // re-strategy run so the edits flow into the plan. Simulated for now.
+    // Real wiring (lands with the dashboard→API connection): call
+    //   PATCH /client/:id/profile  with the changed fields.
+    // The backend already persists the context AND kicks a background
+    // re-strategy run (EditClientProfileUseCase → startLayersDetached), so the
+    // edits flow into the audit + plan automatically — the frontend just needs
+    // to fire that request here. Simulated below until the API layer is wired.
     window.setTimeout(() => {
       setSaved(draft);
       setStatus('recomputing');

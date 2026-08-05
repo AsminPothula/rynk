@@ -150,6 +150,13 @@ export const getUserPermissions = (roles: UserProfileRoleType[]) => {
   return Array.from(userPermissions);
 };
 
+/**
+ * A rynk admin (Admin or SystemAdmin) sees and manages every client; a Client
+ * role only ever sees the companies it owns. Used to bypass ownership scoping.
+ */
+export const isRynkAdmin = (roles: UserProfileRoleType[]): boolean =>
+  roles.some((r) => r === UserProfileRole.Admin || r === UserProfileRole.SystemAdmin);
+
 export const haveSameElements = <T>(array1: T[], array2: T[]) => {
   if (array1.length !== array2.length) {
     return false;

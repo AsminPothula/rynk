@@ -26,6 +26,8 @@ export enum UserProfileRole {
   Admin = 'admin',
   Developer = 'developer',
   SystemAdmin = 'systemadmin',
+  /** A rynk customer — sees only the companies/URLs they own. */
+  Client = 'client',
 }
 export type UserProfileRoleType = `${UserProfileRole}`;
 

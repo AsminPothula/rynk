@@ -1,6 +1,7 @@
 import { Api, DecodedJwt } from '@decorator';
 import { Body, Controller, Param } from '@nestjs/common';
 import { AppError, UserPermission } from '@types';
+import { isRynkAdmin } from '@helper';
 import { AuthDetail } from '@user/types';
 import { PipelineService } from 'src/pipeline/pipeline.service';
 import {
@@ -8,9 +9,11 @@ import {
   ClientResponse,
   EditClientProfileDTO,
   OnboardClientDTO,
+  SetClientAccessStatusDTO,
 } from './client.dto';
 import { ClientNotFoundError } from './client.error';
 import { ClientService } from './client.service';
+import { Client } from './client.types';
 import { EditClientProfileUseCase, OnboardClientUseCase } from './initiator';
 
 @Controller('client')
@@ -21,6 +24,18 @@ export class ClientController {
     private _editClientProfileUseCase: EditClientProfileUseCase,
     private _pipeline: PipelineService,
   ) {}
+
+  /**
+   * Row-level access: a rynk admin can reach any client; a client only its own.
+   * Returns the client if allowed, otherwise a not-found error (we don't leak
+   * existence to non-owners).
+   */
+  private accessOrThrow(client: Client, payload: AuthDetail): Client {
+    if (isRynkAdmin(payload.roles) || client.isOwnedBy(payload.userId)) {
+      return client;
+    }
+    throw new ClientNotFoundError();
+  }
 
   @Api({
     isPublic: false,
@@ -50,11 +65,17 @@ export class ClientController {
     swaggerSuccessResponse: ClientResponse,
   })
   async list(@DecodedJwt() payload: AuthDetail) {
-    const result = await this._clientService.listForOwner(payload.userId);
+    const admin = isRynkAdmin(payload.roles);
+    const result = admin
+      ? await this._clientService.listAll()
+      : await this._clientService.listForOwner(payload.userId);
     if (result instanceof AppError) {
       throw result;
     }
-    return result.data.map((client) => new ClientResponse(client));
+    // Admins see every client regardless of status; clients only see the
+    // companies they can actually use (paid, trialing, or comped).
+    const visible = admin ? result.data : result.data.filter((c) => c.isUsable());
+    return visible.map((client) => new ClientResponse(client));
   }
 
   @Api({
@@ -69,10 +90,36 @@ export class ClientController {
     if (result instanceof AppError) {
       throw result;
     }
-    if (!result.isOwnedBy(payload.userId)) {
+    return new ClientResponse(this.accessOrThrow(result, payload));
+  }
+
+  @Api({
+    hasPermission: UserPermission.ManageClient,
+    isPublic: false,
+    path: ':id/status',
+    verb: 'PATCH',
+    swaggerSuccessResponse: ClientResponse,
+  })
+  async setAccessStatus(
+    @DecodedJwt() payload: AuthDetail,
+    @Param('id') id: string,
+    @Body() body: SetClientAccessStatusDTO,
+  ) {
+    // Admin-only (ManageClient permission). Set a company's entitlement —
+    // e.g. `comp` to give a beta client free access without payment.
+    const client = await this._clientService.findById(id);
+    if (client instanceof AppError) {
+      throw client;
+    }
+    if (!isRynkAdmin(payload.roles)) {
       throw new ClientNotFoundError();
     }
-    return new ClientResponse(result);
+    client.setAccessStatus(body.accessStatus);
+    const saved = await this._clientService.save(client);
+    if (saved instanceof AppError) {
+      throw saved;
+    }
+    return new ClientResponse(saved);
   }
 
   @Api({
@@ -91,6 +138,7 @@ export class ClientController {
       clientId: id,
       actorId: payload.userId,
       patch: { ...body },
+      isAdmin: isRynkAdmin(payload.roles),
     });
     if (result instanceof AppError) {
       throw result;
@@ -106,13 +154,11 @@ export class ClientController {
     swaggerSuccessResponse: ClientOverviewResponse,
   })
   async overview(@DecodedJwt() payload: AuthDetail, @Param('id') id: string) {
-    const client = await this._clientService.findById(id);
-    if (client instanceof AppError) {
-      throw client;
+    const found = await this._clientService.findById(id);
+    if (found instanceof AppError) {
+      throw found;
     }
-    if (!client.isOwnedBy(payload.userId)) {
-      throw new ClientNotFoundError();
-    }
+    const client = this.accessOrThrow(found, payload);
     const domain = client.domain;
     return new ClientOverviewResponse({
       client,
