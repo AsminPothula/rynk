@@ -12,6 +12,13 @@
 export * from "./adapters/types.js";
 export * from "./apply.js";
 export { runLayer4, defaultAdapterSet, type RunLayer4Options } from "./run.js";
+export {
+  classifyAction,
+  actionCategory,
+  isEligibleToApply,
+  type ActionClass,
+  type PublishPolicy,
+} from "./policy.js";
 export { makeWordPressAdapter } from "./adapters/wordpress/index.js";
 export type { WordPressAdapterConfig } from "./adapters/wordpress/index.js";
 export { makeImageAdapter } from "./adapters/image/index.js";

@@ -19,6 +19,7 @@ import { resolve } from "node:path";
 import { createLogger } from "@rynk/core";
 import type { ExecutionManifest } from "@rynk/layer3-generate";
 import { applyManifest, type ApplyReport } from "./apply.js";
+import type { PublishPolicy } from "./policy.js";
 import type { ActionAdapter } from "./adapters/types.js";
 import { makeImageAdapter } from "./adapters/image/index.js";
 import { makeDocumentAdapter } from "./adapters/document/index.js";
@@ -37,8 +38,10 @@ export interface RunLayer4Options {
   manifest: ExecutionManifest;
   /** Where mock adapters write drafts, e.g. runs/{safeDomain}/publish. */
   outputDir: string;
-  /** Only apply actions in status "approved". Default true (safe). */
+  /** Gate visible actions behind approval/policy. Default true (safe). */
   requireApproval?: boolean;
+  /** Client auto-publish preferences (which visible categories publish on their own). */
+  policy?: PublishPolicy;
   /**
    * WordPress credentials. When provided, the CMS adapter is included (still
    * gated by WORDPRESS_LIVE for real HTTP). Omit to skip CMS actions entirely.
@@ -91,6 +94,7 @@ export async function runLayer4(opts: RunLayer4Options): Promise<ApplyReport> {
     manifest: opts.manifest,
     adapters,
     requireApproval: opts.requireApproval ?? true,
+    policy: opts.policy,
   });
 
   log.info("Layer 4 run complete", {

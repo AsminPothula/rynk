@@ -19,6 +19,7 @@ import {
   type ExecutionManifest,
 } from "@rynk/layer3-generate";
 import type { ActionAdapter, ApplyResult } from "./adapters/types.js";
+import { isEligibleToApply, type PublishPolicy } from "./policy.js";
 
 const log = createLogger("layer4.apply");
 
@@ -26,11 +27,17 @@ export interface ApplyOptions {
   manifest: ExecutionManifest;
   adapters: ActionAdapter[];
   /**
-   * If true, only actions with status="approved" are applied. Otherwise
-   * actions in "pending" or "staged" are also applied.
-   * Default: true (safer — explicit approval required).
+   * If true (default), the publishing policy gates each action: technical
+   * actions auto-apply, visible ones need approval (or a client auto-publish
+   * opt-in via `policy`). If false, every non-terminal action is applied
+   * regardless — used for dry-runs / full mock passes.
    */
   requireApproval?: boolean;
+  /**
+   * Client publishing preferences — which visible content categories they've
+   * opted into auto-publishing. Omitted → every visible action needs approval.
+   */
+  policy?: PublishPolicy;
   /** Per-action timeout in ms — fail the action if adapter hangs. */
   perActionTimeoutMs?: number;
 }
@@ -76,9 +83,15 @@ export async function applyManifest(opts: ApplyOptions): Promise<ApplyReport> {
       continue;
     }
 
-    // Approval gate.
-    if (requireApproval && action.status !== "approved") {
-      log.debug("skip — not approved", { actionId: action.id, status: action.status });
+    // Publishing policy gate: technical actions auto-apply; visible ones need
+    // approval (or a client auto-publish opt-in for that category). Ineligible
+    // actions stay `pending` — that pending set is the approval queue.
+    if (requireApproval && !isEligibleToApply(action, opts.policy)) {
+      log.debug("held for approval", {
+        actionId: action.id,
+        type: action.type,
+        status: action.status,
+      });
       continue;
     }
 
