@@ -10,7 +10,7 @@
  */
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Bell, Eye, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Bell, Eye, ExternalLink, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getSampleClient, type ClientData, type ActionItem } from './sampleData';
 import { getArticle } from './sampleContent';
@@ -859,7 +859,27 @@ function Settings({ c }: { c: ClientData }) {
     { name: 'Google Search Console', status: 'Not connected', href: `https://search.google.com/search-console?resource_id=sc-domain:${c.domain}`, cta: 'Open Search Console' },
     { name: 'Google Analytics', status: 'Not connected', href: 'https://analytics.google.com/', cta: 'Open Analytics' },
   ];
-  const autoTypes = ['Meta titles & descriptions', 'Schema markup', 'Internal links', 'Image alt text'];
+  // Technical fixes with no customer-facing impact — always automatic, not toggleable.
+  const alwaysAuto = [
+    'Metadata (titles & descriptions)',
+    'Schema markup',
+    'Sitemap generation & submission',
+    'robots.txt & canonical tags',
+    'Internal linking',
+    'Indexing requests',
+    'Crawl-error & broken-link fixes',
+    'Image alt text',
+  ];
+  // Visible content — client chooses auto vs. approval per type. Default: manual.
+  const configurable = [
+    'Blog posts',
+    'New landing pages',
+    'Service page edits',
+    'FAQ sections',
+    'Website copy rewrites',
+    'Google Business Profile posts',
+    'Review replies',
+  ];
   return (
     <div className="space-y-8">
       <section>
@@ -900,16 +920,42 @@ function Settings({ c }: { c: ClientData }) {
       </section>
 
       <section>
-        <SectionHeading title="Auto-publish trusted types" />
-        <Panel>
-          <p className="mb-4 text-[13px] text-brand-textMute">Let rynk publish these without waiting for approval. Public content (pages, posts, outreach, review replies) always needs sign-off.</p>
+        <SectionHeading eyebrow="What publishes on its own vs. waits for you" title="Publishing" />
+
+        <Panel className="mb-3">
+          <div className="mb-1 flex items-center gap-2">
+            <h3 className="font-serif text-base font-medium text-brand-text">Technical SEO</h3>
+            <span className="rounded-full bg-brand-emerald/12 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide text-brand-emeraldSoft ring-1 ring-brand-emerald/25">always automatic</span>
+          </div>
+          <p className="mb-4 text-[13px] text-brand-textMute">Behind-the-scenes fixes that improve search performance without changing how your site looks or reads. These run automatically — no approval needed.</p>
           <div className="space-y-2.5">
-            {autoTypes.map((t, i) => (
-              <label key={t} className="flex items-center justify-between text-sm">
+            {alwaysAuto.map((t) => (
+              <div key={t} className="flex items-center justify-between text-sm">
                 <span className="text-brand-text/90">{t}</span>
-                <Toggle on={draft.autoPublish[i]} onChange={(v) => update((d) => { d.autoPublish[i] = v; })} />
-              </label>
+                <span className="inline-flex items-center gap-1.5 font-mono text-[11px] text-brand-emeraldSoft">
+                  <Lock className="h-3 w-3" /> Auto
+                </span>
+              </div>
             ))}
+          </div>
+        </Panel>
+
+        <Panel>
+          <h3 className="font-serif text-base font-medium text-brand-text">Visible content — you decide</h3>
+          <p className="mb-4 mt-1 text-[13px] text-brand-textMute">Anything that changes what visitors see. <span className="text-brand-text/80">Needs approval</span> = rynk drafts it and waits for your sign-off (with the reasoning + estimated impact). <span className="text-brand-text/80">Auto-publish</span> = rynk ships it for you. New clients start on manual approval — flip these on as you build trust.</p>
+          <div className="space-y-2.5">
+            {configurable.map((t) => {
+              const on = draft.autoPublish[t] ?? false;
+              return (
+                <label key={t} className="flex items-center justify-between text-sm">
+                  <span className="text-brand-text/90">{t}</span>
+                  <div className="flex items-center gap-2.5">
+                    <span className={cn('font-mono text-[11px]', on ? 'text-brand-emeraldSoft' : 'text-brand-textMute')}>{on ? 'Auto-publish' : 'Needs approval'}</span>
+                    <Toggle on={on} onChange={(v) => update((d) => { d.autoPublish[t] = v; })} />
+                  </div>
+                </label>
+              );
+            })}
           </div>
         </Panel>
       </section>

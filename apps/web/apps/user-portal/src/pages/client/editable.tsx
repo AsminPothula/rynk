@@ -19,8 +19,12 @@ import type { ClientData, ClientProfile } from './sampleData';
 export interface EditDraft {
   profile: ClientProfile;
   business: { name: string; industry: string; location: string };
-  /** Auto-publish toggles, aligned with the Settings "trusted types" list. */
-  autoPublish: boolean[];
+  /**
+   * Per-content-type auto-publish choices for the CONFIGURABLE (visible)
+   * actions, keyed by type. Absent/false = manual approval (the default).
+   * Technical actions are always automatic and not represented here.
+   */
+  autoPublish: Record<string, boolean>;
 }
 
 type Status = 'idle' | 'saving' | 'recomputing' | 'saved';
@@ -47,7 +51,9 @@ export function EditProvider({ client, children }: { client: ClientData; childre
     () => ({
       profile: structuredClone(client.profile),
       business: { name: client.name, industry: client.industry, location: client.location ?? '' },
-      autoPublish: [true, true, true, false],
+      // Empty = every configurable type starts on manual approval (the default
+      // for new clients). Toggling a type on stores true.
+      autoPublish: {},
     }),
     [client],
   );
