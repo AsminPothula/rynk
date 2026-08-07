@@ -35,7 +35,7 @@ $founder_styles = rynk_founder_styles();
 					class="mt-4 font-serif text-5xl md:text-6xl font-medium leading-[1.05] tracking-tight animate-rise"
 					style="animation-delay: 60ms;"
 				>
-					Why we started <span class="italic text-brand-blueSoft">Rynk.</span>
+					Our <span class="italic text-brand-blueSoft">story.</span>
 				</h1>
 				<div
 					class="mt-8 space-y-5 text-[16px] leading-[1.8] text-brand-textMute animate-rise"
@@ -77,7 +77,7 @@ $founder_styles = rynk_founder_styles();
 					The team
 				</p>
 				<h2 class="mt-3 font-serif text-4xl md:text-5xl font-medium tracking-tight">
-					Meet the founders.
+					Meet the team.
 				</h2>
 			</div>
 
@@ -127,22 +127,37 @@ $founder_styles = rynk_founder_styles();
 				class="pointer-events-none absolute -top-20 right-24 h-72 w-72 rounded-full bg-brand-blue/15 blur-3xl animate-float-slow"
 			></div>
 
-			<div class="relative flex flex-col items-start justify-between gap-8 sm:flex-row sm:items-center">
+			<div class="relative flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
 				<div>
 					<h3 class="font-serif text-3xl md:text-4xl font-medium tracking-tight">
-						See it <span class="italic text-brand-blueSoft">running.</span>
+						Try Rynk <span class="italic text-brand-blueSoft">here.</span>
 					</h3>
 					<p class="mt-2 text-[15px] text-brand-textMute">
-						Five-minute setup. Rynk starts shipping the first fixes within the day.
+						Enter your website URL and see the immediate assessment.
 					</p>
 				</div>
-				<a
-					href="<?php echo esc_url( home_url( '/sign-in' ) ); ?>"
-					class="group inline-flex h-12 shrink-0 items-center gap-2.5 rounded-full bg-white px-7 font-serif text-[16px] font-medium text-brand-ink transition-all hover:shadow-[0_14px_36px_-14px_rgba(255,255,255,0.4)]"
-				>
-					Get started
-					<?php echo rynk_icon( 'arrow-right', 'h-4 w-4 transition-transform group-hover:translate-x-0.5' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-				</a>
+				<div class="w-full md:ml-10 md:flex-1">
+					<form
+						action="<?php echo esc_url( rynk_app_url( '/try' ) ); ?>"
+						class="group relative flex w-full items-center gap-2 rounded-full bg-white/[0.06] ring-1 ring-white/12 py-2 pl-6 pr-2 text-brand-text shadow-[0_20px_50px_-20px_rgba(0,0,0,0.6)]"
+					>
+						<?php echo rynk_icon( 'sparkles', 'h-4 w-4 text-brand-violetSoft' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<input
+							type="text"
+							name="domain"
+							placeholder="www.yoursite.com"
+							aria-label="Your domain"
+							class="min-w-0 flex-1 bg-transparent font-serif text-[16px] text-brand-text placeholder:text-brand-textMute focus:outline-none"
+						/>
+						<button
+							type="submit"
+							aria-label="Audit my site"
+							class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-brand-ink transition-all group-hover:scale-105"
+						>
+							<?php echo rynk_icon( 'arrow-right', 'h-4 w-4' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						</button>
+					</form>
+				</div>
 			</div>
 		</div>
 	</section>

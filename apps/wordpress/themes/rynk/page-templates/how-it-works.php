@@ -105,8 +105,8 @@ $tint_styles = rynk_tint_styles();
 					<div>
 						<?php // Job header - colored number chip + name. ?>
 						<div class="flex items-center gap-4">
-							<span class="<?php echo esc_attr( 'flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ' . $s['iconBg'] . ' font-serif text-xl font-medium ' . $s['iconText'] . ' shadow-[0_6px_16px_-4px_rgba(0,0,0,0.5)]' ); ?>">
-								<?php echo esc_html( $job['n'] ); ?>
+							<span class="<?php echo esc_attr( 'inline-flex h-9 shrink-0 items-center justify-center rounded-full px-4 ' . $s['iconBg'] . ' font-serif text-[15px] font-medium ' . $s['iconText'] . ' shadow-[0_6px_16px_-4px_rgba(0,0,0,0.5)]' ); ?>">
+								Step <?php echo esc_html( $job['n'] ); ?>
 							</span>
 							<h3 class="<?php echo esc_attr( 'font-serif text-3xl md:text-4xl font-medium tracking-tight ' . $s['text'] ); ?>">
 								<?php echo esc_html( $job['name'] ); ?>
@@ -167,7 +167,7 @@ $tint_styles = rynk_tint_styles();
 						Enter your website URL and see the immediate assessment.
 					</p>
 				</div>
-				<div class="w-full shrink-0 md:w-auto md:min-w-[360px]">
+				<div class="w-full md:ml-10 md:flex-1">
 					<form
 						action="<?php echo esc_url( rynk_app_url( '/try' ) ); ?>"
 						class="group relative flex w-full items-center gap-2 rounded-full bg-white/[0.06] ring-1 ring-white/12 py-2 pl-6 pr-2 text-brand-text shadow-[0_20px_50px_-20px_rgba(0,0,0,0.6)]"

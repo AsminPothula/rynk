@@ -199,7 +199,7 @@ function rynk_jobs(): array {
 		),
 		array(
 			'n'     => '2',
-			'name'  => 'Update',
+			'name'  => 'Fix & Update',
 			'tint'  => 'amber',
 			'intro' => 'Rynk fixes the technical issues holding your site back and deploys every change for you.',
 			'cards' => array(
@@ -270,6 +270,28 @@ function rynk_jobs(): array {
  */
 function rynk_tiers(): array {
 	return array(
+		array(
+			'name'    => 'Starter',
+			'price'   => 'Free',
+			'cadence' => 'site build',
+			'target'  => 'Getting started? We can build the site too.',
+			'columns' => array(
+				array(
+					'label'    => 'Includes:',
+					'features' => array(
+						'A full WordPress website, built for you',
+						'2-3 pages, SEO-optimized from day one',
+						'Free with 6 months of Gold or Platinum up front',
+						'Automatic updates once you launch',
+					),
+				),
+			),
+			'cta'     => 'Get my site built',
+			'href'    => '/contact',
+			'accent'  => false,
+			'badge'   => '',
+			'tint'    => 'cyan',
+		),
 		array(
 			'name'    => 'Gold',
 			'price'   => '$149',

@@ -53,7 +53,7 @@ $tier_styles = rynk_tier_styles();
 		></div>
 
 		<div class="relative mx-auto max-w-screen-xl">
-			<div class="grid gap-5 lg:grid-cols-2">
+			<div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
 				<?php foreach ( rynk_tiers() as $tier ) : ?>
 					<?php $s = $tier_styles[ $tier['tint'] ]; ?>
 					<div class="<?php echo esc_attr( 'relative flex flex-col overflow-hidden rounded-3xl bg-white/[0.03] p-5 md:p-6 ring-1 ' . $s['ring'] . ' transition-all duration-300 hover:-translate-y-1 ' . ( $tier['accent'] ? 'shadow-[0_18px_50px_-15px_rgba(156,140,240,0.45)]' : '' ) ); ?>">
@@ -109,41 +109,6 @@ $tier_styles = rynk_tier_styles();
 					</div>
 				<?php endforeach; ?>
 			</div>
-
-			<?php // SITE-BUILD ONE-TIME OFFER. ?>
-			<div class="relative mt-5 overflow-hidden rounded-3xl bg-white/[0.02] ring-1 ring-brand-highlight/30 px-8 py-7 md:px-10 md:py-8">
-				<div
-					class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-brand-highlight to-transparent"
-					aria-hidden="true"
-				></div>
-				<div
-					aria-hidden="true"
-					class="pointer-events-none absolute -top-16 right-16 h-56 w-56 rounded-full bg-brand-highlight/15 blur-3xl"
-				></div>
-
-				<div class="relative grid gap-8 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] md:items-center">
-					<div>
-						<h2 class="font-serif text-3xl md:text-4xl font-medium leading-[1.05] tracking-tight text-brand-text">
-							Starting from zero?
-							<span class="italic text-brand-highlight">We&rsquo;ll build the site too.</span>
-						</h2>
-						<p class="mt-4 text-[15px] leading-[1.7] text-brand-textMute">
-							Free website if you buy 6 months of either tier up front. Full
-							WordPress website with 2-3 pages, SEO-optimized from day one.
-						</p>
-					</div>
-
-					<div class="flex md:justify-end">
-						<a
-							href="<?php echo esc_url( home_url( '/contact' ) ); ?>"
-							class="group inline-flex h-12 items-center gap-2.5 rounded-full bg-white px-7 font-serif text-[16px] font-medium text-brand-ink transition-all hover:shadow-[0_14px_36px_-14px_rgba(255,255,255,0.4)]"
-						>
-							Get my site built
-							<?php echo rynk_icon( 'arrow-right', 'h-4 w-4 transition-transform group-hover:translate-x-0.5' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-						</a>
-					</div>
-				</div>
-			</div>
 		</div>
 	</section>
 
@@ -158,10 +123,10 @@ $tier_styles = rynk_tier_styles();
 			<div class="relative grid gap-4 md:grid-cols-[.9fr_1fr] md:items-center">
 				<div class="w-full">
 					<h2 class="w-full font-serif text-3xl md:text-4xl font-medium leading-[1.05] tracking-tight text-brand-text">
-						Watch Rynk work <span class="italic text-brand-blueSoft">on your site.</span>
+						Watch Rynk live <span class="italic text-brand-blueSoft">on your site.</span>
 					</h2>
 					<p class="mt-3 w-full text-[15px] leading-[1.7] text-brand-textMute">
-						Run a free scan: Rynk&rsquo;s will find out why your customers aren&rsquo;t seeing your site while using Google or AI.
+						Enter your website URL and see the immediate assessment - why your customers aren&rsquo;t finding your site on Google or AI.
 					</p>
 				</div>
 
@@ -173,13 +138,13 @@ $tier_styles = rynk_tier_styles();
 					<input
 						type="text"
 						name="domain"
-						placeholder="yoursite.com"
+						placeholder="www.yoursite.com"
 						aria-label="Your domain"
 						class="flex-1 bg-transparent font-serif text-[16px] text-brand-text placeholder:text-brand-textMute focus:outline-none"
 					/>
 					<button
 						type="submit"
-						aria-label="Scan my site"
+						aria-label="Audit my site"
 						class="flex h-11 w-11 items-center justify-center rounded-full bg-white text-brand-ink transition-all group-hover:scale-105"
 					>
 						<?php echo rynk_icon( 'arrow-right', 'h-4 w-4' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>

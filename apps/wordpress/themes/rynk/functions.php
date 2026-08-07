@@ -125,6 +125,9 @@ function rynk_app_url( string $path = '' ): string {
  */
 function rynk_theme_setup(): void {
 	add_theme_support( 'title-tag' );
+
+	// Browser-tab title uses a plain hyphen, e.g. "Pricing - Rynk AI".
+	add_filter( 'document_title_separator', 'rynk_title_separator' );
 	add_theme_support( 'post-thumbnails' );
 	add_theme_support(
 		'html5',
@@ -132,6 +135,19 @@ function rynk_theme_setup(): void {
 	);
 }
 add_action( 'after_setup_theme', 'rynk_theme_setup' );
+
+/**
+ * Force a plain hyphen as the document-title separator.
+ *
+ * WordPress joins the page title and site name in the <title> tag (shown on the
+ * browser tab and in Google results). This keeps that separator a normal
+ * hyphen instead of a dash.
+ *
+ * @return string
+ */
+function rynk_title_separator(): string {
+	return '-';
+}
 
 /**
  * Version an asset by its mtime so a rebuilt stylesheet is never cached.
