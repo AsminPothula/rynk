@@ -42,14 +42,14 @@ $platforms  = rynk_platforms();
 						<h1 class="font-serif text-5xl md:text-6xl font-medium leading-[0.98] tracking-tight animate-rise text-brand-text">
 							Want more sales?
 							<span class="block mt-2 italic text-brand-blueSoft">
-								Increase website visits.
+								Generate more leads.
 							</span>
 						</h1>
 						<p
 							class="mt-6 max-w-xl text-[15.5px] leading-[1.75] text-brand-textMute animate-rise"
 							style="animation-delay: 160ms;"
 						>
-							Rynk is the first AI-powered SEO platform that makes growing your website effortless. It studies your site, identifies exactly what&rsquo;s preventing you from ranking, generates the fixes, and deploys them directly to your website&mdash;no SEO expertise or manual optimization required.
+							Rynk is the first end-to-end AI-powered SEO platform that makes your website generate more leads&mdash;effortlessly. It audits your site, identifies exactly what&rsquo;s stopping you from showing up in search, then deploys the fixes and generates content directly on your website&mdash;no SEO expertise or manual work required.
 						</p>
 
 						<div
@@ -58,11 +58,11 @@ $platforms  = rynk_platforms();
 						>
 							<div class="w-full">
 								<h2 class="w-full font-serif text-10xl md:text-10xl lg:text-[24px] font-medium leading-[1.02] tracking-tight text-brand-text">
-									Watch Rynk work
+									Watch Rynk live
 									on <span class="italic text-brand-blueSoft">your site.</span>
 								</h2>
 								<p class="mt-2 w-full text-[15.5px] leading-[1.7] text-brand-textMute">
-									Enter your website URL and see what Rynk has to say.
+									Enter your website URL and see the immediate assessment.
 								</p>
 							</div>
 
@@ -80,7 +80,7 @@ $platforms  = rynk_platforms();
 								/>
 								<button
 									type="submit"
-									aria-label="Scan my site"
+									aria-label="Audit my site"
 									class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-brand-ink transition-all group-hover:scale-105"
 								>
 									<?php echo rynk_icon( 'arrow-right', 'h-4 w-4' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -179,8 +179,8 @@ $platforms  = rynk_platforms();
 					What you <span class="italic text-brand-violetSoft">get.</span>
 				</h2>
 				<p class="mt-6 text-[15px] leading-[1.75] text-brand-textMute">
-					Rynk does the work of an SEO Specialist and an entire Web Developer team, in minutes. <br />
-					Every day, potential customers search Google, ChatGPT, and other AI search engines for businesses like yours. Rynk helps ensure your website is the one that Google and AI recommend to them.
+					Rynk optimizes your whole site and does the work of a team of SEO experts and web developers, in minutes. <br />
+					Every day, potential customers search Google, ChatGPT, and other AI search engines for businesses like yours. Rynk makes sure your website is the one they find.
 				</p>
 			</div>
 

@@ -23,8 +23,8 @@ declare( strict_types = 1 );
 function rynk_offerings(): array {
 	return array(
 		array(
-			'label'       => 'Better Website Text',
-			'description' => 'We rewrite titles and descriptions so your pages come up when customers hit "search."',
+			'label'       => 'Optimized Website',
+			'description' => 'We rewrite your titles, descriptions, and page text so your site comes up when customers hit "search."',
 			'icon'        => 'type',
 			'tint'        => 'emerald',
 		),
@@ -59,18 +59,6 @@ function rynk_offerings(): array {
 			'tint'        => 'violet',
 		),
 		array(
-			'label'       => 'Outreach Emails',
-			'description' => 'We draft emails to other sites, asking them to include your business name on their website.',
-			'icon'        => 'mail',
-			'tint'        => 'blue',
-		),
-		array(
-			'label'       => 'Social Media Posts',
-			'description' => 'We draft LinkedIn, Reddit and Threads posts, so AI tools are more likely to mention you.',
-			'icon'        => 'message-square',
-			'tint'        => 'pink',
-		),
-		array(
 			'label'       => 'Credibility Signals',
 			'description' => 'We create reports that mention your business, increasing the chance AI references you.',
 			'icon'        => 'book-open',
@@ -81,6 +69,18 @@ function rynk_offerings(): array {
 			'description' => 'If your site is custom-built, we write down developer-friendly SEO improvement suggestions.',
 			'icon'        => 'git-pull-request',
 			'tint'        => 'emerald',
+		),
+		array(
+			'label'       => 'Outreach Emails',
+			'description' => 'We draft emails to other sites, asking them to include your business name on their website.',
+			'icon'        => 'mail',
+			'tint'        => 'blue',
+		),
+		array(
+			'label'       => 'Social Media Posts',
+			'description' => 'We draft LinkedIn, Reddit and Threads posts, so AI tools are more likely to mention you.',
+			'icon'        => 'message-square',
+			'tint'        => 'pink',
 		),
 	);
 }
@@ -114,30 +114,30 @@ function rynk_hero_cards(): array {
 		array(
 			'icon'   => 'type',
 			'tint'   => 'emerald',
-			'label'  => 'Scans Your Site',
+			'label'  => 'Audits Your Site',
 			'target' => '',
 			'status' => 'Understand your site',
 		),
 		array(
-			'icon'   => 'braces',
-			'tint'   => 'pink',
-			'label'  => 'Analyzes Competitors',
-			'target' => '',
-			'status' => 'Find what works in your industry',
-		),
-		array(
 			'icon'   => 'link-2',
-			'tint'   => 'cyan',
+			'tint'   => 'amber',
 			'label'  => 'Updates Your Website',
 			'target' => '',
-			'status' => 'Changes Created For You',
+			'status' => 'Fix technical issues',
 		),
 		array(
 			'icon'   => 'file-plus-2',
-			'tint'   => 'highlight',
-			'label'  => 'Monitors the Results',
+			'tint'   => 'pink',
+			'label'  => 'Generates Content',
 			'target' => '',
-			'status' => 'See Rynk work and keep improving',
+			'status' => 'Add blogs and pages',
+		),
+		array(
+			'icon'   => 'trending-up',
+			'tint'   => 'highlight',
+			'label'  => 'Monitors Results',
+			'target' => '',
+			'status' => 'Keep improving',
 		),
 	);
 }
@@ -151,20 +151,20 @@ function rynk_outcomes(): array {
 	return array(
 		array(
 			'icon'  => 'trending-up',
-			'title' => 'Higher rankings',
-			'body'  => 'More of your pages on page one for the keywords your customers actually search.',
+			'title' => 'First page of Google',
+			'body'  => 'More of your pages on the first page of Google for the searches your customers actually make.',
 			'tint'  => 'emerald',
 		),
 		array(
 			'icon'  => 'sparkles',
-			'title' => 'More AI citations',
-			'body'  => 'The trust signals ChatGPT, Perplexity, and Google AI Overview look for, continuously built.',
+			'title' => 'Visible on AI platforms',
+			'body'  => 'The trust signals ChatGPT, Perplexity, and Google AI Overview look for, built continuously so AI tools recommend you.',
 			'tint'  => 'violet',
 		),
 		array(
 			'icon'  => 'rocket',
-			'title' => 'Fixes shipped for you',
-			'body'  => 'Rynk ships meta, schema, pages, links, images, and code changes directly to your site.',
+			'title' => 'Automated fixes',
+			'body'  => 'Rynk deploys page fixes, new content, links, images, and code changes directly to your site — auto updates, no manual work.',
 			'tint'  => 'pink',
 		),
 	);
@@ -179,61 +179,61 @@ function rynk_jobs(): array {
 	return array(
 		array(
 			'n'     => '1',
-			'name'  => 'Analyze',
+			'name'  => 'Audit',
 			'tint'  => 'emerald',
-			'intro' => 'Crawl, score, and benchmark - Rynk understands the site as deeply as a human auditor.',
+			'intro' => 'Rynk goes through your whole site to understand exactly what\'s working and what\'s holding you back.',
 			'cards' => array(
 				array(
-					'title' => 'Full Site Scan',
+					'title' => 'Full Site Audit',
 					'body'  => 'We go through every page of your website — just like a visitor or Google would — to see what\'s working and what\'s missing.',
 				),
 				array(
-					'title' => 'Keyword Insights',
-					'body'  => 'We find out what people are searching for, how hard it is to rank for, and how you compare to your competitors.',
+					'title' => 'Keyword & Competitor Insights',
+					'body'  => 'We find what people are searching for, how hard it is to rank for, and how you compare to your competitors.',
 				),
 				array(
 					'title' => 'Duplicate Content Check',
-					'body'  => 'We find pages on your site that are competing with each other and fix it so the right one shows up in search.',
+					'body'  => 'We find pages on your site that are competing with each other, so the right one shows up in search.',
 				),
 			),
 		),
 		array(
 			'n'     => '2',
-			'name'  => 'Generate',
+			'name'  => 'Update',
 			'tint'  => 'amber',
-			'intro' => 'Eleven generators produce every change rynk plans - typed, validated, traceable.',
+			'intro' => 'Rynk fixes the technical issues holding your site back and deploys every change for you.',
 			'cards' => array(
 				array(
-					'title' => 'Site Updates',
-					'body'  => 'We write the behind-the-scenes fixes your website needs — like updated page titles, working links, and consistent business info — ready to go live.',
+					'title' => 'Technical Fixes',
+					'body'  => 'We fix the behind-the-scenes issues — page titles, meta descriptions, broken links, and consistent business info — ready to go live.',
 				),
 				array(
-					'title' => 'New Web Pages',
-					'body'  => 'We write full pages for your site, from the main content down to the small details that help you get found in search.',
+					'title' => 'Page Connections',
+					'body'  => 'We connect your pages to each other so Google easily finds your relevant content.',
 				),
 				array(
-					'title' => 'Photos & Graphics',
-					'body'  => 'We create the images your site and posts need — banners, simple graphics, and thumbnails — sized and labeled correctly.',
+					'title' => 'Cleanup',
+					'body'  => 'We merge or redirect duplicate pages so customers always land where you expect them to.',
 				),
 			),
 		),
 		array(
 			'n'     => '3',
-			'name'  => 'Publish',
+			'name'  => 'Generate & Publish',
 			'tint'  => 'pink',
-			'intro' => 'Every action is dispatched to the right service - WordPress, GitHub, image generation, document rendering.',
+			'intro' => 'Rynk writes the new content your site needs and publishes it directly — no copy-paste required.',
 			'cards' => array(
 				array(
-					'title' => 'Website Publishing',
-					'body'  => 'If your site runs on WordPress, we publish updates directly — no need to copy and paste anything yourself.',
+					'title' => 'New Blogs & Pages',
+					'body'  => 'We write full blogs and pages for your site, from the main content down to the small details that help you get found in search.',
 				),
 				array(
-					'title' => 'Image Publishing',
-					'body'  => 'New images are automatically attached to the right page or post — no extra steps for you.',
+					'title' => 'Photos & Graphics',
+					'body'  => 'We create the images your site and posts need — banners, simple graphics, and thumbnails — sized and labeled correctly.',
 				),
 				array(
-					'title' => 'See What\'s Done',
-					'body'  => 'You can always check what\'s been published, what\'s waiting on you, and what\'s in progress.',
+					'title' => 'Auto-Publishing',
+					'body'  => 'If your site runs on WordPress, we publish updates and attach images directly — no manual steps for you.',
 				),
 			),
 		),

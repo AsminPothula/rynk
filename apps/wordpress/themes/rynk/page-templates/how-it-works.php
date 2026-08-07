@@ -27,16 +27,16 @@ $tint_styles = rynk_tint_styles();
 			<h1
 				class="font-serif text-5xl md:text-6xl font-medium leading-[1.02] tracking-tight animate-rise"
 			>
-				Leads on <span class="italic text-brand-blueSoft">autopilot.</span>
+				Generate leads on <span class="italic text-brand-blueSoft">autopilot.</span>
 			</h1>
 			<p
 				class="mt-6 text-[16px] leading-[1.75] text-brand-textMute animate-rise"
 				style="animation-delay: 160ms;"
 			>
-				We scan your website, find every fix worth making, and ship those changes
-				straight to your site and channels &mdash; no manual work on your end. As search
-				keeps evolving, we keep watching and adjusting, so you consistently rank
-				higher on Google and get cited more when people
+				We audit your site, generate the fixes and content it needs, and deploy those
+				changes straight to your site &mdash; no manual intervention on your end. As the
+				tech keeps evolving, Rynk keeps watching and adjusting, so you consistently show
+				up higher on search engines and get cited more when people
 				ask AI assistants questions.
 			</p>
 		</div>
@@ -52,6 +52,9 @@ $tint_styles = rynk_tint_styles();
 				<h2 class="mt-3 font-serif text-4xl md:text-5xl font-medium tracking-tight text-brand-text">
 					The outcomes, up front.
 				</h2>
+				<p class="mt-5 text-[15px] leading-[1.75] text-brand-textMute">
+					More customers reaching out to you &mdash; here&rsquo;s what Rynk delivers.
+				</p>
 			</div>
 
 			<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -87,12 +90,12 @@ $tint_styles = rynk_tint_styles();
 					Under the hood
 				</p>
 				<h2 class="mt-3 font-serif text-4xl md:text-5xl font-medium tracking-tight text-brand-text">
-					Built around four jobs.
+					Built in 4 steps.
 				</h2>
 				<p class="mt-5 text-[15px] leading-[1.75] text-brand-textMute">
-					Rynk analyzes what&rsquo;s there, generates every change it would
-					make, publishes the result, and monitors what happens next. Each
-					capability below is a real piece of the pipeline running today.
+					Rynk audits your site, updates what&rsquo;s broken, generates and
+					publishes new content, and monitors what happens next &mdash; the same
+					four steps, running on autopilot.
 				</p>
 			</div>
 
@@ -158,27 +161,33 @@ $tint_styles = rynk_tint_styles();
 			<div class="relative flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
 				<div>
 					<h2 class="font-serif text-3xl md:text-4xl font-medium leading-[1.05] tracking-tight text-brand-text">
-						Watch Rynk work <span class="italic text-brand-blueSoft">on your site.</span>
+						Watch Rynk live <span class="italic text-brand-blueSoft">on your site.</span>
 					</h2>
 					<p class="mt-2 text-[15px] leading-[1.7] text-brand-textMute">
-						Enter your website URL and see what Rynk has to say.
+						Enter your website URL and see the immediate assessment.
 					</p>
 				</div>
-				<div class="flex shrink-0 flex-wrap items-center gap-6">
-					<a
-						href="<?php echo esc_url( home_url( '/sign-in' ) ); ?>"
-						class="group inline-flex h-12 items-center gap-2.5 rounded-full bg-white px-7 font-serif text-[16px] font-medium text-brand-ink transition-all hover:shadow-[0_14px_36px_-14px_rgba(255,255,255,0.4)]"
+				<div class="w-full shrink-0 md:w-auto md:min-w-[360px]">
+					<form
+						action="<?php echo esc_url( rynk_app_url( '/try' ) ); ?>"
+						class="group relative flex w-full items-center gap-2 rounded-full bg-white/[0.06] ring-1 ring-white/12 py-2 pl-6 pr-2 text-brand-text shadow-[0_20px_50px_-20px_rgba(0,0,0,0.6)]"
 					>
-						Get started
-						<?php echo rynk_icon( 'arrow-right', 'h-4 w-4 transition-transform group-hover:translate-x-0.5' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-					</a>
-					<a
-						href="<?php echo esc_url( home_url( '/pricing/' ) ); ?>"
-						class="group inline-flex items-center gap-2 font-serif text-[16px] text-brand-textMute transition-colors hover:text-brand-text"
-					>
-						See pricing
-						<?php echo rynk_icon( 'arrow-up-right', 'h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-					</a>
+						<?php echo rynk_icon( 'sparkles', 'h-4 w-4 text-brand-violetSoft' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<input
+							type="text"
+							name="domain"
+							placeholder="www.yoursite.com"
+							aria-label="Your domain"
+							class="min-w-0 flex-1 bg-transparent font-serif text-[16px] text-brand-text placeholder:text-brand-textMute focus:outline-none"
+						/>
+						<button
+							type="submit"
+							aria-label="Audit my site"
+							class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-brand-ink transition-all group-hover:scale-105"
+						>
+							<?php echo rynk_icon( 'arrow-right', 'h-4 w-4' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						</button>
+					</form>
 				</div>
 			</div>
 		</div>
