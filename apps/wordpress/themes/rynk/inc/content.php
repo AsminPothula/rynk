@@ -114,28 +114,28 @@ function rynk_hero_cards(): array {
 		array(
 			'icon'   => 'type',
 			'tint'   => 'emerald',
-			'label'  => 'Audits Your Site',
+			'label'  => 'Audit Your Site',
 			'target' => '',
 			'status' => 'Understand your site',
 		),
 		array(
 			'icon'   => 'link-2',
 			'tint'   => 'amber',
-			'label'  => 'Updates Your Website',
+			'label'  => 'Update Your Website',
 			'target' => '',
 			'status' => 'Fix technical issues',
 		),
 		array(
 			'icon'   => 'file-plus-2',
 			'tint'   => 'pink',
-			'label'  => 'Generates Content',
+			'label'  => 'Generate Content',
 			'target' => '',
 			'status' => 'Add blogs and pages',
 		),
 		array(
 			'icon'   => 'trending-up',
 			'tint'   => 'highlight',
-			'label'  => 'Monitors Results',
+			'label'  => 'Monitor Results',
 			'target' => '',
 			'status' => 'Keep improving',
 		),
@@ -151,8 +151,8 @@ function rynk_outcomes(): array {
 	return array(
 		array(
 			'icon'  => 'trending-up',
-			'title' => 'First page of Google',
-			'body'  => 'More of your pages on the first page of Google for the searches your customers actually make.',
+			'title' => 'Top results on Google',
+			'body'  => 'More of your pages among the top few results on Google for the searches your customers actually make.',
 			'tint'  => 'emerald',
 		),
 		array(
@@ -163,8 +163,8 @@ function rynk_outcomes(): array {
 		),
 		array(
 			'icon'  => 'rocket',
-			'title' => 'Automated fixes',
-			'body'  => 'Rynk deploys page fixes, new content, links, images, and code changes directly to your site — auto updates, no manual work.',
+			'title' => 'Automated fixes on your site',
+			'body'  => 'Rynk deploys page fixes, new content, links, images, and code changes directly to your site — auto updates, no manual intervention needed.',
 			'tint'  => 'pink',
 		),
 	);
@@ -221,7 +221,7 @@ function rynk_jobs(): array {
 			'n'     => '3',
 			'name'  => 'Generate & Publish',
 			'tint'  => 'pink',
-			'intro' => 'Rynk writes the new content your site needs and publishes it directly — no copy-paste required.',
+			'intro' => 'Rynk writes the new content your site needs and publishes it directly — no manual intervention needed.',
 			'cards' => array(
 				array(
 					'title' => 'New Blogs & Pages',
@@ -233,7 +233,7 @@ function rynk_jobs(): array {
 				),
 				array(
 					'title' => 'Auto-Publishing',
-					'body'  => 'If your site runs on WordPress, we publish updates and attach images directly — no manual steps for you.',
+					'body'  => 'If your site runs on WordPress, we publish updates and attach images directly — no manual intervention needed.',
 				),
 			),
 		),

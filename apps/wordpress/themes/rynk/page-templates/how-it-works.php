@@ -34,7 +34,7 @@ $tint_styles = rynk_tint_styles();
 				style="animation-delay: 160ms;"
 			>
 				We audit your site, generate the fixes and content it needs, and deploy those
-				changes straight to your site &mdash; no manual intervention on your end. As the
+				changes straight to your site &mdash; no manual intervention needed. As the
 				tech keeps evolving, Rynk keeps watching and adjusting, so you consistently show
 				up higher on search engines and get cited more when people
 				ask AI assistants questions.
