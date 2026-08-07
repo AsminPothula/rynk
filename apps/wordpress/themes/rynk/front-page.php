@@ -49,7 +49,7 @@ $platforms  = rynk_platforms();
 							class="mt-6 max-w-xl text-[15.5px] leading-[1.75] text-brand-textMute animate-rise"
 							style="animation-delay: 160ms;"
 						>
-							Rynk is the first end-to-end AI-powered SEO platform that makes your website generate more leads&mdash;effortlessly. It audits your site, identifies exactly what&rsquo;s stopping you from showing up in search, then deploys the fixes and generates content directly on your website&mdash;no SEO expertise or manual intervention needed.
+							Rynk is the first end-to-end AI-powered SEO platform that makes your website generate more leads - effortlessly. It audits your site, identifies exactly what&rsquo;s stopping you from showing up in search, then deploys the fixes and generates content directly on your website - no SEO expertise or manual intervention needed.
 						</p>
 
 						<div

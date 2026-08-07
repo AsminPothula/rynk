@@ -34,7 +34,7 @@ $tint_styles = rynk_tint_styles();
 				style="animation-delay: 160ms;"
 			>
 				We audit your site, generate the fixes and content it needs, and deploy those
-				changes straight to your site &mdash; no manual intervention needed. As the
+				changes straight to your site - no manual intervention needed. As the
 				tech keeps evolving, Rynk keeps watching and adjusting, so you consistently show
 				up higher on search engines and get cited more when people
 				ask AI assistants questions.
@@ -53,7 +53,7 @@ $tint_styles = rynk_tint_styles();
 					The outcomes, up front.
 				</h2>
 				<p class="mt-5 text-[15px] leading-[1.75] text-brand-textMute">
-					More customers reaching out to you &mdash; here&rsquo;s what Rynk delivers.
+					More customers reaching out to you - here&rsquo;s what Rynk delivers.
 				</p>
 			</div>
 
@@ -94,7 +94,7 @@ $tint_styles = rynk_tint_styles();
 				</h2>
 				<p class="mt-5 text-[15px] leading-[1.75] text-brand-textMute">
 					Rynk audits your site, updates what&rsquo;s broken, generates and
-					publishes new content, and monitors what happens next &mdash; the same
+					publishes new content, and monitors what happens next - the same
 					four steps, running on autopilot.
 				</p>
 			</div>

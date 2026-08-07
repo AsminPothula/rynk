@@ -16,7 +16,7 @@
 declare( strict_types = 1 );
 
 /**
- * Landing page — "What you get" offering tiles.
+ * Landing page - "What you get" offering tiles.
  *
  * @return array<int, array<string, string>>
  */
@@ -86,7 +86,7 @@ function rynk_offerings(): array {
 }
 
 /**
- * Landing page — trust-bar marquee names.
+ * Landing page - trust-bar marquee names.
  *
  * @return array<int, string>
  */
@@ -105,7 +105,7 @@ function rynk_platforms(): array {
 }
 
 /**
- * Landing page — hero action cards.
+ * Landing page - hero action cards.
  *
  * @return array<int, array<string, string>>
  */
@@ -143,7 +143,7 @@ function rynk_hero_cards(): array {
 }
 
 /**
- * How-it-works — "What you get" outcome cards.
+ * How-it-works - "What you get" outcome cards.
  *
  * @return array<int, array<string, string>>
  */
@@ -164,14 +164,14 @@ function rynk_outcomes(): array {
 		array(
 			'icon'  => 'rocket',
 			'title' => 'Automated fixes on your site',
-			'body'  => 'Rynk deploys page fixes, new content, links, images, and code changes directly to your site — auto updates, no manual intervention needed.',
+			'body'  => 'Rynk deploys page fixes, new content, links, images, and code changes directly to your site - auto updates, no manual intervention needed.',
 			'tint'  => 'pink',
 		),
 	);
 }
 
 /**
- * How-it-works — the four pipeline jobs and their capability cards.
+ * How-it-works - the four pipeline jobs and their capability cards.
  *
  * @return array<int, array<string, mixed>>
  */
@@ -185,7 +185,7 @@ function rynk_jobs(): array {
 			'cards' => array(
 				array(
 					'title' => 'Full Site Audit',
-					'body'  => 'We go through every page of your website — just like a visitor or Google would — to see what\'s working and what\'s missing.',
+					'body'  => 'We go through every page of your website - just like a visitor or Google would - to see what\'s working and what\'s missing.',
 				),
 				array(
 					'title' => 'Keyword & Competitor Insights',
@@ -205,7 +205,7 @@ function rynk_jobs(): array {
 			'cards' => array(
 				array(
 					'title' => 'Technical Fixes',
-					'body'  => 'We fix the behind-the-scenes issues — page titles, meta descriptions, broken links, and consistent business info — ready to go live.',
+					'body'  => 'We fix the behind-the-scenes issues - page titles, meta descriptions, broken links, and consistent business info - ready to go live.',
 				),
 				array(
 					'title' => 'Page Connections',
@@ -221,7 +221,7 @@ function rynk_jobs(): array {
 			'n'     => '3',
 			'name'  => 'Generate & Publish',
 			'tint'  => 'pink',
-			'intro' => 'Rynk writes the new content your site needs and publishes it directly — no manual intervention needed.',
+			'intro' => 'Rynk writes the new content your site needs and publishes it directly - no manual intervention needed.',
 			'cards' => array(
 				array(
 					'title' => 'New Blogs & Pages',
@@ -229,11 +229,11 @@ function rynk_jobs(): array {
 				),
 				array(
 					'title' => 'Photos & Graphics',
-					'body'  => 'We create the images your site and posts need — banners, simple graphics, and thumbnails — sized and labeled correctly.',
+					'body'  => 'We create the images your site and posts need - banners, simple graphics, and thumbnails - sized and labeled correctly.',
 				),
 				array(
 					'title' => 'Auto-Publishing',
-					'body'  => 'If your site runs on WordPress, we publish updates and attach images directly — no manual intervention needed.',
+					'body'  => 'If your site runs on WordPress, we publish updates and attach images directly - no manual intervention needed.',
 				),
 			),
 		),
@@ -245,11 +245,11 @@ function rynk_jobs(): array {
 			'cards' => array(
 				array(
 					'title' => 'Weekly Search Check',
-					'body'  => 'Every week, we check how the top results look for your key searches — so we catch changes before they cost you customers.',
+					'body'  => 'Every week, we check how the top results look for your key searches - so we catch changes before they cost you customers.',
 				),
 				array(
 					'title' => 'Ranking Tracker',
-					'body'  => 'See exactly where you stand — on Google and on AI tools — for every search that matters to your business.',
+					'body'  => 'See exactly where you stand - on Google and on AI tools - for every search that matters to your business.',
 				),
 				array(
 					'title' => 'Competitor Watch',
@@ -261,7 +261,7 @@ function rynk_jobs(): array {
 }
 
 /**
- * Pricing — the tiers.
+ * Pricing - the tiers.
  *
  * Each tier renders as two feature columns: `columns[0]` is what the plan
  * includes, `columns[1]` is the per-month page allowance.
@@ -333,7 +333,7 @@ function rynk_tiers(): array {
 }
 
 /**
- * About — the founders.
+ * About - the founders.
  *
  * @return array<int, array<string, string>>
  */
@@ -349,7 +349,7 @@ function rynk_founders(): array {
 		array(
 			'name'  => 'Ashwika Khandavalli',
 			'role'  => 'Co-Founder',
-			'bio'   => 'Ashwika Khandavalli is driven by a passion for entrepreneurship and community impact. She leads product strategy and go-to-market at Rynk — covering competitive positioning, pricing, and client segmentation across the SEO and AI-visibility space.',
+			'bio'   => 'Ashwika Khandavalli is driven by a passion for entrepreneurship and community impact. She leads product strategy and go-to-market at Rynk - covering competitive positioning, pricing, and client segmentation across the SEO and AI-visibility space.',
 			'tint'  => 'pink',
 			'image' => 'ak.png',
 		),
