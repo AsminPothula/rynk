@@ -10,9 +10,9 @@
  */
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Bell, Eye, ExternalLink, Lock } from 'lucide-react';
+import { ArrowLeft, Bell, Eye, ExternalLink, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { getSampleClient, type ClientData, type ActionItem } from './sampleData';
+import { getSampleClient, PUBLISH_TYPES, isActionAuto, type ClientData, type ActionItem } from './sampleData';
 import { getArticle } from './sampleContent';
 import { EditProvider, useEdit, SaveBar, EField, EText, EChips, ERowList } from './editable';
 import {
@@ -501,10 +501,17 @@ function AIVisibility({ c }: { c: ClientData }) {
 // ── Actions ──────────────────────────────────────────────────────────────────
 
 function Actions({ c }: { c: ClientData }) {
-  const needsYou = c.actions.filter((a) => a.status === 'needs_you' || a.status === 'in_review').sort((a, b) => (a.priority ?? 99) - (b.priority ?? 99));
+  const { draft } = useEdit();
+  const pending = c.actions
+    .filter((a) => a.status === 'needs_you' || a.status === 'in_review')
+    .sort((a, b) => (a.priority ?? 99) - (b.priority ?? 99));
+  // Publishing settings decide the split: manual types wait in the approval
+  // queue; auto types are applied for the client and shown under Done.
+  const needsApproval = pending.filter((a) => !isActionAuto(a, draft.autoPublish));
+  const autoHandled = pending.filter((a) => isActionAuto(a, draft.autoPublish));
   const shipped = c.actions.filter((a) => a.status === 'shipped');
-  const byChannel = groupBy(shipped, (a) => a.channel);
-  const remaining = needsYou.length;
+  const byChannel = groupBy([...shipped, ...autoHandled], (a) => a.channel);
+  const remaining = needsApproval.length;
 
   return (
     <div className="space-y-8">
@@ -524,8 +531,8 @@ function Actions({ c }: { c: ClientData }) {
         </div>
       </section>
 
-      {/* Approval queue — nothing visible goes live without the client's OK */}
-      <ApprovalQueue items={needsYou} />
+      {/* Approval queue — only the types set to manual; auto ones are applied. */}
+      <ApprovalQueue items={needsApproval} autoCount={autoHandled.length} />
 
       {/* Done by rynk — grouped, collapsible by channel */}
       <section>
@@ -540,7 +547,7 @@ function Actions({ c }: { c: ClientData }) {
   );
 }
 
-function ApprovalQueue({ items }: { items: ActionItem[] }) {
+function ApprovalQueue({ items, autoCount = 0 }: { items: ActionItem[]; autoCount?: number }) {
   const [decided, setDecided] = useState<Record<string, 'approved' | 'rejected'>>({});
   const [publishing, setPublishing] = useState<'idle' | 'publishing' | 'done'>('idle');
 
@@ -560,6 +567,13 @@ function ApprovalQueue({ items }: { items: ActionItem[] }) {
   return (
     <section>
       <SectionHeading eyebrow="Nothing visible goes live without your OK" title={`Waiting for your approval${pending.length ? ` · ${pending.length}` : ''}`} />
+
+      {autoCount > 0 && (
+        <p className="-mt-3 mb-3 flex items-center gap-1.5 text-[12.5px] text-brand-textMute">
+          <CheckCircle2 className="h-3.5 w-3.5 text-brand-emeraldSoft" />
+          {autoCount} more handled automatically per your <span className="text-brand-text/80">Publishing settings</span> — see Done below.
+        </p>
+      )}
 
       {pending.length === 0 ? (
         <Panel><EmptyNote>All caught up — nothing waiting for sign-off.</EmptyNote></Panel>
@@ -909,27 +923,8 @@ function Settings({ c }: { c: ClientData }) {
     { name: 'Google Search Console', status: 'Not connected', href: `https://search.google.com/search-console?resource_id=sc-domain:${c.domain}`, cta: 'Open Search Console' },
     { name: 'Google Analytics', status: 'Not connected', href: 'https://analytics.google.com/', cta: 'Open Analytics' },
   ];
-  // Technical fixes with no customer-facing impact — always automatic, not toggleable.
-  const alwaysAuto = [
-    'Metadata (titles & descriptions)',
-    'Schema markup',
-    'Sitemap generation & submission',
-    'robots.txt & canonical tags',
-    'Internal linking',
-    'Indexing requests',
-    'Crawl-error & broken-link fixes',
-    'Image alt text',
-  ];
-  // Visible content — client chooses auto vs. approval per type. Default: manual.
-  const configurable = [
-    'Blog posts',
-    'New landing pages',
-    'Service page edits',
-    'FAQ sections',
-    'Website copy rewrites',
-    'Google Business Profile posts',
-    'Review replies',
-  ];
+  const technical = PUBLISH_TYPES.filter((t) => t.group === 'technical');
+  const content = PUBLISH_TYPES.filter((t) => t.group === 'content');
   return (
     <div className="space-y-8">
       <section>
@@ -971,37 +966,44 @@ function Settings({ c }: { c: ClientData }) {
 
       <section>
         <SectionHeading eyebrow="What publishes on its own vs. waits for you" title="Publishing" />
+        <p className="-mt-3 mb-3 text-[13px] leading-relaxed text-brand-textMute">
+          <span className="text-brand-text/80">Auto-publish</span> = rynk ships it for you and logs it under Done. <span className="text-brand-text/80">Needs approval</span> = rynk drafts it and it waits in your approval queue with the reasoning + estimated impact. Change any toggle and the queue updates to match.
+        </p>
 
         <Panel className="mb-3">
           <div className="mb-1 flex items-center gap-2">
             <h3 className="font-serif text-base font-medium text-brand-text">Technical SEO</h3>
-            <span className="rounded-full bg-brand-emerald/12 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide text-brand-emeraldSoft ring-1 ring-brand-emerald/25">always automatic</span>
+            <span className="rounded-full bg-brand-emerald/12 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide text-brand-emeraldSoft ring-1 ring-brand-emerald/25">auto by default</span>
           </div>
-          <p className="mb-4 text-[13px] text-brand-textMute">Behind-the-scenes fixes that improve search performance without changing how your site looks or reads. These run automatically — no approval needed.</p>
+          <p className="mb-4 text-[13px] text-brand-textMute">Behind-the-scenes fixes with no visible impact — on by default so they run automatically. Turn one off if you'd rather approve it first.</p>
           <div className="space-y-2.5">
-            {alwaysAuto.map((t) => (
-              <div key={t} className="flex items-center justify-between text-sm">
-                <span className="text-brand-text/90">{t}</span>
-                <span className="inline-flex items-center gap-1.5 font-mono text-[11px] text-brand-emeraldSoft">
-                  <Lock className="h-3 w-3" /> Auto
-                </span>
-              </div>
-            ))}
+            {technical.map((t) => {
+              const on = draft.autoPublish[t.key] ?? t.defaultAuto;
+              return (
+                <label key={t.key} className="flex items-center justify-between text-sm">
+                  <span className="text-brand-text/90">{t.label}</span>
+                  <div className="flex items-center gap-2.5">
+                    <span className={cn('font-mono text-[11px]', on ? 'text-brand-emeraldSoft' : 'text-brand-textMute')}>{on ? 'Auto-publish' : 'Needs approval'}</span>
+                    <Toggle on={on} onChange={(v) => update((d) => { d.autoPublish[t.key] = v; })} />
+                  </div>
+                </label>
+              );
+            })}
           </div>
         </Panel>
 
         <Panel>
           <h3 className="font-serif text-base font-medium text-brand-text">Visible content — you decide</h3>
-          <p className="mb-4 mt-1 text-[13px] text-brand-textMute">Anything that changes what visitors see. <span className="text-brand-text/80">Needs approval</span> = rynk drafts it and waits for your sign-off (with the reasoning + estimated impact). <span className="text-brand-text/80">Auto-publish</span> = rynk ships it for you. New clients start on manual approval — flip these on as you build trust.</p>
+          <p className="mb-4 mt-1 text-[13px] text-brand-textMute">Anything that changes what visitors see — off by default (waits for your sign-off). Flip a type on to let rynk publish it automatically as you build trust.</p>
           <div className="space-y-2.5">
-            {configurable.map((t) => {
-              const on = draft.autoPublish[t] ?? false;
+            {content.map((t) => {
+              const on = draft.autoPublish[t.key] ?? t.defaultAuto;
               return (
-                <label key={t} className="flex items-center justify-between text-sm">
-                  <span className="text-brand-text/90">{t}</span>
+                <label key={t.key} className="flex items-center justify-between text-sm">
+                  <span className="text-brand-text/90">{t.label}</span>
                   <div className="flex items-center gap-2.5">
                     <span className={cn('font-mono text-[11px]', on ? 'text-brand-emeraldSoft' : 'text-brand-textMute')}>{on ? 'Auto-publish' : 'Needs approval'}</span>
-                    <Toggle on={on} onChange={(v) => update((d) => { d.autoPublish[t] = v; })} />
+                    <Toggle on={on} onChange={(v) => update((d) => { d.autoPublish[t.key] = v; })} />
                   </div>
                 </label>
               );

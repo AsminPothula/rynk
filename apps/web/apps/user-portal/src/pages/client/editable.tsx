@@ -14,7 +14,7 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { Check, Loader2, Plus, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { ClientData, ClientProfile } from './sampleData';
+import { defaultAutoPublish, type ClientData, type ClientProfile } from './sampleData';
 
 export interface EditDraft {
   profile: ClientProfile;
@@ -51,9 +51,9 @@ export function EditProvider({ client, children }: { client: ClientData; childre
     () => ({
       profile: structuredClone(client.profile),
       business: { name: client.name, industry: client.industry, location: client.location ?? '' },
-      // Empty = every configurable type starts on manual approval (the default
-      // for new clients). Toggling a type on stores true.
-      autoPublish: {},
+      // Seeded from the publishing defaults: technical types auto-publish,
+      // visible content starts on manual approval. Client flips any of them.
+      autoPublish: defaultAutoPublish(),
     }),
     [client],
   );

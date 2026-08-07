@@ -64,6 +64,51 @@ export interface ActionItem {
   priority?: number; // 1 = highest (for the "waiting on you" ordering)
   why?: string; // plain-English reasoning shown in the approval queue
   impact?: string; // estimated SEO impact, e.g. "+ ~800 est. monthly visits"
+  publishKey?: string; // which PUBLISH_TYPES category this action belongs to
+}
+
+// ── Publishing settings ────────────────────────────────────────────────────────
+// Every publishable action type + its default. Technical (no visible impact)
+// defaults to auto-publish; visible content defaults to manual approval. The
+// client can flip any of them; the approval queue reads these to decide what
+// waits for sign-off vs. what auto-applies.
+export interface PublishType {
+  key: string;
+  label: string;
+  group: 'technical' | 'content';
+  defaultAuto: boolean;
+}
+
+export const PUBLISH_TYPES: PublishType[] = [
+  { key: 'metadata', label: 'Metadata (titles & descriptions)', group: 'technical', defaultAuto: true },
+  { key: 'schema', label: 'Schema markup', group: 'technical', defaultAuto: true },
+  { key: 'sitemap', label: 'Sitemap generation & submission', group: 'technical', defaultAuto: true },
+  { key: 'robots-canonical', label: 'robots.txt & canonical tags', group: 'technical', defaultAuto: true },
+  { key: 'internal-links', label: 'Internal linking', group: 'technical', defaultAuto: true },
+  { key: 'indexing', label: 'Indexing requests', group: 'technical', defaultAuto: true },
+  { key: 'crawl-fix', label: 'Crawl-error & broken-link fixes', group: 'technical', defaultAuto: true },
+  { key: 'citations', label: 'Directory listing / citation fixes', group: 'technical', defaultAuto: true },
+  { key: 'image-alt', label: 'Image alt text', group: 'technical', defaultAuto: true },
+  { key: 'blog', label: 'Blog posts', group: 'content', defaultAuto: false },
+  { key: 'landing-page', label: 'New landing pages', group: 'content', defaultAuto: false },
+  { key: 'service-edit', label: 'Service page edits', group: 'content', defaultAuto: false },
+  { key: 'faq', label: 'FAQ sections', group: 'content', defaultAuto: false },
+  { key: 'copy-rewrite', label: 'Website copy rewrites', group: 'content', defaultAuto: false },
+  { key: 'gbp-post', label: 'Google Business Profile posts', group: 'content', defaultAuto: false },
+  { key: 'review-reply', label: 'Review replies', group: 'content', defaultAuto: false },
+  { key: 'outreach', label: 'Backlink outreach emails', group: 'content', defaultAuto: false },
+];
+
+/** Default auto/manual seed for every type (used to init the edit draft). */
+export function defaultAutoPublish(): Record<string, boolean> {
+  return Object.fromEntries(PUBLISH_TYPES.map((t) => [t.key, t.defaultAuto]));
+}
+
+/** Is this action set to auto-publish under the given settings? */
+export function isActionAuto(a: ActionItem, autoPublish: Record<string, boolean>): boolean {
+  if (!a.publishKey) return false; // untagged → treat as needing approval
+  const t = PUBLISH_TYPES.find((x) => x.key === a.publishKey);
+  return autoPublish[a.publishKey] ?? t?.defaultAuto ?? false;
 }
 
 export interface ContentDraft {
@@ -239,9 +284,9 @@ const barbershop: ClientData = {
     ] },
   ],
   actions: [
-    { id: 'a1', type: 'review_reply', channel: 'reviews', title: 'Reply to 3 new Google reviews', detail: 'Two 5★, one 3★ mentioning wait time.', status: 'needs_you', automatable: false, priority: 1, why: 'Replying — especially to the 3★ — signals an active, trusted business to Google and reassures prospects reading the reviews. rynk drafted warm, on-brand replies for you to approve.', impact: 'Local ranking + trust' },
-    { id: 'a2', type: 'gbp_photo', channel: 'gbp', title: 'Post 5 haircut/interior photos to Google Business Profile', detail: 'You shoot them; rynk optimizes + posts.', status: 'needs_you', automatable: false, priority: 2, why: 'Profiles with fresh photos get noticeably more calls and direction requests, and Google favors active listings in the map pack.', impact: '+ GBP engagement' },
-    { id: 'a3', type: 'citation_fix', channel: 'citations', title: 'Fix phone number on Yelp', detail: 'Yelp shows an old number.', status: 'in_review', automatable: false, priority: 3, why: 'Your Yelp phone doesn’t match your website. NAP mismatches confuse Google and split your local authority across listings.', impact: 'Local ranking' },
+    { id: 'a1', type: 'review_reply', channel: 'reviews', title: 'Reply to 3 new Google reviews', detail: 'Two 5★, one 3★ mentioning wait time.', status: 'needs_you', automatable: false, priority: 1, publishKey: 'review-reply', why: 'Replying — especially to the 3★ — signals an active, trusted business to Google and reassures prospects reading the reviews. rynk drafted warm, on-brand replies for you to approve.', impact: 'Local ranking + trust' },
+    { id: 'a2', type: 'gbp_photo', channel: 'gbp', title: 'Post 5 haircut/interior photos to Google Business Profile', detail: 'You shoot them; rynk optimizes + posts.', status: 'needs_you', automatable: false, priority: 2, publishKey: 'gbp-post', why: 'Profiles with fresh photos get noticeably more calls and direction requests, and Google favors active listings in the map pack.', impact: '+ GBP engagement' },
+    { id: 'a3', type: 'citation_fix', channel: 'citations', title: 'Fix phone number on Yelp', detail: 'Yelp shows an old number.', status: 'in_review', automatable: false, priority: 3, publishKey: 'citations', why: 'Your Yelp phone doesn’t match your website. NAP mismatches confuse Google and split your local authority across listings.', impact: 'Local ranking' },
     { id: 'a4', type: 'gbp_optimize', channel: 'gbp', title: 'Completed GBP: services, hours, booking link', status: 'shipped', date: '2026-06-18', automatable: true },
     { id: 'a5', type: 'inject_schema', channel: 'schema', title: 'Added LocalBusiness + Service schema', detail: 'Tells Google your services, hours, price range.', status: 'shipped', date: '2026-06-20', automatable: true },
     { id: 'a6', type: 'create_page', channel: 'cms', title: 'New page: "Fades in Plano" landing page', status: 'shipped', date: '2026-06-24', automatable: false, before: '(no page)', after: '/services/fades-plano' },
@@ -339,8 +384,8 @@ const b2b: ClientData = {
     ] },
   ],
   actions: [
-    { id: 'b1', type: 'draft_outreach', channel: 'outreach', title: 'Approve 4 backlink outreach emails', detail: 'To data/AI publications for guest posts.', status: 'needs_you', automatable: false, priority: 1, why: 'These 4 publications link to your competitors but not you. Guest posts earn authoritative backlinks that lift the whole domain.', impact: 'Domain authority' },
-    { id: 'b2', type: 'create_page', channel: 'cms', title: 'Review draft: "Snowflake Migration Guide" (2,100 words)', status: 'needs_you', automatable: false, priority: 2, why: 'A high-intent topic three competitors rank for and you have zero coverage on. This pillar page targets it with an original, in-depth guide.', impact: '+ ~800 est. monthly visits' },
+    { id: 'b1', type: 'draft_outreach', channel: 'outreach', title: 'Approve 4 backlink outreach emails', detail: 'To data/AI publications for guest posts.', status: 'needs_you', automatable: false, priority: 1, publishKey: 'outreach', why: 'These 4 publications link to your competitors but not you. Guest posts earn authoritative backlinks that lift the whole domain.', impact: 'Domain authority' },
+    { id: 'b2', type: 'create_page', channel: 'cms', title: 'Review draft: "Snowflake Migration Guide" (2,100 words)', status: 'needs_you', automatable: false, priority: 2, publishKey: 'blog', why: 'A high-intent topic three competitors rank for and you have zero coverage on. This pillar page targets it with an original, in-depth guide.', impact: '+ ~800 est. monthly visits' },
     { id: 'b3', type: 'inject_schema', channel: 'schema', title: 'Added Article + FAQ schema to 12 posts', status: 'shipped', date: '2026-06-22', automatable: true },
     { id: 'b4', type: 'insert_internal_link', channel: 'cms', title: 'Added 90 internal links across the blog', status: 'shipped', date: '2026-06-19', automatable: true },
     { id: 'b5', type: 'update_meta', channel: 'cms', title: 'Rewrote metas on 11 high-impression, low-CTR pages', status: 'shipped', date: '2026-06-11', automatable: true },
