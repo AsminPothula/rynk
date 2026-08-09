@@ -16,6 +16,13 @@ export { runStrategyAgent } from "./agents/strategy-agent.js";
 export { loadAuditInput } from "./utils/audit-loader.js";
 export { saveStrategyOutput } from "./utils/output-writer.js";
 export { ideateKeywords, type IdeatedKeyword, type IdeateKeywordsOptions } from "./keyword-ideation.js";
+export {
+  selectCycleBriefs,
+  briefsForTier,
+  cycleQuota,
+  TIER_PAGE_QUOTA,
+  DEFAULT_PAGE_QUOTA,
+} from "./select-cycle.js";
 
 const log = createLogger("layer2");
 

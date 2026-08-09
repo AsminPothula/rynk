@@ -102,8 +102,8 @@ AEO (Answer Engine Optimization) — optimizing for featured snippets and People
 - Direct, specific answers — no hedging
 - Structured data to support snippet extraction
 
-### 8. Produce a brief for EVERY page in the publishing roadmap
-If a page appears in the sprint plan or publishing roadmap, a content brief MUST exist for it. Do not stop at the top-priority pages. Every page that Layer 3 will generate needs a brief — no exceptions.
+### 8. Produce 15–20 of the HIGHEST-PRIORITY content briefs — not an exhaustive list
+Do NOT write a brief for every possible page. Generate **at most 15–20 briefs**, and only for the highest-value, most winnable opportunities (top-right quadrant: high business value, lower difficulty). A downstream scheduler picks the ~5–10 that actually get published each cycle, so quality and ranking matter far more than coverage. Order the briefs best-first, and set each brief's publishPriority honestly (now / 30d / 60d / 90d+) so the top ones are unmistakable. It is correct to leave lower-value pages unbriefed.
 
 ### 9. Every content brief must have structured internal links
 Every brief must include a populated internalLinks array with:
@@ -200,7 +200,7 @@ IMPORTANT: Use the field name "eeatRequirements" (ASCII letters only). Do not us
 11. competitorUrlsToOutperform must be objects with url, estimatedDepth, contentElementsTheyHave, and serpFeaturesCaptured — not plain URL strings
 12. contentInventory must cover ALL URLs from the audit content inventory — not just the ones being changed
 13. doNotModify list must be populated — if no pages qualify, return an empty array
-14. A content brief must exist for every page that appears in the sprint plan or publishing roadmap
+14. Cap content briefs at 15–20, ranked best-first — brief only the highest-priority pages, not every page in the roadmap
 
 Your output feeds a content generation system. Precision and completeness here determines whether the generated content ranks.
 `;
