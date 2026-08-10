@@ -130,10 +130,10 @@ $founder_styles = rynk_founder_styles();
 			<div class="relative flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
 				<div>
 					<h3 class="font-serif text-3xl md:text-4xl font-medium tracking-tight">
-						Try Rynk <span class="italic text-brand-blueSoft">here.</span>
+						Watch Rynk live <span class="italic text-brand-blueSoft">on your site.</span>
 					</h3>
 					<p class="mt-2 text-[15px] text-brand-textMute">
-						Enter your website URL and see the immediate assessment.
+						Enter your website URL and see the immediate assessment - why your customers aren&rsquo;t finding your site on Google or AI.
 					</p>
 				</div>
 				<div class="w-full md:ml-10 md:flex-1">
