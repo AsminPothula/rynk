@@ -9,11 +9,12 @@
  * and authority.
  */
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Bell, Eye, ExternalLink, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getSampleClient, PUBLISH_TYPES, isActionAuto, type ClientData, type ActionItem } from './sampleData';
 import { getArticle } from './sampleContent';
+import { SetupStart, SetupOnboarding, SetupRunning, SetupBanner, isFullScreenSetup, type SetupStep } from './firstRun';
 import { EditProvider, useEdit, SaveBar, EField, EText, EChips, ERowList } from './editable';
 import {
   Panel,
@@ -57,6 +58,24 @@ function ClientDashboardInner({
   const [tab, setTab] = useState<Tab>('Overview');
   const waiting = client.waitingOnYou.length;
   const { dirty, discard } = useEdit();
+
+  // First-run setup wizard — entered via ?setup (demo) or when a company has
+  // never been run. `start`/`onboarding`/`running` take over the content area;
+  // `profile`/`settings` overlay the real tabs (built in later steps).
+  const [searchParams] = useSearchParams();
+  const [setupStep, setSetupStep] = useState<SetupStep | null>(() =>
+    searchParams.get('setup') != null ? 'start' : null,
+  );
+  const inFullSetup = isFullScreenSetup(setupStep);
+  const inTabSetup = setupStep === 'profile' || setupStep === 'settings';
+
+  // During the profile/settings steps, force the matching tab (and hide the
+  // free tab switcher) so the wizard controls navigation.
+  useEffect(() => {
+    if (setupStep === 'profile') setTab('Profile');
+    else if (setupStep === 'settings') setTab('Settings');
+    else if (setupStep === 'done') setTab('Overview'); // land on the populated dashboard
+  }, [setupStep]);
 
   // Guard tab switches when there are unsaved edits.
   function requestTab(next: Tab) {
@@ -122,7 +141,23 @@ function ClientDashboardInner({
         </button>
       </div>
 
-      {/* Tab bar */}
+      {inFullSetup ? (
+        setupStep === 'start' ? (
+          <SetupStart client={client} onStart={() => setSetupStep('onboarding')} />
+        ) : setupStep === 'onboarding' ? (
+          <SetupOnboarding onDone={() => setSetupStep('profile')} />
+        ) : (
+          <SetupRunning onDone={() => setSetupStep('done')} />
+        )
+      ) : (
+        <>
+      {inTabSetup && setupStep ? (
+        <SetupBanner
+          step={setupStep}
+          onNext={() => setSetupStep(setupStep === 'profile' ? 'settings' : 'running')}
+        />
+      ) : (
+      /* Tab bar */
       <div className="mb-8 flex gap-7 overflow-x-auto border-b border-white/8">
         {TABS.map((t) => (
           <button
@@ -138,6 +173,7 @@ function ClientDashboardInner({
           </button>
         ))}
       </div>
+      )}
 
       {tab === 'Overview' && <Overview c={client} onSeeActions={() => setTab('Actions')} />}
       {tab === 'Search Visibility' && <SearchVisibility c={client} />}
@@ -149,6 +185,8 @@ function ClientDashboardInner({
       {tab === 'Settings' && <Settings c={client} />}
 
       <SaveBar />
+        </>
+      )}
     </div>
   );
 }
