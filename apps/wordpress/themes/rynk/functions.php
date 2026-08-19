@@ -148,6 +148,22 @@ function rynk_title_separator(): string {
 }
 
 /**
+ * Keyword-rich <title> for the About page so it competes for category searches
+ * instead of a brand-only "About - Rynk AI". Returning a non-empty string here
+ * short-circuits WordPress' default title, so this is the full tag.
+ *
+ * @param string $title Default document title.
+ * @return string
+ */
+function rynk_about_document_title( string $title ): string {
+	if ( is_page_template( 'page-templates/about.php' ) ) {
+		return 'About Rynk - AI SEO Platform for Small Businesses';
+	}
+	return $title;
+}
+add_filter( 'pre_get_document_title', 'rynk_about_document_title' );
+
+/**
  * Version an asset by its mtime so a rebuilt stylesheet is never cached.
  *
  * @param string $relative Theme-relative path.
