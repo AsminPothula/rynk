@@ -353,5 +353,30 @@ function rynk_founders(): array {
 			'tint'  => 'pink',
 			'image' => 'ak.png',
 		),
+		array(
+			'name'      => 'Asmin Pothula',
+			'role'      => 'Technical Lead',
+			'bio'       => 'Asmin Pothula is a software engineer with a strong technical background, holding both a master\'s and bachelor\'s degree from the University of Texas at Arlington. She serves as technical lead at Rynk, owning the platform architecture, engineering, and day-to-day build.',
+			'tint'      => 'violet',
+			'image'     => 'ap.png',
+			'img_class' => 'scale-110',
+		),
+	);
+}
+
+/**
+ * Mentors / advisors shown in their own section on the About page.
+ *
+ * @return array<int, array<string, string>>
+ */
+function rynk_mentors(): array {
+	return array(
+		array(
+			'name'  => 'Kishore Khandavalli',
+			'role'  => 'Mentor',
+			'bio'   => 'Kishore Khandavalli is a serial technology entrepreneur who has founded and scaled multiple global technology companies across AI, enterprise software, and IT services. He leads AI initiatives at RiseIT Solutions, 7T, and iTech, and mentors the Rynk team on engineering and scaling the business.',
+			'tint'  => 'emerald',
+			'image' => 'kk.png',
+		),
 	);
 }
