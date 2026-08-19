@@ -201,6 +201,18 @@ function rynk_founder_styles(): array {
 			'ambient' => 'bg-brand-pink/20',
 			'role'    => 'text-brand-pinkSoft',
 		),
+		'violet' => array(
+			'ring'    => 'ring-brand-violet/40',
+			'topBar'  => 'bg-gradient-to-r from-transparent via-brand-violet to-transparent',
+			'ambient' => 'bg-brand-violet/20',
+			'role'    => 'text-brand-violetSoft',
+		),
+		'emerald' => array(
+			'ring'    => 'ring-brand-emerald/40',
+			'topBar'  => 'bg-gradient-to-r from-transparent via-brand-emerald to-transparent',
+			'ambient' => 'bg-brand-emerald/20',
+			'role'    => 'text-brand-emeraldSoft',
+		),
 	);
 }
 

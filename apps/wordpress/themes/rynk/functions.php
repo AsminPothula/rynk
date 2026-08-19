@@ -247,6 +247,27 @@ function rynk_favicon_links(): void {
 add_action( 'wp_head', 'rynk_favicon_links', 5 );
 
 /**
+ * Output a meta description (+ og:description) so search engines don't write
+ * their own. Per-page copy for the pages that matter most.
+ *
+ * @return void
+ */
+function rynk_meta_description(): void {
+	$desc = '';
+	if ( is_front_page() ) {
+		$desc = 'Rynk is an AI-powered SEO platform that audits your site, fixes what holds back your search visibility, and generates content automatically - so more customers find you.';
+	} elseif ( is_page_template( 'page-templates/about.php' ) ) {
+		$desc = 'Meet the team behind Rynk - the AI-powered SEO and AI-visibility platform helping local businesses get found in search.';
+	}
+	if ( '' === $desc ) {
+		return;
+	}
+	printf( '<meta name="description" content="%s" />' . "\n", esc_attr( $desc ) );
+	printf( '<meta property="og:description" content="%s" />' . "\n", esc_attr( $desc ) );
+}
+add_action( 'wp_head', 'rynk_meta_description', 1 );
+
+/**
  * Create the marketing pages and point the front page at the landing template.
  *
  * Runs on activation, and is safe to run again — an existing page with the

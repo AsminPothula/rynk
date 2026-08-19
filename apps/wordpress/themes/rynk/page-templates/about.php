@@ -81,7 +81,7 @@ $founder_styles = rynk_founder_styles();
 				</h2>
 			</div>
 
-			<div class="grid gap-6 md:grid-cols-2">
+			<div class="grid gap-6 md:grid-cols-3">
 				<?php foreach ( rynk_founders() as $founder ) : ?>
 					<?php $s = $founder_styles[ $founder['tint'] ]; ?>
 					<div class="<?php echo esc_attr( 'group relative overflow-hidden rounded-3xl bg-white/[0.03] ring-1 ' . $s['ring'] . ' p-7 md:p-8 transition-all duration-300 hover:-translate-y-1' ); ?>">
@@ -96,7 +96,7 @@ $founder_styles = rynk_founder_styles();
 								<img
 									src="<?php echo esc_url( get_theme_file_uri( 'assets/img/' . $founder['image'] ) ); ?>"
 									alt="<?php echo esc_attr( $founder['name'] ); ?>"
-									class="block h-full w-full object-cover"
+									class="<?php echo esc_attr( 'block h-full w-full object-cover ' . ( $founder['img_class'] ?? '' ) ); ?>"
 									sizes="(max-width: 768px) 100vw, 50vw"
 									loading="lazy"
 									decoding="async"
@@ -111,6 +111,56 @@ $founder_styles = rynk_founder_styles();
 							</p>
 							<p class="mt-4 text-[14px] leading-relaxed text-brand-textMute">
 								<?php echo esc_html( $founder['bio'] ); ?>
+							</p>
+						</div>
+					</div>
+				<?php endforeach; ?>
+			</div>
+		</div>
+	</section>
+
+	<?php // MENTORS. ?>
+	<section class="relative px-6 py-14 md:px-10 md:py-16">
+		<div class="relative mx-auto max-w-screen-xl">
+			<div class="mb-12">
+				<p class="font-mono text-[11px] uppercase tracking-[0.18em] text-brand-emeraldSoft">
+					Guidance
+				</p>
+				<h2 class="mt-3 font-serif text-4xl md:text-5xl font-medium tracking-tight">
+					Mentors.
+				</h2>
+			</div>
+
+			<div class="grid gap-6 md:grid-cols-3">
+				<?php foreach ( rynk_mentors() as $mentor ) : ?>
+					<?php $s = $founder_styles[ $mentor['tint'] ]; ?>
+					<div class="<?php echo esc_attr( 'group relative overflow-hidden rounded-3xl bg-white/[0.03] ring-1 ' . $s['ring'] . ' p-7 md:p-8 transition-all duration-300 hover:-translate-y-1' ); ?>">
+						<div class="<?php echo esc_attr( 'absolute inset-x-0 top-0 h-[2px] ' . $s['topBar'] ); ?>" aria-hidden="true"></div>
+						<div
+							aria-hidden="true"
+							class="<?php echo esc_attr( 'pointer-events-none absolute -top-14 -right-14 h-44 w-44 rounded-full ' . $s['ambient'] . ' blur-3xl opacity-70' ); ?>"
+						></div>
+
+						<div class="relative">
+							<div class="aspect-square w-full overflow-hidden rounded-2xl ring-1 ring-white/10">
+								<img
+									src="<?php echo esc_url( get_theme_file_uri( 'assets/img/' . $mentor['image'] ) ); ?>"
+									alt="<?php echo esc_attr( $mentor['name'] ); ?>"
+									class="block h-full w-full object-cover"
+									sizes="(max-width: 768px) 100vw, 33vw"
+									loading="lazy"
+									decoding="async"
+								/>
+							</div>
+
+							<h3 class="mt-6 font-serif text-2xl font-medium leading-tight tracking-tight">
+								<?php echo esc_html( $mentor['name'] ); ?>
+							</h3>
+							<p class="<?php echo esc_attr( 'mt-1 font-mono text-[11px] uppercase tracking-[0.15em] ' . $s['role'] ); ?>">
+								<?php echo esc_html( $mentor['role'] ); ?>
+							</p>
+							<p class="mt-4 text-[14px] leading-relaxed text-brand-textMute">
+								<?php echo esc_html( $mentor['bio'] ); ?>
 							</p>
 						</div>
 					</div>
