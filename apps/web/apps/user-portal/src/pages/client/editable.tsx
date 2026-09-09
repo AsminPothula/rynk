@@ -46,7 +46,16 @@ export function useEdit(): EditContextValue {
   return ctx;
 }
 
-export function EditProvider({ client, children }: { client: ClientData; children: React.ReactNode }) {
+export function EditProvider({
+  client,
+  children,
+  onSave,
+}: {
+  client: ClientData;
+  children: React.ReactNode;
+  /** Real persistence (PATCH profile). When omitted, save is simulated (sample preview). */
+  onSave?: (draft: EditDraft) => Promise<void>;
+}) {
   const initial = useMemo<EditDraft>(
     () => ({
       profile: structuredClone(client.profile),
@@ -76,12 +85,22 @@ export function EditProvider({ client, children }: { client: ClientData; childre
 
   const save = useCallback(() => {
     setStatus('saving');
-    // Real wiring (lands with the dashboard→API connection): call
-    //   PATCH /client/:id/profile  with the changed fields.
-    // The backend already persists the context AND kicks a background
-    // re-strategy run (EditClientProfileUseCase → startLayersDetached), so the
-    // edits flow into the audit + plan automatically — the frontend just needs
-    // to fire that request here. Simulated below until the API layer is wired.
+    if (onSave) {
+      // Real: PATCH /client/:id/profile. The backend persists the context AND
+      // kicks a background re-strategy run, so edits flow into the audit + plan.
+      onSave(draft)
+        .then(() => {
+          setSaved(draft);
+          setStatus('recomputing');
+          window.setTimeout(() => {
+            setStatus('saved');
+            window.setTimeout(() => setStatus('idle'), 2500);
+          }, 1200);
+        })
+        .catch(() => setStatus('idle'));
+      return;
+    }
+    // Sample preview: simulate persistence + recompute.
     window.setTimeout(() => {
       setSaved(draft);
       setStatus('recomputing');
@@ -90,7 +109,7 @@ export function EditProvider({ client, children }: { client: ClientData; childre
         window.setTimeout(() => setStatus('idle'), 2500);
       }, 1200);
     }, 700);
-  }, [draft]);
+  }, [draft, onSave]);
 
   return (
     <EditContext.Provider value={{ draft, update, dirty, discard, save, status }}>

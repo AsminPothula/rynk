@@ -162,11 +162,11 @@ export function Meter({ value, tone = 'blue' }: { value: number; tone?: 'blue' |
 
 // ── score ring ───────────────────────────────────────────────────────────────
 
-export function ScoreRing({ score, size = 132 }: { score: number; size?: number }) {
+export function ScoreRing({ score, size = 132 }: { score: number | null; size?: number }) {
   const stroke = 10;
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
-  const dash = (score / 100) * c;
+  const dash = ((score ?? 0) / 100) * c;
   return (
     <div className="relative shrink-0" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="-rotate-90">
@@ -189,8 +189,8 @@ export function ScoreRing({ score, size = 132 }: { score: number; size?: number 
         </defs>
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="font-serif text-4xl leading-none tracking-tight text-brand-text">{score}</span>
-        <span className="mt-1 font-mono text-[9px] uppercase tracking-[0.15em] text-brand-textMute">/ 100</span>
+        <span className="font-serif text-4xl leading-none tracking-tight text-brand-text">{score ?? '—'}</span>
+        <span className="mt-1 font-mono text-[9px] uppercase tracking-[0.15em] text-brand-textMute">{score == null ? 'not tracked' : '/ 100'}</span>
       </div>
     </div>
   );

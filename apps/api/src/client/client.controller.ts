@@ -134,10 +134,13 @@ export class ClientController {
     @Param('id') id: string,
     @Body() body: EditClientProfileDTO,
   ) {
+    // `rerun` is a control flag, not a profile field — keep it out of the patch.
+    const { rerun, ...patch } = body;
     const result = await this._editClientProfileUseCase.execute({
       clientId: id,
       actorId: payload.userId,
-      patch: { ...body },
+      patch,
+      rerun,
       isAdmin: isRynkAdmin(payload.roles),
     });
     if (result instanceof AppError) {

@@ -1,6 +1,6 @@
 import { DtoProperty } from '@decorator';
 import { ApiPropertyOptional, ApiProperty } from '@nestjs/swagger';
-import { IsObject, IsOptional } from 'class-validator';
+import { IsBoolean, IsObject, IsOptional } from 'class-validator';
 import { AccessStatus, Client } from './client.types';
 
 export class OnboardClientDTO {
@@ -64,6 +64,15 @@ export class EditClientProfileDTO {
     description: 'Partial presence block — deep-merged into context.presence.',
   })
   presence?: Record<string, unknown>;
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({
+    type: 'boolean',
+    description:
+      'Whether to auto re-run Layers 1-3 after saving (default true). Set false to persist edits without triggering a run — e.g. during first-run setup, where the run is fired explicitly after all confirmations.',
+  })
+  rerun?: boolean;
 }
 
 export class ClientResponse {

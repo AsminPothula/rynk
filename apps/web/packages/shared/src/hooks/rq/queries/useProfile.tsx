@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ReactQueryKey } from '../../../common/constant';
 import { useApiContext } from '../../../providers/ApiProvider';
 import { fromAuth, useAuthStore } from '../../../state/useAuthStore';
-import type { UserProfileRole } from '../../../_api';
+import type { UserProfileRole } from '../../../type';
 import type { AxiosResponse } from 'axios';
 import type { GetProfileResponse } from '../../../_api';
 
