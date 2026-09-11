@@ -35,37 +35,69 @@ import {
 const TABS = ['Overview', 'Search Visibility', 'AI Visibility', 'Actions', 'Content', 'Reports', 'Profile', 'Settings'] as const;
 type Tab = (typeof TABS)[number];
 
-export function ClientDashboard(props: { backHref?: string; backLabel?: string }) {
+export function ClientDashboard(props: {
+  backHref?: string;
+  backLabel?: string;
+  /** Real client data (mapped from the backend). Omit for the sample preview. */
+  data?: ClientData;
+  /** Persist edited profile to the backend. Omit in sample mode. */
+  onSaveProfile?: (draft: import('./editable').EditDraft) => Promise<void>;
+  /** Live run state + trigger for the header run control + first-run wizard. */
+  live?: ClientLive;
+}) {
   const { domain = 'fadelabbarbers.com' } = useParams();
-  const client = useMemo(() => getSampleClient(domain), [domain]);
+  // Real data when provided (authed app); sample data for /preview only.
+  const client = useMemo(
+    () => props.data ?? getSampleClient(domain),
+    [props.data, domain],
+  );
   // Key by client id so the edit draft resets when switching clients.
   return (
-    <EditProvider key={client.id} client={client}>
-      <ClientDashboardInner client={client} {...props} />
+    <EditProvider key={client.id} client={client} onSave={props.onSaveProfile}>
+      <ClientDashboardInner client={client} backHref={props.backHref} backLabel={props.backLabel} live={props.live} />
     </EditProvider>
   );
+}
+
+/** Live wiring passed from the authed wrapper (absent in sample preview). */
+export interface ClientLive {
+  /** Has this client ever completed a run? Drives first-run vs populated view. */
+  hasRun: boolean;
+  /** Current run phase, if a run is active/most-recent. */
+  runPhase?: string | null;
+  isRunning: boolean;
+  /** Kick off onboarding for a URL (first-run). */
+  onOnboard?: (url: string) => Promise<void>;
+  /** Fire the Layers 1-3 run (after confirmations, or a manual re-run). */
+  onRun: () => Promise<void> | void;
 }
 
 function ClientDashboardInner({
   client,
   backHref = '/preview',
   backLabel = 'all clients',
+  live,
 }: {
   client: ClientData;
   backHref?: string;
   backLabel?: string;
+  live?: ClientLive;
 }) {
   const [tab, setTab] = useState<Tab>('Overview');
   const waiting = client.waitingOnYou.length;
   const { dirty, discard } = useEdit();
 
-  // First-run setup wizard — entered via ?setup (demo) or when a company has
-  // never been run. `start`/`onboarding`/`running` take over the content area;
-  // `profile`/`settings` overlay the real tabs (built in later steps).
+  // First-run setup wizard — entered via ?setup (demo) or, in real mode, when a
+  // company has never completed a run. `start`/`onboarding`/`running` take over
+  // the content area; `profile`/`settings` overlay the real tabs.
   const [searchParams] = useSearchParams();
-  const [setupStep, setSetupStep] = useState<SetupStep | null>(() =>
-    searchParams.get('setup') != null ? 'start' : null,
-  );
+  const [setupStep, setSetupStep] = useState<SetupStep | null>(() => {
+    if (searchParams.get('setup') != null) return 'start'; // demo walkthrough
+    // Real never-run client: onboarding already happened via "Add a site", so
+    // jump straight to confirming the extracted profile.
+    if (live && !live.hasRun) return 'profile';
+    return null;
+  });
   const inFullSetup = isFullScreenSetup(setupStep);
   const inTabSetup = setupStep === 'profile' || setupStep === 'settings';
 
@@ -76,6 +108,13 @@ function ClientDashboardInner({
     else if (setupStep === 'settings') setTab('Settings');
     else if (setupStep === 'done') setTab('Overview'); // land on the populated dashboard
   }, [setupStep]);
+
+  // Real mode: leave the "running" screen for the populated dashboard the moment
+  // the real Layers 1-3 run reaches a terminal phase.
+  useEffect(() => {
+    if (!live || setupStep !== 'running') return;
+    if (live.runPhase === 'done' || live.runPhase === 'failed') setSetupStep('done');
+  }, [live, setupStep]);
 
   // Guard tab switches when there are unsaved edits.
   function requestTab(next: Tab) {
@@ -147,14 +186,24 @@ function ClientDashboardInner({
         ) : setupStep === 'onboarding' ? (
           <SetupOnboarding onDone={() => setSetupStep('profile')} />
         ) : (
-          <SetupRunning onDone={() => setSetupStep('done')} />
+          // Demo mode advances on a timer; real mode advances when the real run
+          // finishes (see the effect below), so onDone is a no-op with `live`.
+          <SetupRunning onDone={() => { if (!live) setSetupStep('done'); }} />
         )
       ) : (
         <>
       {inTabSetup && setupStep ? (
         <SetupBanner
           step={setupStep}
-          onNext={() => setSetupStep(setupStep === 'profile' ? 'settings' : 'running')}
+          onNext={() => {
+            if (setupStep === 'profile') {
+              setSetupStep('settings');
+            } else {
+              // Settings confirmed → fire the real run, then show progress.
+              live?.onRun();
+              setSetupStep('running');
+            }
+          }}
         />
       ) : (
       /* Tab bar */
@@ -195,6 +244,9 @@ function ClientDashboardInner({
 
 function Overview({ c, onSeeActions }: { c: ClientData; onSeeActions: () => void }) {
   const scoreDelta = c.visibilityScore.today - c.visibilityScore.baseline;
+  // No history series → the composite score isn't tracked yet (needs GSC/GA +
+  // tracking over time). Show an honest state instead of a bogus "0 / 100".
+  const scoreTracked = c.visibilityScore.series.length > 0;
   const recent = [...c.actions]
     .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
     .filter((a) => a.status !== 'shipped' || a.date)
@@ -205,21 +257,25 @@ function Overview({ c, onSeeActions }: { c: ClientData; onSeeActions: () => void
       {/* Score + chart */}
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
         <Panel className="flex items-center gap-6">
-          <ScoreRing score={c.visibilityScore.today} />
+          {scoreTracked ? <ScoreRing score={c.visibilityScore.today} /> : <ScoreRing score={null} />}
           <div>
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-brand-violetSoft">Visibility Score</p>
             <p className="mt-2 text-sm leading-relaxed text-brand-textMute">
               One number rolling up rankings, AI citations, and authority.
             </p>
-            <div className="mt-3 flex items-baseline gap-2">
-              <span className="font-mono text-xs text-brand-textMute">Day 0 baseline {c.visibilityScore.baseline}</span>
-              <Delta value={scoreDelta} goodDirection="up" />
-            </div>
+            {scoreTracked ? (
+              <div className="mt-3 flex items-baseline gap-2">
+                <span className="font-mono text-xs text-brand-textMute">Day 0 baseline {c.visibilityScore.baseline}</span>
+                <Delta value={scoreDelta} goodDirection="up" />
+              </div>
+            ) : (
+              <p className="mt-3 font-mono text-[11px] text-brand-textMute">Starts tracking once Google Search Console is connected.</p>
+            )}
           </div>
         </Panel>
         <Panel>
           <SectionHeading title="Visibility over time" updated={c.lastUpdated} />
-          <LineChart data={c.visibilityScore.series} />
+          {scoreTracked ? <LineChart data={c.visibilityScore.series} /> : <NeedsData title="No history yet" detail="The trend line begins the first time your metrics are tracked (connect Google Search Console)." />}
         </Panel>
       </div>
 

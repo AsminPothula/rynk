@@ -10,15 +10,19 @@ export const useSignup = () => {
       email,
       password,
       phone,
+      firstName,
+      lastName,
     }: {
       email: string;
       password: string;
       phone?: string;
+      firstName?: string;
+      lastName?: string;
     }) => {
       const { data: tokens } = await api.authApi.signUp({
         email,
-        firstName: '',
-        lastName: '',
+        firstName: firstName || '',
+        lastName: lastName || '',
         phone: phone || '',
         password,
       });

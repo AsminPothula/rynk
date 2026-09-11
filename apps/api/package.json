@@ -27,6 +27,7 @@
     "migration:run:dev": "npm run build && npx typeorm migration:run -d dist/orm.js",
     "migration:revert:dev": "npx typeorm migration:revert -d dist/orm.js",
     "migration:run:prod": "npx typeorm migration:run -d dist/orm.js",
+    "db:setup": "npm run build && npx typeorm migration:run -d dist/orm.js",
     "bitbucket:env:generate": "scripts_generators/bitbucket_env_generator.sh",
     "aws:scripts:generate": "scripts_generators/aws_scripts_generator.sh",
     "rebase": "bash ./dev/script/rebase.sh"

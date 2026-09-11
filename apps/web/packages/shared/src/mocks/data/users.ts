@@ -1,4 +1,5 @@
-import { GetProfileResponse, UserStatus, UserProfileRole } from '../../_api';
+import { GetProfileResponse, UserStatus } from '../../_api';
+import { UserProfileRole } from '../../type';
 
 const firstNames = [
   'James',

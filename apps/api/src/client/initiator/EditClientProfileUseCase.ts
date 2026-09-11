@@ -32,8 +32,14 @@ export class EditClientProfileUseCase {
     patch: Record<string, unknown>;
     /** A rynk admin may edit any client; a client only its own. */
     isAdmin?: boolean;
+    /**
+     * Auto re-run Layers 1-3 after saving. Defaults to true (dashboard edits
+     * recompute immediately). First-run setup passes false so edits persist
+     * without triggering a run — the run is fired explicitly after all steps.
+     */
+    rerun?: boolean;
   }): Promise<Client | AppError> {
-    const { clientId, actorId, patch, isAdmin } = params;
+    const { clientId, actorId, patch, isAdmin, rerun } = params;
 
     const client = await this._clientService.findById(clientId);
     if (client instanceof AppError) {
@@ -61,8 +67,11 @@ export class EditClientProfileUseCase {
       this._pipeline.writeClientContext(saved.domain, merged);
       // Recompute: re-run Layers 1-3 in the background so the edited profile
       // flows into the audit + strategy. Fire-and-forget; the dashboard polls
-      // run status. Only meaningful for an already-onboarded client.
-      this._pipeline.startLayersDetached(saved.domain);
+      // run status. Skipped when rerun === false (first-run setup persists the
+      // edit, then fires the run explicitly once all steps are confirmed).
+      if (rerun !== false) {
+        this._pipeline.startLayersDetached(saved.domain);
+      }
     } catch {
       // Swallowed intentionally — surfaced via logs in PipelineService callers.
     }

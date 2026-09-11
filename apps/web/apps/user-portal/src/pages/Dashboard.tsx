@@ -1,11 +1,12 @@
 /**
  * Clients list — rynk dashboard home (authed app route).
  *
- * Renders the shared navy ClientsList. Sample-data driven for now; swaps to the
- * real clients query when the DB + backend are wired.
+ * Real data from the backend: lists the signed-in user's onboarded clients and
+ * leads into the onboard-and-run flow. (The sample-data ClientsList still backs
+ * the auth-free /preview shell.)
  */
-import { ClientsList } from './client/ClientsList';
+import { RealClientsList } from './client/RealClientsList';
 
 export function Dashboard() {
-  return <ClientsList basePath="/clients" />;
+  return <RealClientsList />;
 }

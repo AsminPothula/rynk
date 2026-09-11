@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom';
-import type { UserProfileRole } from '../_api';
+import type { UserProfileRole } from '../type';
 import { NavigationRoutes } from '../common/constant';
 import { useCanAccess } from '../hooks/rq/queries/useProfile';
 

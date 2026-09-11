@@ -41,8 +41,17 @@ const Settings = lazy(() =>
 const Users = lazy(() =>
   import('../pages/Users/Users').then((m) => ({ default: m.Users })),
 );
+// Sample-data dashboard — used ONLY by the auth-free /preview shell for demos.
 const ClientDashboard = lazy(() =>
   import('../pages/client/ClientDashboard').then((m) => ({ default: m.ClientDashboard })),
+);
+// The real, authed dashboard: polished ClientDashboard wired to backend data.
+const ClientDashboardLive = lazy(() =>
+  import('../pages/client/ClientDashboardLive').then((m) => ({ default: m.ClientDashboardLive })),
+);
+// "Add a site" → onboard the URL, then hand off to the dashboard's first-run wizard.
+const OnboardFlow = lazy(() =>
+  import('../pages/OnboardFlow').then((m) => ({ default: m.OnboardFlow })),
 );
 // Dev/demo: view the dashboard with sample data, no auth needed.
 const PreviewDashboard = lazy(() =>
@@ -101,7 +110,12 @@ export function Router() {
                     path={NavigationRoutes.Settings}
                     element={<Settings />}
                   />
-                  <Route path="/clients/:domain" element={<ClientDashboard />} />
+                  {/* The real, authed dashboard (backed by pipeline output). */}
+                  <Route path="/clients/:domain" element={<ClientDashboardLive />} />
+                  {/* Add a new site → onboard, then the dashboard runs the pipeline. */}
+                  <Route path="/onboard" element={<OnboardFlow />} />
+                  {/* Sample-data dashboard kept for design reference / demo talks. */}
+                  <Route path="/demo/:domain" element={<ClientDashboard />} />
                   <Route
                     path="/"
                     element={<Navigate to={NavigationRoutes.Dashboard} />}
