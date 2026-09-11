@@ -51,18 +51,18 @@
 						<?php echo esc_html( $label ); ?>
 					</a>
 				<?php endforeach; ?>
-				<?php // Dev shortcut until auth lands - direct door into the app. ?>
+				<?php // Existing beta clients sign in; new visitors request an invite. ?>
 				<a
-					href="<?php echo esc_url( home_url( '/app' ) ); ?>"
+					href="<?php echo esc_url( rynk_app_url( '/sign-in' ) ); ?>"
 					class="font-serif text-[16px] text-brand-textMute transition-colors hover:text-brand-text"
 				>
-					Dashboard
+					Sign in
 				</a>
 				<a
-					href="<?php echo esc_url( home_url( '/sign-in' ) ); ?>"
+					href="<?php echo esc_url( rynk_app_url( '/sign-up' ) ); ?>"
 					class="inline-flex h-10 items-center rounded-full bg-white px-5 font-serif text-[15px] font-medium text-brand-ink transition-all hover:shadow-[0_10px_28px_-10px_rgba(255,255,255,0.4)]"
 				>
-					Sign in
+					Get started
 				</a>
 			</nav>
 
@@ -102,16 +102,16 @@
 				</a>
 			<?php endforeach; ?>
 			<a
-				href="<?php echo esc_url( home_url( '/app' ) ); ?>"
+				href="<?php echo esc_url( rynk_app_url( '/sign-in' ) ); ?>"
 				class="rounded-lg px-3 py-3 font-serif text-[16px] text-brand-textMute transition-colors hover:text-brand-text"
 			>
-				Dashboard
+				Sign in
 			</a>
 			<a
-				href="<?php echo esc_url( home_url( '/sign-in' ) ); ?>"
+				href="<?php echo esc_url( rynk_app_url( '/sign-up' ) ); ?>"
 				class="mt-2 inline-flex h-11 items-center justify-center rounded-full bg-white px-5 font-serif text-[15px] font-medium text-brand-ink"
 			>
-				Sign in
+				Get started
 			</a>
 		</nav>
 	</header>
