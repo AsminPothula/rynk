@@ -164,6 +164,23 @@ function rynk_about_document_title( string $title ): string {
 add_filter( 'pre_get_document_title', 'rynk_about_document_title' );
 
 /**
+ * Keyword-rich <title> for the Pricing page so it competes for "rynk pricing"
+ * / plan-name searches instead of a brand-only "Pricing - Rynk AI". Returning
+ * a non-empty string here short-circuits WordPress' default title, so this is
+ * the full tag.
+ *
+ * @param string $title Default document title.
+ * @return string
+ */
+function rynk_pricing_document_title( string $title ): string {
+	if ( is_page_template( 'page-templates/pricing.php' ) ) {
+		return 'Rynk AI Pricing: Gold $149/mo, Platinum $299/mo';
+	}
+	return $title;
+}
+add_filter( 'pre_get_document_title', 'rynk_pricing_document_title' );
+
+/**
  * Version an asset by its mtime so a rebuilt stylesheet is never cached.
  *
  * @param string $relative Theme-relative path.
@@ -274,6 +291,8 @@ function rynk_meta_description(): void {
 		$desc = 'Rynk is an AI-powered SEO platform that audits your site, fixes what holds back your search visibility, and generates content automatically - so more customers find you.';
 	} elseif ( is_page_template( 'page-templates/about.php' ) ) {
 		$desc = 'Meet the team behind Rynk - the AI-powered SEO and AI-visibility platform helping local businesses get found in search.';
+	} elseif ( is_page_template( 'page-templates/pricing.php' ) ) {
+		$desc = 'See Rynk AI pricing plans for automated SEO, AEO, and GEO. Gold and Platinum tiers give small businesses full AI search visibility, no expertise needed.';
 	}
 	if ( '' === $desc ) {
 		return;
