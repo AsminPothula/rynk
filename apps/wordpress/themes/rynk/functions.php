@@ -148,20 +148,26 @@ function rynk_title_separator(): string {
 }
 
 /**
- * Keyword-rich <title> for the About page so it competes for category searches
- * instead of a brand-only "About - Rynk AI". Returning a non-empty string here
- * short-circuits WordPress' default title, so this is the full tag.
+ * Keyword-rich <title> overrides for the marketing pages that would
+ * otherwise fall back to a brand-only "Page - Rynk AI" title. Returning a
+ * non-empty string here short-circuits WordPress' default title, so each
+ * branch below is the full tag.
  *
  * @param string $title Default document title.
  * @return string
  */
-function rynk_about_document_title( string $title ): string {
+function rynk_document_title( string $title ): string {
 	if ( is_page_template( 'page-templates/about.php' ) ) {
 		return 'About Rynk - AI SEO Platform for Small Businesses';
 	}
+
+	if ( is_page_template( 'page-templates/pricing.php' ) ) {
+		return 'Rynk AI Pricing: Local Business SEO Software Plans';
+	}
+
 	return $title;
 }
-add_filter( 'pre_get_document_title', 'rynk_about_document_title' );
+add_filter( 'pre_get_document_title', 'rynk_document_title' );
 
 /**
  * Version an asset by its mtime so a rebuilt stylesheet is never cached.
@@ -274,6 +280,8 @@ function rynk_meta_description(): void {
 		$desc = 'Rynk is an AI-powered SEO platform that audits your site, fixes what holds back your search visibility, and generates content automatically - so more customers find you.';
 	} elseif ( is_page_template( 'page-templates/about.php' ) ) {
 		$desc = 'Meet the team behind Rynk - the AI-powered SEO and AI-visibility platform helping local businesses get found in search.';
+	} elseif ( is_page_template( 'page-templates/pricing.php' ) ) {
+		$desc = "Compare Rynk's Gold and Platinum plans starting at $149/month. Automated technical SEO, content generation, and rank tracking for small businesses.";
 	}
 	if ( '' === $desc ) {
 		return;
@@ -384,3 +392,51 @@ function rynk_maybe_scaffold_pages(): void {
 	update_option( 'rynk_scaffold_version', RYNK_SCAFFOLD_VERSION );
 }
 add_action( 'init', 'rynk_maybe_scaffold_pages' );
+
+/**
+ * Ensure the Redirection plugin is active so rynk can publish 301 redirects
+ * (old URLs -> new pages) without any theme-level redirect hack.
+ *
+ * This theme has no mechanism of its own for issuing redirects, so rather
+ * than inventing one in functions.php, we rely on the Redirection plugin
+ * (https://wordpress.org/plugins/redirection/) — the standard, supported way
+ * to manage 301s on a WordPress install. The plugin's code itself is a
+ * WordPress.org plugin and is installed via WP-CLI or the Plugins screen,
+ * not shipped inside the theme; this hook only activates it automatically
+ * once it has been installed, and is a silent no-op everywhere else
+ * (uninstalled, already active, or on the front end).
+ *
+ * To install: `wp plugin install redirection --activate` (or Plugins ->
+ * Add New -> search "Redirection" -> Install -> Activate in wp-admin).
+ *
+ * @return void
+ */
+function rynk_maybe_activate_redirection_plugin(): void {
+	if ( ! is_admin() || wp_doing_ajax() ) {
+		return;
+	}
+
+	if ( ! function_exists( 'is_plugin_active' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
+	}
+
+	$plugin = 'redirection/redirection.php';
+
+	if ( is_plugin_active( $plugin ) ) {
+		return;
+	}
+
+	if ( ! file_exists( WP_PLUGIN_DIR . '/' . $plugin ) ) {
+		// Not installed yet — nothing to activate. Install via WP-CLI or
+		// the Plugins screen; this hook will pick it up on the next
+		// admin request once the plugin files are present.
+		return;
+	}
+
+	if ( ! current_user_can( 'activate_plugins' ) ) {
+		return;
+	}
+
+	activate_plugin( $plugin );
+}
+add_action( 'admin_init', 'rynk_maybe_activate_redirection_plugin' );
