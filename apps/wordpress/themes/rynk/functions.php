@@ -35,6 +35,12 @@ function rynk_pages(): array {
 			'title'    => 'About',
 			'template' => 'page-templates/about.php',
 		),
+		// Long-tail comparison / content page - not in the primary nav, but a
+		// real published page so it can rank and be linked to internally.
+		'rynk-vs-semrush-ahrefs-moz-small-business-seo' => array(
+			'title'    => 'Rynk vs Semrush, Ahrefs, and Moz: Best SEO Tool for Small Local Businesses',
+			'template' => 'page-templates/rynk-vs-semrush-ahrefs-moz-small-business-seo.php',
+		),
 		// Placeholder pages — live until the real destinations ship. The app,
 		// sign-in, and free-scan CTAs all land on a "Coming soon" screen rather
 		// than a dead link.
@@ -164,6 +170,22 @@ function rynk_about_document_title( string $title ): string {
 add_filter( 'pre_get_document_title', 'rynk_about_document_title' );
 
 /**
+ * Keyword-rich <title> for the Semrush/Ahrefs/Moz comparison page, so it
+ * competes for the "vs" and "best SEO tool for small business" searches it
+ * targets, rather than a generic page title.
+ *
+ * @param string $title Default document title.
+ * @return string
+ */
+function rynk_compare_document_title( string $title ): string {
+	if ( is_page_template( 'page-templates/rynk-vs-semrush-ahrefs-moz-small-business-seo.php' ) ) {
+		return 'Rynk vs Semrush, Ahrefs & Moz - Best SEO Tool for Small Local Businesses';
+	}
+	return $title;
+}
+add_filter( 'pre_get_document_title', 'rynk_compare_document_title' );
+
+/**
  * Version an asset by its mtime so a rebuilt stylesheet is never cached.
  *
  * @param string $relative Theme-relative path.
@@ -274,6 +296,8 @@ function rynk_meta_description(): void {
 		$desc = 'Rynk is an AI-powered SEO platform that audits your site, fixes what holds back your search visibility, and generates content automatically - so more customers find you.';
 	} elseif ( is_page_template( 'page-templates/about.php' ) ) {
 		$desc = 'Meet the team behind Rynk - the AI-powered SEO and AI-visibility platform helping local businesses get found in search.';
+	} elseif ( is_page_template( 'page-templates/rynk-vs-semrush-ahrefs-moz-small-business-seo.php' ) ) {
+		$desc = 'Compare Rynk to Semrush, Ahrefs, and Moz for local business SEO. See why hyperlocal owners choose an automated, no-expertise-needed alternative.';
 	}
 	if ( '' === $desc ) {
 		return;
@@ -282,6 +306,59 @@ function rynk_meta_description(): void {
 	printf( '<meta property="og:description" content="%s" />' . "\n", esc_attr( $desc ) );
 }
 add_action( 'wp_head', 'rynk_meta_description', 1 );
+
+/**
+ * FAQPage JSON-LD for the Semrush/Ahrefs/Moz comparison page, so the on-page
+ * FAQ section is also eligible for a rich result. Kept in sync with the Q&A
+ * markup in page-templates/rynk-vs-semrush-ahrefs-moz-small-business-seo.php.
+ *
+ * @return void
+ */
+function rynk_compare_faq_schema(): void {
+	if ( ! is_page_template( 'page-templates/rynk-vs-semrush-ahrefs-moz-small-business-seo.php' ) ) {
+		return;
+	}
+
+	$faqs = array(
+		array(
+			'q' => 'Is Rynk a replacement for Semrush, Ahrefs, or Moz?',
+			'a' => 'For hyperlocal businesses without a dedicated marketing team, yes, Rynk is designed to be the whole solution, auditing your site and deploying fixes and content automatically rather than just reporting data for someone else to act on.',
+		),
+		array(
+			'q' => 'Do I need SEO experience to use Rynk instead of Semrush or Ahrefs?',
+			'a' => 'No. Rynk is built specifically so business owners without any SEO or developer background can get an audit, have the fixes deployed, and have new content generated without manually interpreting reports.',
+		),
+		array(
+			'q' => 'Does Rynk help with AI search engines like ChatGPT, not just Google?',
+			'a' => 'Yes. Rynk optimizes for traditional Google search and reformats pages for AI readability so tools like ChatGPT, Perplexity, and Google AI Overview can describe your business accurately and cite it more often.',
+		),
+		array(
+			'q' => 'What local business SEO software should I use if I have no marketing budget?',
+			'a' => 'Look for a tool that automates the fix, not just the diagnosis. Rynk audits your site, deploys technical and content fixes directly, and monitors results, which removes the need for a separate developer or SEO hire.',
+		),
+	);
+
+	$entities = array();
+	foreach ( $faqs as $faq ) {
+		$entities[] = array(
+			'@type'          => 'Question',
+			'name'           => $faq['q'],
+			'acceptedAnswer' => array(
+				'@type' => 'Answer',
+				'text'  => $faq['a'],
+			),
+		);
+	}
+
+	$schema = array(
+		'@context'   => 'https://schema.org',
+		'@type'      => 'FAQPage',
+		'mainEntity' => $entities,
+	);
+
+	echo '<script type="application/ld+json">' . wp_json_encode( $schema ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+add_action( 'wp_head', 'rynk_compare_faq_schema', 2 );
 
 /**
  * Create the marketing pages and point the front page at the landing template.
@@ -354,7 +431,7 @@ add_action( 'after_switch_theme', 'rynk_scaffold_pages' );
  * Scaffold version. Bump whenever rynk_pages() gains a page so the new pages
  * are created on the next request without a manual theme re-activation.
  */
-const RYNK_SCAFFOLD_VERSION = '3';
+const RYNK_SCAFFOLD_VERSION = '4';
 
 /**
  * Re-run scaffolding once after a deploy that changed the page set.

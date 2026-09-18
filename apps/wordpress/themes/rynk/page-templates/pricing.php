@@ -37,6 +37,18 @@ $tier_styles = rynk_tier_styles();
 			>
 				Pick the tier that fits your business.
 			</p>
+			<p
+				class="mb-5 text-[14px] leading-[1.7] text-brand-textMute animate-rise"
+				style="animation-delay: 200ms;"
+			>
+				Comparing Rynk to tools like Semrush, Ahrefs, or Moz?
+				<a
+					href="<?php echo esc_url( home_url( '/rynk-vs-semrush-ahrefs-moz-small-business-seo/' ) ); ?>"
+					class="text-brand-blueSoft underline underline-offset-2 transition-colors hover:text-brand-text"
+				>
+					See how we compare
+				</a>.
+			</p>
 		</div>
 	</section>
 
