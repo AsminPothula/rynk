@@ -23,32 +23,37 @@ require_once get_theme_file_path( 'inc/components.php' );
  */
 function rynk_pages(): array {
 	return array(
-		'how-it-works'   => array(
+		'how-it-works'                       => array(
 			'title'    => 'How it works',
 			'template' => 'page-templates/how-it-works.php',
 		),
-		'pricing'        => array(
+		'pricing'                            => array(
 			'title'    => 'Pricing',
 			'template' => 'page-templates/pricing.php',
 		),
-		'about'          => array(
+		'about'                              => array(
 			'title'    => 'About',
 			'template' => 'page-templates/about.php',
 		),
 		// Placeholder pages — live until the real destinations ship. The app,
 		// sign-in, and free-scan CTAs all land on a "Coming soon" screen rather
 		// than a dead link.
-		'app'            => array(
+		'app'                                => array(
 			'title'    => 'Dashboard',
 			'template' => 'page-templates/coming-soon.php',
 		),
-		'sign-in'        => array(
+		'sign-in'                            => array(
 			'title'    => 'Sign in',
 			'template' => 'page-templates/coming-soon.php',
 		),
-		'privacy-policy' => array(
+		'privacy-policy'                     => array(
 			'title'    => 'Privacy Policy and Agreement',
 			'template' => 'page-templates/privacy-policy.php',
+		),
+		// SEO landing page — the free automated Google rank checker explainer.
+		'google-keyword-ranking-checker'     => array(
+			'title'    => 'Check My Keyword Ranking on Google',
+			'template' => 'page-templates/google-keyword-ranking-checker.php',
 		),
 	);
 }
@@ -164,6 +169,23 @@ function rynk_about_document_title( string $title ): string {
 add_filter( 'pre_get_document_title', 'rynk_about_document_title' );
 
 /**
+ * Keyword-rich <title> for the Google keyword ranking checker landing page,
+ * so it competes for rank-checker searches instead of a generic page title.
+ * Returning a non-empty string here short-circuits WordPress' default title,
+ * so this is the full tag.
+ *
+ * @param string $title Default document title.
+ * @return string
+ */
+function rynk_google_rank_checker_document_title( string $title ): string {
+	if ( is_page_template( 'page-templates/google-keyword-ranking-checker.php' ) ) {
+		return 'Google Keyword Ranking Checker for Small Business Websites | Rynk AI';
+	}
+	return $title;
+}
+add_filter( 'pre_get_document_title', 'rynk_google_rank_checker_document_title' );
+
+/**
  * Version an asset by its mtime so a rebuilt stylesheet is never cached.
  *
  * @param string $relative Theme-relative path.
@@ -274,6 +296,8 @@ function rynk_meta_description(): void {
 		$desc = 'Rynk is an AI-powered SEO platform that audits your site, fixes what holds back your search visibility, and generates content automatically - so more customers find you.';
 	} elseif ( is_page_template( 'page-templates/about.php' ) ) {
 		$desc = 'Meet the team behind Rynk - the AI-powered SEO and AI-visibility platform helping local businesses get found in search.';
+	} elseif ( is_page_template( 'page-templates/google-keyword-ranking-checker.php' ) ) {
+		$desc = "See exactly where your website ranks on Google for the keywords your customers search, then let Rynk fix what's holding you back automatically.";
 	}
 	if ( '' === $desc ) {
 		return;
@@ -282,6 +306,62 @@ function rynk_meta_description(): void {
 	printf( '<meta property="og:description" content="%s" />' . "\n", esc_attr( $desc ) );
 }
 add_action( 'wp_head', 'rynk_meta_description', 1 );
+
+/**
+ * FAQPage structured data for the Google keyword ranking checker landing
+ * page, so the on-page FAQ section is also eligible for FAQ rich results and
+ * AI-assistant citation.
+ *
+ * @return void
+ */
+function rynk_google_rank_checker_schema(): void {
+	if ( ! is_page_template( 'page-templates/google-keyword-ranking-checker.php' ) ) {
+		return;
+	}
+
+	$faqs = array(
+		array(
+			'q' => "How can I check my website's ranking on Google for a specific keyword?",
+			'a' => 'Enter your website URL into Rynk and it runs an automated check on your target keywords, showing your current position and tracking it weekly so you can see movement over time instead of guessing.',
+		),
+		array(
+			'q' => 'Why does my Google ranking change from search to search?',
+			'a' => 'Personalization, location, and search history all affect what you personally see when you search. Rynk checks rankings from a neutral standpoint so the numbers reflect what real customers see, not what your own browser shows you.',
+		),
+		array(
+			'q' => "What's the best SEO tool for small businesses that just need to know where they rank?",
+			'a' => 'Small businesses generally need a tool that checks rankings and also explains what to fix, without requiring an SEO specialist to interpret the data. Rynk is built for that: it audits, fixes, generates content, and monitors rankings in one automated workflow.',
+		),
+		array(
+			'q' => 'How often should I check my keyword position on Google?',
+			'a' => 'Weekly is a reasonable cadence for most small and local businesses, since rankings can shift with algorithm updates, competitor activity, and seasonality. Rynk runs this check automatically every week so you never have to remember to do it.',
+		),
+	);
+
+	$schema = array(
+		'@context'   => 'https://schema.org',
+		'@type'      => 'FAQPage',
+		'mainEntity' => array_map(
+			static function ( array $faq ): array {
+				return array(
+					'@type'          => 'Question',
+					'name'           => $faq['q'],
+					'acceptedAnswer' => array(
+						'@type' => 'Answer',
+						'text'  => $faq['a'],
+					),
+				);
+			},
+			$faqs
+		),
+	);
+
+	printf(
+		'<script type="application/ld+json">%s</script>' . "\n",
+		wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) // phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_wp_json_encode
+	);
+}
+add_action( 'wp_head', 'rynk_google_rank_checker_schema', 20 );
 
 /**
  * Create the marketing pages and point the front page at the landing template.
@@ -354,7 +434,7 @@ add_action( 'after_switch_theme', 'rynk_scaffold_pages' );
  * Scaffold version. Bump whenever rynk_pages() gains a page so the new pages
  * are created on the next request without a manual theme re-activation.
  */
-const RYNK_SCAFFOLD_VERSION = '3';
+const RYNK_SCAFFOLD_VERSION = '4';
 
 /**
  * Re-run scaffolding once after a deploy that changed the page set.
