@@ -6,10 +6,13 @@
  *
  * Structure:
  *   1. Hero          - "Leads on autopilot" (fills the first screen)
- *   2. What you get  - outcome cards (value up front)
+ *   2. What you get  - outcome cards (value up front) + a supporting
+ *                      value list and workflow diagram
  *   3. Four jobs     - Analyze / Generate / Publish / Monitor, with the
  *                      capability cards under each
- *   4. Bottom CTA    -> /sign-in
+ *   4. FAQ           - common questions, mirrored by the FAQPage JSON-LD
+ *                      emitted in functions.php
+ *   5. Bottom CTA    -> /sign-in
  *
  * @package rynk-ai
  */
@@ -33,9 +36,9 @@ $tint_styles = rynk_tint_styles();
 				class="mt-6 text-[16px] leading-[1.75] text-brand-textMute animate-rise"
 				style="animation-delay: 160ms;"
 			>
-				We audit your site, generate the fixes and content it needs, and deploy those
-				changes straight to your site - no manual intervention needed. As the
-				tech keeps evolving, Rynk keeps watching and adjusting, so you consistently show
+				Rynk audits your site, generates the fixes and content it needs, and deploys
+				those changes straight to your site - no manual intervention needed. As the
+				technology keeps evolving, Rynk keeps watching and adjusting, so you consistently show
 				up higher on search engines and get cited more when people
 				ask AI assistants questions.
 			</p>
@@ -55,6 +58,21 @@ $tint_styles = rynk_tint_styles();
 				<p class="mt-5 text-[15px] leading-[1.75] text-brand-textMute">
 					More customers reaching out to you - here&rsquo;s what Rynk delivers.
 				</p>
+
+				<ul class="mt-6 max-w-2xl space-y-2.5">
+					<li class="flex items-start gap-2.5 text-[14.5px] leading-relaxed text-brand-textMute">
+						<?php echo rynk_icon( 'check', 'mt-0.5 h-4 w-4 shrink-0 text-brand-emeraldSoft' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<span>More of your pages among the top few results on Google for the searches your customers actually make.</span>
+					</li>
+					<li class="flex items-start gap-2.5 text-[14.5px] leading-relaxed text-brand-textMute">
+						<?php echo rynk_icon( 'check', 'mt-0.5 h-4 w-4 shrink-0 text-brand-emeraldSoft' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<span>The trust signals ChatGPT, Perplexity, and Google AI Overview look for, built continuously so AI tools recommend you.</span>
+					</li>
+					<li class="flex items-start gap-2.5 text-[14.5px] leading-relaxed text-brand-textMute">
+						<?php echo rynk_icon( 'check', 'mt-0.5 h-4 w-4 shrink-0 text-brand-emeraldSoft' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<span>Page fixes, new content, links, images, and code changes deployed directly to your site, with automatic updates and no manual intervention.</span>
+					</li>
+				</ul>
 			</div>
 
 			<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -62,6 +80,19 @@ $tint_styles = rynk_tint_styles();
 					<?php rynk_outcome_card( $outcome ); ?>
 				<?php endforeach; ?>
 			</div>
+
+			<figure class="mt-10 overflow-hidden rounded-3xl bg-white/[0.02] ring-1 ring-white/8">
+				<img
+					src="<?php echo esc_url( get_theme_file_uri( 'assets/img/how-it-works-diagram.png' ) ); ?>"
+					alt="Four-step Rynk AI SEO workflow: audit, fix, generate, and monitor"
+					class="block h-auto w-full object-cover"
+					loading="lazy"
+					decoding="async"
+				/>
+				<figcaption class="px-6 py-4 text-center text-[13px] text-brand-textMute">
+					Audit, fix, generate, and monitor - running on autopilot.
+				</figcaption>
+			</figure>
 		</div>
 	</section>
 
@@ -150,6 +181,33 @@ $tint_styles = rynk_tint_styles();
 		</div>
 	</section>
 
+	<?php // FAQ — mirrored by the FAQPage JSON-LD emitted in functions.php. ?>
+	<section class="relative px-6 py-14 md:px-10 md:py-16">
+		<div class="relative mx-auto max-w-screen-xl">
+			<div class="mb-12">
+				<p class="font-mono text-[11px] uppercase tracking-[0.18em] text-brand-emeraldSoft">
+					FAQ
+				</p>
+				<h2 class="mt-3 font-serif text-4xl md:text-5xl font-medium tracking-tight text-brand-text">
+					Common questions.
+				</h2>
+			</div>
+
+			<div class="grid gap-4 md:grid-cols-2">
+				<?php foreach ( rynk_how_it_works_faqs() as $faq ) : ?>
+					<div class="rounded-2xl bg-white/[0.03] ring-1 ring-white/8 p-6">
+						<h3 class="font-serif text-lg font-medium leading-snug tracking-tight text-brand-text">
+							<?php echo esc_html( $faq['q'] ); ?>
+						</h3>
+						<p class="mt-2.5 text-[14px] leading-relaxed text-brand-textMute">
+							<?php echo esc_html( $faq['a'] ); ?>
+						</p>
+					</div>
+				<?php endforeach; ?>
+			</div>
+		</div>
+	</section>
+
 	<?php // BOTTOM CTA. ?>
 	<section class="relative px-6 py-14 md:px-10 md:py-16">
 		<div class="relative mx-auto max-w-screen-xl overflow-hidden rounded-[32px] bg-white/[0.02] ring-1 ring-white/8 px-8 py-12 md:px-14 md:py-14">
@@ -164,7 +222,7 @@ $tint_styles = rynk_tint_styles();
 						Watch Rynk live <span class="italic text-brand-blueSoft">on your site.</span>
 					</h2>
 					<p class="mt-2 text-[15px] leading-[1.7] text-brand-textMute">
-						Enter your website URL and see the immediate assessment.
+						Enter your website URL and see the immediate assessment - why your customers aren&rsquo;t finding your site on Google or AI.
 					</p>
 				</div>
 				<div class="w-full md:ml-10 md:flex-1">
