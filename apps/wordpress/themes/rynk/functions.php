@@ -284,6 +284,69 @@ function rynk_meta_description(): void {
 add_action( 'wp_head', 'rynk_meta_description', 1 );
 
 /**
+ * Site-wide JSON-LD structured data.
+ *
+ * Emits a Person entity for the Rynk founders and Service entities for the
+ * three core offerings (audit, technical fixes, AI content generation), each
+ * tied back to the Rynk AI Organization. Printed on every page — like the
+ * favicon and meta-description hooks above — since no crawled page currently
+ * carries any structured data at all.
+ *
+ * @return void
+ */
+function rynk_schema_jsonld(): void {
+	$schemas   = array();
+	$schemas[] = array(
+		'@context' => 'https://schema.org',
+		'@type'    => 'Person',
+		'name'     => 'Rishik Khandavalli, Ashwika Khandavalli',
+		'worksFor' => array(
+			'@type' => 'Organization',
+			'name'  => 'Rynk AI',
+			'url'   => 'https://rynk.ai/',
+		),
+	);
+	$schemas[] = array(
+		'@context' => 'https://schema.org',
+		'@type'    => 'Service',
+		'name'     => 'Website SEO audit and analysis',
+		'provider' => array(
+			'@type' => 'Organization',
+			'name'  => 'Rynk AI',
+			'url'   => 'https://rynk.ai/',
+		),
+	);
+	$schemas[] = array(
+		'@context' => 'https://schema.org',
+		'@type'    => 'Service',
+		'name'     => 'Technical SEO fixes and optimization',
+		'provider' => array(
+			'@type' => 'Organization',
+			'name'  => 'Rynk AI',
+			'url'   => 'https://rynk.ai/',
+		),
+	);
+	$schemas[] = array(
+		'@context' => 'https://schema.org',
+		'@type'    => 'Service',
+		'name'     => 'AI-optimized content generation',
+		'provider' => array(
+			'@type' => 'Organization',
+			'name'  => 'Rynk AI',
+			'url'   => 'https://rynk.ai/',
+		),
+	);
+
+	foreach ( $schemas as $schema ) {
+		printf(
+			'<script type="application/ld+json">%s</script>' . "\n",
+			wp_json_encode( $schema, JSON_UNESCAPED_SLASHES )
+		);
+	}
+}
+add_action( 'wp_head', 'rynk_schema_jsonld', 2 );
+
+/**
  * Create the marketing pages and point the front page at the landing template.
  *
  * Runs on activation, and is safe to run again — an existing page with the
