@@ -148,20 +148,26 @@ function rynk_title_separator(): string {
 }
 
 /**
- * Keyword-rich <title> for the About page so it competes for category searches
- * instead of a brand-only "About - Rynk AI". Returning a non-empty string here
- * short-circuits WordPress' default title, so this is the full tag.
+ * Keyword-rich <title> overrides for the marketing pages that need to compete
+ * for category searches instead of a brand-only "Page - Rynk AI" default.
+ * Returning a non-empty string here short-circuits WordPress' default title,
+ * so each branch below is the full tag.
  *
  * @param string $title Default document title.
  * @return string
  */
-function rynk_about_document_title( string $title ): string {
+function rynk_marketing_document_titles( string $title ): string {
 	if ( is_page_template( 'page-templates/about.php' ) ) {
 		return 'About Rynk - AI SEO Platform for Small Businesses';
 	}
+
+	if ( is_page_template( 'page-templates/pricing.php' ) ) {
+		return 'Rynk AI Pricing: SEO Automation Software Plans';
+	}
+
 	return $title;
 }
-add_filter( 'pre_get_document_title', 'rynk_about_document_title' );
+add_filter( 'pre_get_document_title', 'rynk_marketing_document_titles' );
 
 /**
  * Version an asset by its mtime so a rebuilt stylesheet is never cached.
@@ -274,6 +280,8 @@ function rynk_meta_description(): void {
 		$desc = 'Rynk is an AI-powered SEO platform that audits your site, fixes what holds back your search visibility, and generates content automatically - so more customers find you.';
 	} elseif ( is_page_template( 'page-templates/about.php' ) ) {
 		$desc = 'Meet the team behind Rynk - the AI-powered SEO and AI-visibility platform helping local businesses get found in search.';
+	} elseif ( is_page_template( 'page-templates/pricing.php' ) ) {
+		$desc = "Compare Rynk's Gold and Platinum plans. Affordable SEO automation software with automated audits, content generation, and AI visibility monitoring.";
 	}
 	if ( '' === $desc ) {
 		return;
