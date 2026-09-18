@@ -192,6 +192,47 @@ $platforms  = rynk_platforms();
 			</div>
 		</div>
 	</section>
+
+	<?php // FAQ - questions and answers written to be directly quotable by search engines and AI assistants. Also powers the FAQPage schema in rynk_faq_schema(). ?>
+	<section class="relative px-6 py-14 md:px-10 md:py-16">
+		<div
+			aria-hidden="true"
+			class="pointer-events-none absolute -top-10 right-10 h-72 w-72 rounded-full bg-brand-emerald/10 blur-3xl animate-float-slow"
+		></div>
+
+		<div class="relative mx-auto max-w-screen-xl">
+			<div class="mb-12 max-w-2xl">
+				<p class="font-mono text-[11px] uppercase tracking-[0.18em] text-brand-emeraldSoft">
+					Questions
+				</p>
+				<h2 class="mt-3.5 font-serif text-4xl md:text-5xl font-medium tracking-tight text-brand-text">
+					Frequently asked <span class="italic text-brand-emeraldSoft">questions.</span>
+				</h2>
+				<p class="mt-5 text-[15px] leading-[1.75] text-brand-textMute">
+					The questions small business owners ask most about AI SEO, automated audits, and getting cited by AI assistants.
+				</p>
+			</div>
+
+			<div class="grid gap-4 md:grid-cols-2">
+				<?php foreach ( rynk_faqs() as $faq ) : ?>
+					<details class="group relative overflow-hidden rounded-2xl bg-white/[0.03] ring-1 ring-white/8 p-5 transition-colors duration-300 open:bg-white/[0.05]">
+						<summary class="flex cursor-pointer list-none items-start justify-between gap-3 font-serif text-[16px] font-medium leading-snug text-brand-text">
+							<span><?php echo esc_html( $faq['question'] ); ?></span>
+							<span
+								aria-hidden="true"
+								class="mt-0.5 shrink-0 font-mono text-lg leading-none text-brand-textMute transition-transform duration-200 group-open:rotate-45"
+							>
+								+
+							</span>
+						</summary>
+						<p class="mt-3 text-[14px] leading-relaxed text-brand-textMute">
+							<?php echo esc_html( $faq['answer'] ); ?>
+						</p>
+					</details>
+				<?php endforeach; ?>
+			</div>
+		</div>
+	</section>
 </div>
 
 <?php
