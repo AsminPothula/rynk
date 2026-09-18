@@ -148,20 +148,24 @@ function rynk_title_separator(): string {
 }
 
 /**
- * Keyword-rich <title> for the About page so it competes for category searches
- * instead of a brand-only "About - Rynk AI". Returning a non-empty string here
- * short-circuits WordPress' default title, so this is the full tag.
+ * Keyword-rich <title> tags for pages that should compete for category
+ * searches instead of a brand-only "Page - Rynk AI". Returning a non-empty
+ * string here short-circuits WordPress' default title, so each return below
+ * is the full tag.
  *
  * @param string $title Default document title.
  * @return string
  */
-function rynk_about_document_title( string $title ): string {
+function rynk_page_document_title( string $title ): string {
 	if ( is_page_template( 'page-templates/about.php' ) ) {
 		return 'About Rynk - AI SEO Platform for Small Businesses';
 	}
+	if ( is_page_template( 'page-templates/pricing.php' ) ) {
+		return 'Pricing - AI SEO Automation Plans for Small Business | Rynk AI';
+	}
 	return $title;
 }
-add_filter( 'pre_get_document_title', 'rynk_about_document_title' );
+add_filter( 'pre_get_document_title', 'rynk_page_document_title' );
 
 /**
  * Version an asset by its mtime so a rebuilt stylesheet is never cached.
@@ -274,6 +278,8 @@ function rynk_meta_description(): void {
 		$desc = 'Rynk is an AI-powered SEO platform that audits your site, fixes what holds back your search visibility, and generates content automatically - so more customers find you.';
 	} elseif ( is_page_template( 'page-templates/about.php' ) ) {
 		$desc = 'Meet the team behind Rynk - the AI-powered SEO and AI-visibility platform helping local businesses get found in search.';
+	} elseif ( is_page_template( 'page-templates/pricing.php' ) ) {
+		$desc = 'Rynk pricing for small and scaling businesses: automated audits, fixes, and AI content generation from $149/month. Compare Gold and Platinum plans.';
 	}
 	if ( '' === $desc ) {
 		return;
@@ -282,6 +288,62 @@ function rynk_meta_description(): void {
 	printf( '<meta property="og:description" content="%s" />' . "\n", esc_attr( $desc ) );
 }
 add_action( 'wp_head', 'rynk_meta_description', 1 );
+
+/**
+ * FAQPage structured data for the pricing page, so search engines and AI
+ * assistants (ChatGPT, Perplexity, AI Overviews) can surface the on-page FAQ
+ * answers directly instead of re-summarizing the page.
+ *
+ * @return void
+ */
+function rynk_pricing_faq_schema(): void {
+	if ( ! is_page_template( 'page-templates/pricing.php' ) ) {
+		return;
+	}
+
+	$faq = array(
+		array(
+			'q' => "What's the best SEO tool for a small business on a tight budget?",
+			'a' => "The best tool is one that automates the fix, not just the report. Rynk's Gold plan starts at $149 per month and includes automatic website updates plus new pages built to target the keywords your customers actually search.",
+		),
+		array(
+			'q' => 'Do I need a developer to use Rynk?',
+			'a' => 'No. Rynk deploys fixes and new content directly to your WordPress site automatically. If your site is custom-built, Rynk provides developer-friendly written suggestions instead.',
+		),
+		array(
+			'q' => 'What is included in every plan?',
+			'a' => 'Every plan includes a full site audit, technical fixes, new AI-optimized content, automatic WordPress updates, and ranking comparisons against your competitors, with the difference between Gold and Platinum being volume of pages and tracking frequency.',
+		),
+		array(
+			'q' => "Can Rynk build my website if I don't have one yet?",
+			'a' => 'Yes. Rynk offers a one-time $499 option to build a full WordPress website with 2 to 3 SEO-optimized pages, giving Rynk a foundation to grow from month to month.',
+		),
+	);
+
+	$schema = array(
+		'@context'   => 'https://schema.org',
+		'@type'      => 'FAQPage',
+		'mainEntity' => array_map(
+			static function ( array $item ): array {
+				return array(
+					'@type'          => 'Question',
+					'name'           => $item['q'],
+					'acceptedAnswer' => array(
+						'@type' => 'Answer',
+						'text'  => $item['a'],
+					),
+				);
+			},
+			$faq
+		),
+	);
+
+	printf(
+		'<script type="application/ld+json">%s</script>' . "\n",
+		wp_json_encode( $schema )
+	); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+add_action( 'wp_head', 'rynk_pricing_faq_schema', 2 );
 
 /**
  * Create the marketing pages and point the front page at the landing template.
