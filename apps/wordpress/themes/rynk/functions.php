@@ -284,6 +284,76 @@ function rynk_meta_description(): void {
 add_action( 'wp_head', 'rynk_meta_description', 1 );
 
 /**
+ * Homepage FAQ content — question => answer, shared by the on-page FAQ
+ * section (rendered in front-page.php) and the FAQPage JSON-LD emitted by
+ * rynk_faq_schema(), so the two can never drift out of sync.
+ *
+ * @return array<int, array{question: string, answer: string}>
+ */
+function rynk_faqs(): array {
+	return array(
+		array(
+			'question' => 'What is AI SEO automation and how can it help my business?',
+			'answer'   => 'AI SEO automation uses artificial intelligence to audit a website, fix technical issues, and generate optimized content without manual work from the business owner. Rynk is an AI-powered SEO platform that audits your site, fixes what holds back your search visibility, and generates content automatically so more customers find you. For a small hyperlocal business, that means showing up in Google and AI search results without hiring an SEO agency or developer.',
+		),
+		array(
+			'question' => 'How can I automate website optimization without technical knowledge?',
+			'answer'   => 'Rynk handles automated website optimization end to end by auditing your site, deploying technical fixes, and generating content directly on your website with no SEO expertise or manual intervention needed. You simply enter your website URL and Rynk identifies what is stopping you from showing up in search, then applies the fixes automatically. This removes the need to understand code, meta tags, or schema markup yourself.',
+		),
+		array(
+			'question' => "What's the best SEO tool for small businesses?",
+			'answer'   => 'For small and hyperlocal businesses without an in-house marketing team, the best SEO tool is one that automates the full workflow instead of just reporting problems. Rynk does the work of a team of SEO experts and web developers, in minutes, covering audit, technical fixes, content generation, and ranking monitoring in one platform. Unlike traditional SEO tools that require you to interpret data and hire someone to act on it, Rynk deploys the fixes itself directly on your site.',
+		),
+		array(
+			'question' => 'How can AI improve my search visibility online?',
+			'answer'   => 'AI improves search visibility by continuously auditing a website, rewriting titles and content to match what customers search for, and reformatting pages so both Google and AI assistants can accurately describe the business. Rynk builds the trust signals ChatGPT, Perplexity, and Google AI Overview look for, so AI tools recommend your business, in addition to optimizing for traditional Google ranking. This dual approach, called SEO, AEO, and GEO, helps businesses get found regardless of which search tool a customer uses.',
+		),
+		array(
+			'question' => 'What local business SEO software should I use?',
+			'answer'   => "Local business SEO software should handle hyperlocal pages, keyword targeting, and competitor comparison automatically rather than just providing raw data. Rynk's Gold plan generates 5 hyperlocal pages and 5 target keyword pages every month, plus monthly performance tracking and competitor rank comparison, built specifically for small businesses without marketing budgets. Restaurants, salons, hair parlors, and local service providers can use it to compete against larger chains with bigger marketing teams.",
+		),
+		array(
+			'question' => 'How can I rank my business in ChatGPT and Google?',
+			'answer'   => 'Ranking in both ChatGPT and Google requires optimizing for traditional search signals and for the credibility and readability signals AI assistants use to decide who to cite. Rynk gets businesses cited by Google, ChatGPT, Perplexity, Claude, Gemini, AI Overview, Bing, Copilot, and DuckDuckGo by reformatting pages for AI readability and creating credibility signals that increase the chance AI references you. It runs this as one continuous process, rather than treating Google SEO and AI visibility as separate projects.',
+		),
+	);
+}
+
+/**
+ * Emit the FAQPage JSON-LD for the homepage FAQ section, mirroring the
+ * question/answer copy rendered on the page so the structured data and the
+ * visible content never disagree.
+ *
+ * @return void
+ */
+function rynk_faq_schema(): void {
+	if ( ! is_front_page() ) {
+		return;
+	}
+
+	$entities = array();
+	foreach ( rynk_faqs() as $faq ) {
+		$entities[] = array(
+			'@type'          => 'Question',
+			'name'           => $faq['question'],
+			'acceptedAnswer' => array(
+				'@type' => 'Answer',
+				'text'  => $faq['answer'],
+			),
+		);
+	}
+
+	$schema = array(
+		'@context'   => 'https://schema.org',
+		'@type'      => 'FAQPage',
+		'mainEntity' => $entities,
+	);
+
+	echo '<script type="application/ld+json">' . wp_json_encode( $schema ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+add_action( 'wp_head', 'rynk_faq_schema', 20 );
+
+/**
  * Create the marketing pages and point the front page at the landing template.
  *
  * Runs on activation, and is safe to run again — an existing page with the

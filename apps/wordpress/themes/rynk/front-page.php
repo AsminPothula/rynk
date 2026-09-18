@@ -19,6 +19,7 @@ get_header();
 
 $hero_cards = rynk_hero_cards();
 $platforms  = rynk_platforms();
+$faqs       = rynk_faqs();
 ?>
 
 <div class="relative text-brand-text overflow-x-hidden">
@@ -188,6 +189,50 @@ $platforms  = rynk_platforms();
 			<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
 				<?php foreach ( rynk_offerings() as $item ) : ?>
 					<?php rynk_offering_tile( $item ); ?>
+				<?php endforeach; ?>
+			</div>
+		</div>
+	</section>
+
+	<?php // FAQ - answers the AI-SEO / local-SEO questions people actually search for. ?>
+	<section class="relative px-6 py-14 md:px-10 md:py-16">
+		<div
+			aria-hidden="true"
+			class="pointer-events-none absolute -top-10 left-10 h-72 w-72 rounded-full bg-brand-blue/12 blur-3xl animate-float-slow"
+		></div>
+		<div
+			aria-hidden="true"
+			class="pointer-events-none absolute bottom-0 right-10 h-72 w-72 rounded-full bg-brand-emerald/10 blur-3xl animate-float-slow"
+			style="animation-delay: 4s;"
+		></div>
+
+		<div class="relative mx-auto max-w-screen-xl">
+			<div class="mb-12 max-w-2xl">
+				<p class="font-mono text-[11px] uppercase tracking-[0.18em] text-brand-emeraldSoft">
+					FAQ
+				</p>
+				<h2 class="mt-3.5 font-serif text-4xl md:text-5xl font-medium tracking-tight text-brand-text">
+					Questions, <span class="italic text-brand-emeraldSoft">answered.</span>
+				</h2>
+				<p class="mt-5 text-[15px] leading-[1.75] text-brand-textMute">
+					What business owners ask us before they turn Rynk on.
+				</p>
+			</div>
+
+			<div class="grid gap-4 lg:grid-cols-2">
+				<?php foreach ( $faqs as $faq ) : ?>
+					<details class="group relative overflow-hidden rounded-2xl bg-white/[0.03] ring-1 ring-white/8 p-6 transition-all duration-300">
+						<summary class="flex cursor-pointer list-none items-start justify-between gap-4 font-serif text-[17px] font-medium leading-snug tracking-tight text-brand-text">
+							<?php echo esc_html( $faq['question'] ); ?>
+							<span class="mt-0.5 shrink-0 font-mono text-lg leading-none text-brand-textMute" aria-hidden="true">
+								<span class="group-open:hidden">+</span>
+								<span class="hidden group-open:inline">&minus;</span>
+							</span>
+						</summary>
+						<p class="mt-3 text-[14px] leading-relaxed text-brand-textMute">
+							<?php echo esc_html( $faq['answer'] ); ?>
+						</p>
+					</details>
 				<?php endforeach; ?>
 			</div>
 		</div>
