@@ -58,7 +58,9 @@ $tint_styles = rynk_tint_styles();
 					More customers reaching out to you - that&rsquo;s what Rynk delivers: more of
 					your pages ranking on Google for the searches your customers actually make,
 					stronger visibility on AI platforms like ChatGPT and Perplexity, and fixes
-					deployed automatically, with no manual intervention needed.
+					deployed automatically, with no manual intervention needed. Want the deeper
+					technical breakdown? Read our guide to
+					<a href="<?php echo esc_url( home_url( '/ai-search-engine-optimization/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 transition-colors hover:text-brand-text">AI search engine optimization</a>.
 				</p>
 			</div>
 

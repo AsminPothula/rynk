@@ -23,30 +23,36 @@ require_once get_theme_file_path( 'inc/components.php' );
  */
 function rynk_pages(): array {
 	return array(
-		'how-it-works'   => array(
+		'how-it-works'                 => array(
 			'title'    => 'How it works',
 			'template' => 'page-templates/how-it-works.php',
 		),
-		'pricing'        => array(
+		'pricing'                      => array(
 			'title'    => 'Pricing',
 			'template' => 'page-templates/pricing.php',
 		),
-		'about'          => array(
+		'about'                        => array(
 			'title'    => 'About',
 			'template' => 'page-templates/about.php',
+		),
+		// Educational guide page — linked in-content from How it Works and
+		// Pricing rather than added to the primary nav.
+		'ai-search-engine-optimization' => array(
+			'title'    => 'AI Search Engine Optimization',
+			'template' => 'page-templates/ai-search-engine-optimization.php',
 		),
 		// Placeholder pages — live until the real destinations ship. The app,
 		// sign-in, and free-scan CTAs all land on a "Coming soon" screen rather
 		// than a dead link.
-		'app'            => array(
+		'app'                          => array(
 			'title'    => 'Dashboard',
 			'template' => 'page-templates/coming-soon.php',
 		),
-		'sign-in'        => array(
+		'sign-in'                      => array(
 			'title'    => 'Sign in',
 			'template' => 'page-templates/coming-soon.php',
 		),
-		'privacy-policy' => array(
+		'privacy-policy'               => array(
 			'title'    => 'Privacy Policy and Agreement',
 			'template' => 'page-templates/privacy-policy.php',
 		),
@@ -164,6 +170,20 @@ function rynk_about_document_title( string $title ): string {
 add_filter( 'pre_get_document_title', 'rynk_about_document_title' );
 
 /**
+ * Keyword-rich <title> for the AI Search Engine Optimization guide.
+ *
+ * @param string $title Default document title.
+ * @return string
+ */
+function rynk_ai_seo_document_title( string $title ): string {
+	if ( is_page_template( 'page-templates/ai-search-engine-optimization.php' ) ) {
+		return 'AI Search Engine Optimization - Rynk AI SEO Automation';
+	}
+	return $title;
+}
+add_filter( 'pre_get_document_title', 'rynk_ai_seo_document_title' );
+
+/**
  * Version an asset by its mtime so a rebuilt stylesheet is never cached.
  *
  * @param string $relative Theme-relative path.
@@ -274,6 +294,8 @@ function rynk_meta_description(): void {
 		$desc = 'Rynk is an AI-powered SEO platform that audits your site, fixes what holds back your search visibility, and generates content automatically - so more customers find you.';
 	} elseif ( is_page_template( 'page-templates/about.php' ) ) {
 		$desc = 'Meet the team behind Rynk - the AI-powered SEO and AI-visibility platform helping local businesses get found in search.';
+	} elseif ( is_page_template( 'page-templates/ai-search-engine-optimization.php' ) ) {
+		$desc = 'Learn how AI search engine optimization works and how Rynk automates AEO, technical SEO, and content so your business gets found on Google, ChatGPT, and Perplexity.';
 	}
 	if ( '' === $desc ) {
 		return;
@@ -282,6 +304,83 @@ function rynk_meta_description(): void {
 	printf( '<meta property="og:description" content="%s" />' . "\n", esc_attr( $desc ) );
 }
 add_action( 'wp_head', 'rynk_meta_description', 1 );
+
+/**
+ * FAQPage + BreadcrumbList structured data for the AI Search Engine
+ * Optimization guide, so the FAQ section rendered in the template is
+ * mirrored in schema.org markup for search and AI-assistant crawlers.
+ *
+ * @return void
+ */
+function rynk_ai_seo_schema(): void {
+	if ( ! is_page_template( 'page-templates/ai-search-engine-optimization.php' ) ) {
+		return;
+	}
+
+	$page_url = home_url( '/ai-search-engine-optimization/' );
+
+	$breadcrumb = array(
+		'@context'        => 'https://schema.org',
+		'@type'           => 'BreadcrumbList',
+		'itemListElement' => array(
+			array(
+				'@type'    => 'ListItem',
+				'position' => 1,
+				'name'     => 'Home',
+				'item'     => home_url( '/' ),
+			),
+			array(
+				'@type'    => 'ListItem',
+				'position' => 2,
+				'name'     => 'AI Search Engine Optimization',
+				'item'     => $page_url,
+			),
+		),
+	);
+
+	$faq = array(
+		'@context'   => 'https://schema.org',
+		'@type'      => 'FAQPage',
+		'mainEntity' => array(
+			array(
+				'@type'          => 'Question',
+				'name'           => 'What is AI search engine optimization and how does it work?',
+				'acceptedAnswer' => array(
+					'@type' => 'Answer',
+					'text'  => 'AI search engine optimization is the process of formatting and structuring your website so AI assistants like ChatGPT and Perplexity can accurately read, trust, and cite your business alongside traditional Google rankings. It works by combining technical SEO fixes with AI-readable content formatting and outside credibility signals.',
+				),
+			),
+			array(
+				'@type'          => 'Question',
+				'name'           => 'How does AI SEO automation work to improve my website?',
+				'acceptedAnswer' => array(
+					'@type' => 'Answer',
+					'text'  => 'Rynk automates the process by auditing your full site, fixing technical issues like titles, meta descriptions, and duplicate pages, generating new content and images, and then deploying everything directly to your website with no manual work required.',
+				),
+			),
+			array(
+				'@type'          => 'Question',
+				'name'           => 'What does AI-powered search visibility mean for my site?',
+				'acceptedAnswer' => array(
+					'@type' => 'Answer',
+					'text'  => "AI-powered search visibility means your business shows up not only in Google's organic results but also when customers ask AI tools direct questions, because your site is formatted in a way those tools can confidently reference.",
+				),
+			),
+			array(
+				'@type'          => 'Question',
+				'name'           => 'What is technical SEO automation and how does it help?',
+				'acceptedAnswer' => array(
+					'@type' => 'Answer',
+					'text'  => 'Technical SEO automation means software finds and fixes the behind-the-scenes issues, broken links, missing meta descriptions, duplicate pages, slow-loading content, that quietly stop your site from ranking, without you needing an SEO background.',
+				),
+			),
+		),
+	);
+
+	echo '<script type="application/ld+json">' . wp_json_encode( $breadcrumb ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo '<script type="application/ld+json">' . wp_json_encode( $faq ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+add_action( 'wp_head', 'rynk_ai_seo_schema', 2 );
 
 /**
  * 301 the default WordPress scaffolding URLs (the "Hello world" sample post
@@ -385,7 +484,7 @@ add_action( 'after_switch_theme', 'rynk_scaffold_pages' );
  * Scaffold version. Bump whenever rynk_pages() gains a page so the new pages
  * are created on the next request without a manual theme re-activation.
  */
-const RYNK_SCAFFOLD_VERSION = '3';
+const RYNK_SCAFFOLD_VERSION = '4';
 
 /**
  * Re-run scaffolding once after a deploy that changed the page set.

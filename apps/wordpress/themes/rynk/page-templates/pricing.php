@@ -35,7 +35,9 @@ $tier_styles = rynk_tier_styles();
 				class="mt-4 mb-5 text-[16px] leading-[1.75] text-brand-textMute animate-rise"
 				style="animation-delay: 160ms;"
 			>
-				Pick the tier that fits your business.
+				Pick the tier that fits your business. Curious what&rsquo;s under the hood? See how
+				<a href="<?php echo esc_url( home_url( '/ai-search-engine-optimization/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 transition-colors hover:text-brand-text">AI search engine optimization</a>
+				works before you choose.
 			</p>
 		</div>
 	</section>
