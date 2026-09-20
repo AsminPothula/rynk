@@ -180,7 +180,7 @@ $platforms  = rynk_platforms();
 				</h2>
 				<p class="mt-6 text-[15px] leading-[1.75] text-brand-textMute">
 					Rynk optimizes your whole site and does the work of a team of SEO experts and web developers, in minutes. <br />
-					Every day, potential customers search Google, ChatGPT, and other AI search engines for businesses like yours. Rynk makes sure your website is the one they find.
+					Every day, potential customers search Google, ChatGPT, and other AI search engines for businesses like yours. Rynk makes sure your website is the one they find. Curious how it happens? <a href="<?php echo esc_url( home_url( '/how-it-works/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 transition-colors hover:text-brand-text">see how Rynk works in 4 steps</a>.
 				</p>
 			</div>
 
