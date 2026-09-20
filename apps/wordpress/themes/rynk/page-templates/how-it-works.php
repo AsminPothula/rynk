@@ -9,7 +9,9 @@
  *   2. What you get  - outcome cards (value up front)
  *   3. Four jobs     - Analyze / Generate / Publish / Monitor, with the
  *                      capability cards under each
- *   4. Bottom CTA    -> /sign-in
+ *   4. FAQ           - common automation / technical-SEO questions, mirrored
+ *                      in the FAQPage structured data emitted in functions.php
+ *   5. Bottom CTA    -> /sign-in
  *
  * @package rynk-ai
  */
@@ -33,8 +35,8 @@ $tint_styles = rynk_tint_styles();
 				class="mt-6 text-[16px] leading-[1.75] text-brand-textMute animate-rise"
 				style="animation-delay: 160ms;"
 			>
-				We audit your site, generate the fixes and content it needs, and deploy those
-				changes straight to your site - no manual intervention needed. As the
+				Rynk audits your site, generates the fixes and content it needs, and deploys
+				those changes straight to your site - no manual intervention needed. As the
 				tech keeps evolving, Rynk keeps watching and adjusting, so you consistently show
 				up higher on search engines and get cited more when people
 				ask AI assistants questions.
@@ -53,7 +55,10 @@ $tint_styles = rynk_tint_styles();
 					The outcomes, up front.
 				</h2>
 				<p class="mt-5 text-[15px] leading-[1.75] text-brand-textMute">
-					More customers reaching out to you - here&rsquo;s what Rynk delivers.
+					More customers reaching out to you - that&rsquo;s what Rynk delivers: more of
+					your pages ranking on Google for the searches your customers actually make,
+					stronger visibility on AI platforms like ChatGPT and Perplexity, and fixes
+					deployed automatically, with no manual intervention needed.
 				</p>
 			</div>
 
@@ -93,9 +98,9 @@ $tint_styles = rynk_tint_styles();
 					Built in 4 steps.
 				</h2>
 				<p class="mt-5 text-[15px] leading-[1.75] text-brand-textMute">
-					Rynk audits your site, updates what&rsquo;s broken, generates and
-					publishes new content, and monitors what happens next - the same
-					four steps, running on autopilot.
+					Rynk audits your site, updates what&rsquo;s broken, generates and publishes
+					new content, and monitors what happens next - the same four steps, running
+					on autopilot.
 				</p>
 			</div>
 
@@ -144,6 +149,43 @@ $tint_styles = rynk_tint_styles();
 								</div>
 							<?php endforeach; ?>
 						</div>
+					</div>
+				<?php endforeach; ?>
+			</div>
+		</div>
+	</section>
+
+	<?php // Section divider — separates the pipeline breakdown from the FAQ. ?>
+	<div class="px-6 md:px-10" aria-hidden="true">
+		<div class="mx-auto max-w-screen-xl">
+			<div class="h-px w-full bg-gradient-to-r from-transparent via-brand-hairline to-transparent"></div>
+		</div>
+	</div>
+
+	<?php // FAQ - common automation / technical-SEO questions. Mirrored in the FAQPage schema in functions.php. ?>
+	<section class="relative px-6 py-14 md:px-10 md:py-16">
+		<div class="relative mx-auto max-w-screen-xl">
+			<div class="mb-12 max-w-2xl">
+				<p class="font-mono text-[11px] uppercase tracking-[0.18em] text-brand-emeraldSoft">
+					Common questions
+				</p>
+				<h2 class="mt-3 font-serif text-4xl md:text-5xl font-medium tracking-tight text-brand-text">
+					Frequently asked.
+				</h2>
+				<p class="mt-5 text-[15px] leading-[1.75] text-brand-textMute">
+					A few things business owners ask before automating their SEO.
+				</p>
+			</div>
+
+			<div class="grid max-w-3xl gap-4">
+				<?php foreach ( rynk_how_it_works_faqs() as $faq ) : ?>
+					<div class="rounded-3xl bg-white/[0.03] ring-1 ring-white/8 p-7 md:p-8">
+						<h3 class="font-serif text-xl md:text-[22px] font-medium leading-snug tracking-tight text-brand-text">
+							<?php echo esc_html( $faq['q'] ); ?>
+						</h3>
+						<p class="mt-3 text-[15px] leading-[1.75] text-brand-textMute">
+							<?php echo esc_html( $faq['a'] ); ?>
+						</p>
 					</div>
 				<?php endforeach; ?>
 			</div>

@@ -67,6 +67,30 @@ function rynk_nav_links(): array {
 }
 
 /**
+ * FAQ entries for the How It Works page - shared between the on-page FAQ
+ * section and the FAQPage structured data emitted in the head, so the two
+ * can never drift apart.
+ *
+ * @return array<int, array{q: string, a: string}>
+ */
+function rynk_how_it_works_faqs(): array {
+	return array(
+		array(
+			'q' => 'How can I automate website optimization for my business?',
+			'a' => 'Automating website optimization means letting software handle the audit, technical fixes, and content generation that would otherwise take an agency weeks. Rynk runs this as a continuous four-step cycle: audit, fix, generate, and monitor.',
+		),
+		array(
+			'q' => 'What is technical SEO automation and how does it help?',
+			'a' => 'Technical SEO automation finds and fixes the behind-the-scenes problems - broken titles, missing meta descriptions, duplicate pages - that quietly hurt your rankings, and deploys the fixes directly to your site without a developer.',
+		),
+		array(
+			'q' => 'How does AI SEO automation work to improve my website?',
+			'a' => "Rynk's AI SEO automation works in four steps: it audits your full site, fixes technical and content issues, generates and publishes new pages and blogs, and then monitors your rankings weekly to keep adjusting as search results change.",
+		),
+	);
+}
+
+/**
  * Nav link classes, with the current page highlighted.
  *
  * The React version compared `usePathname()` to the href. WordPress knows
@@ -162,6 +186,23 @@ function rynk_about_document_title( string $title ): string {
 	return $title;
 }
 add_filter( 'pre_get_document_title', 'rynk_about_document_title' );
+
+/**
+ * Keyword-rich <title> for the How It Works page so it competes for
+ * "SEO automation" style searches instead of a brand-only title. Returning a
+ * non-empty string here short-circuits WordPress' default title, so this is
+ * the full tag.
+ *
+ * @param string $title Default document title.
+ * @return string
+ */
+function rynk_how_it_works_document_title( string $title ): string {
+	if ( is_page_template( 'page-templates/how-it-works.php' ) ) {
+		return "How Rynk's AI SEO Automation Works | Audit, Fix, Generate, Monitor";
+	}
+	return $title;
+}
+add_filter( 'pre_get_document_title', 'rynk_how_it_works_document_title' );
 
 /**
  * Version an asset by its mtime so a rebuilt stylesheet is never cached.
@@ -274,6 +315,8 @@ function rynk_meta_description(): void {
 		$desc = 'Rynk is an AI-powered SEO platform that audits your site, fixes what holds back your search visibility, and generates content automatically - so more customers find you.';
 	} elseif ( is_page_template( 'page-templates/about.php' ) ) {
 		$desc = 'Meet the team behind Rynk - the AI-powered SEO and AI-visibility platform helping local businesses get found in search.';
+	} elseif ( is_page_template( 'page-templates/how-it-works.php' ) ) {
+		$desc = 'See exactly how Rynk automates SEO in four steps: full site audit, technical fixes, AI-generated content, and ongoing ranking monitoring - no manual work required.';
 	}
 	if ( '' === $desc ) {
 		return;
@@ -282,6 +325,43 @@ function rynk_meta_description(): void {
 	printf( '<meta property="og:description" content="%s" />' . "\n", esc_attr( $desc ) );
 }
 add_action( 'wp_head', 'rynk_meta_description', 1 );
+
+/**
+ * FAQPage structured data for the How It Works page, mirroring the on-page
+ * FAQ section (rynk_how_it_works_faqs()) so search engines and AI assistants
+ * can surface the answers directly.
+ *
+ * @return void
+ */
+function rynk_how_it_works_schema(): void {
+	if ( ! is_page_template( 'page-templates/how-it-works.php' ) ) {
+		return;
+	}
+
+	$schema = array(
+		'@context'   => 'https://schema.org',
+		'@type'      => 'FAQPage',
+		'mainEntity' => array_map(
+			static function ( array $faq ): array {
+				return array(
+					'@type'          => 'Question',
+					'name'           => $faq['q'],
+					'acceptedAnswer' => array(
+						'@type' => 'Answer',
+						'text'  => $faq['a'],
+					),
+				);
+			},
+			rynk_how_it_works_faqs()
+		),
+	);
+
+	printf(
+		'<script type="application/ld+json">%s</script>' . "\n",
+		wp_json_encode( $schema )
+	);
+}
+add_action( 'wp_head', 'rynk_how_it_works_schema', 20 );
 
 /**
  * Create the marketing pages and point the front page at the landing template.
