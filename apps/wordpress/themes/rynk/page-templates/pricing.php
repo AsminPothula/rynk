@@ -37,7 +37,9 @@ $tier_styles = rynk_tier_styles();
 			>
 				Pick the tier that fits your business. Curious what&rsquo;s under the hood? See how
 				<a href="<?php echo esc_url( home_url( '/ai-search-engine-optimization/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 transition-colors hover:text-brand-text">AI search engine optimization</a>
-				works before you choose. Want to know who&rsquo;s behind it?
+				works before you choose, or see how
+				<a href="<?php echo esc_url( home_url( '/content-marketing-for-link-building/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 transition-colors hover:text-brand-text">content marketing earns backlinks</a>
+				along the way. Want to know who&rsquo;s behind it?
 				<a href="<?php echo esc_url( home_url( '/about/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 transition-colors hover:text-brand-text">meet the team behind Rynk</a>.
 			</p>
 		</div>
