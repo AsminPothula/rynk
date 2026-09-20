@@ -700,12 +700,219 @@ function rynk_hello_world_schema(): void {
 				'name'     => 'Home',
 				'item'     => home_url( '/' ),
 			),
+			array(
+				'@type'    => 'ListItem',
+				'position' => 2,
+				'name'     => 'Hello World',
+				'item'     => home_url( '/hello-world/' ),
+			),
 		),
 	);
 
 	echo '<script type="application/ld+json">' . wp_json_encode( $breadcrumb ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 add_action( 'wp_head', 'rynk_hello_world_schema', 2 );
+
+/**
+ * BreadcrumbList structured data for the default WordPress "Sample Page".
+ *
+ * Sample Page ships on every fresh WordPress install and has no dedicated
+ * page template (it falls back to index.php), so this hooks off is_page()
+ * directly rather than is_page_template() the way the templated marketing
+ * pages above do.
+ *
+ * @return void
+ */
+function rynk_sample_page_schema(): void {
+	if ( ! is_page( 'sample-page' ) ) {
+		return;
+	}
+
+	$breadcrumb = array(
+		'@context'        => 'https://schema.org',
+		'@type'           => 'BreadcrumbList',
+		'itemListElement' => array(
+			array(
+				'@type'    => 'ListItem',
+				'position' => 1,
+				'name'     => 'Home',
+				'item'     => home_url( '/' ),
+			),
+			array(
+				'@type'    => 'ListItem',
+				'position' => 2,
+				'name'     => 'Sample Page',
+				'item'     => home_url( '/sample-page/' ),
+			),
+		),
+	);
+
+	echo '<script type="application/ld+json">' . wp_json_encode( $breadcrumb ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+add_action( 'wp_head', 'rynk_sample_page_schema', 2 );
+
+/**
+ * BreadcrumbList structured data for the /app placeholder page.
+ *
+ * /app and /sign-in both render through the shared coming-soon.php template
+ * (see rynk_pages()), so each gets its own is_page() check rather than an
+ * is_page_template() check, which would match both at once.
+ *
+ * @return void
+ */
+function rynk_app_page_schema(): void {
+	if ( ! is_page( 'app' ) ) {
+		return;
+	}
+
+	$breadcrumb = array(
+		'@context'        => 'https://schema.org',
+		'@type'           => 'BreadcrumbList',
+		'itemListElement' => array(
+			array(
+				'@type'    => 'ListItem',
+				'position' => 1,
+				'name'     => 'Home',
+				'item'     => home_url( '/' ),
+			),
+			array(
+				'@type'    => 'ListItem',
+				'position' => 2,
+				'name'     => 'App',
+				'item'     => home_url( '/app/' ),
+			),
+		),
+	);
+
+	echo '<script type="application/ld+json">' . wp_json_encode( $breadcrumb ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+add_action( 'wp_head', 'rynk_app_page_schema', 2 );
+
+/**
+ * BreadcrumbList structured data for the /sign-in placeholder page.
+ *
+ * See rynk_app_page_schema() above — /sign-in shares the same coming-soon.php
+ * template as /app, so it needs its own is_page() check.
+ *
+ * @return void
+ */
+function rynk_sign_in_page_schema(): void {
+	if ( ! is_page( 'sign-in' ) ) {
+		return;
+	}
+
+	$breadcrumb = array(
+		'@context'        => 'https://schema.org',
+		'@type'           => 'BreadcrumbList',
+		'itemListElement' => array(
+			array(
+				'@type'    => 'ListItem',
+				'position' => 1,
+				'name'     => 'Home',
+				'item'     => home_url( '/' ),
+			),
+			array(
+				'@type'    => 'ListItem',
+				'position' => 2,
+				'name'     => 'Sign In',
+				'item'     => home_url( '/sign-in/' ),
+			),
+		),
+	);
+
+	echo '<script type="application/ld+json">' . wp_json_encode( $breadcrumb ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+add_action( 'wp_head', 'rynk_sign_in_page_schema', 2 );
+
+/**
+ * BreadcrumbList structured data for the default WordPress "Uncategorized"
+ * category archive (/category/uncategorized/).
+ *
+ * Every fresh WordPress install ships a default "Uncategorized" category, so
+ * this hooks off is_category() directly the same way rynk_sample_page_schema()
+ * hooks off is_page() for the default Sample Page — there's no dedicated
+ * template for category archives on this four-page marketing site.
+ *
+ * @return void
+ */
+function rynk_uncategorized_category_schema(): void {
+	if ( ! is_category( 'uncategorized' ) ) {
+		return;
+	}
+
+	$breadcrumb = array(
+		'@context'        => 'https://schema.org',
+		'@type'           => 'BreadcrumbList',
+		'itemListElement' => array(
+			array(
+				'@type'    => 'ListItem',
+				'position' => 1,
+				'name'     => 'Home',
+				'item'     => home_url( '/' ),
+			),
+			array(
+				'@type'    => 'ListItem',
+				'position' => 2,
+				'name'     => 'Category',
+				'item'     => home_url( '/category/' ),
+			),
+			array(
+				'@type'    => 'ListItem',
+				'position' => 3,
+				'name'     => 'Uncategorized',
+				'item'     => home_url( '/category/uncategorized/' ),
+			),
+		),
+	);
+
+	echo '<script type="application/ld+json">' . wp_json_encode( $breadcrumb ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+add_action( 'wp_head', 'rynk_uncategorized_category_schema', 2 );
+
+/**
+ * BreadcrumbList structured data for the default "rynkai" author archive
+ * (/author/rynkai/).
+ *
+ * WordPress creates an author archive for the default admin user, so this
+ * hooks off is_author() directly rather than is_page_template(), matching
+ * rynk_uncategorized_category_schema() above for the same reason: there's no
+ * dedicated template for author archives on this marketing site.
+ *
+ * @return void
+ */
+function rynk_author_rynkai_schema(): void {
+	if ( ! is_author( 'rynkai' ) ) {
+		return;
+	}
+
+	$breadcrumb = array(
+		'@context'        => 'https://schema.org',
+		'@type'           => 'BreadcrumbList',
+		'itemListElement' => array(
+			array(
+				'@type'    => 'ListItem',
+				'position' => 1,
+				'name'     => 'Home',
+				'item'     => home_url( '/' ),
+			),
+			array(
+				'@type'    => 'ListItem',
+				'position' => 2,
+				'name'     => 'Author',
+				'item'     => home_url( '/author/' ),
+			),
+			array(
+				'@type'    => 'ListItem',
+				'position' => 3,
+				'name'     => 'Rynkai',
+				'item'     => home_url( '/author/rynkai/' ),
+			),
+		),
+	);
+
+	echo '<script type="application/ld+json">' . wp_json_encode( $breadcrumb ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+add_action( 'wp_head', 'rynk_author_rynkai_schema', 2 );
 
 /**
  * 301 redirect the default WordPress "Hello World" sample post to the home
