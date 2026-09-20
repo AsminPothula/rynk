@@ -41,6 +41,12 @@ function rynk_pages(): array {
 			'title'    => 'AI Search Engine Optimization',
 			'template' => 'page-templates/ai-search-engine-optimization.php',
 		),
+		// Feature explainer — linked in-content from the AI SEO guide, How it
+		// Works, and Pricing rather than added to the primary nav.
+		'content-marketing-for-link-building' => array(
+			'title'    => 'Content Marketing for Link Building',
+			'template' => 'page-templates/content-marketing-for-link-building.php',
+		),
 		// Placeholder pages — live until the real destinations ship. The app,
 		// sign-in, and free-scan CTAs all land on a "Coming soon" screen rather
 		// than a dead link.
@@ -184,6 +190,20 @@ function rynk_ai_seo_document_title( string $title ): string {
 add_filter( 'pre_get_document_title', 'rynk_ai_seo_document_title' );
 
 /**
+ * Keyword-rich <title> for the Content Marketing for Link Building page.
+ *
+ * @param string $title Default document title.
+ * @return string
+ */
+function rynk_content_marketing_document_title( string $title ): string {
+	if ( is_page_template( 'page-templates/content-marketing-for-link-building.php' ) ) {
+		return 'Content Marketing for Link Building - Rynk AI SEO Automation';
+	}
+	return $title;
+}
+add_filter( 'pre_get_document_title', 'rynk_content_marketing_document_title' );
+
+/**
  * Version an asset by its mtime so a rebuilt stylesheet is never cached.
  *
  * @param string $relative Theme-relative path.
@@ -296,6 +316,8 @@ function rynk_meta_description(): void {
 		$desc = 'Meet the team behind Rynk - the AI-powered SEO and AI-visibility platform helping local businesses get found in search.';
 	} elseif ( is_page_template( 'page-templates/ai-search-engine-optimization.php' ) ) {
 		$desc = 'Learn how AI search engine optimization works and how Rynk automates AEO, technical SEO, and content so your business gets found on Google, ChatGPT, and Perplexity.';
+	} elseif ( is_page_template( 'page-templates/content-marketing-for-link-building.php' ) ) {
+		$desc = 'See how Rynk generates blog content, outreach emails, and social posts that earn backlinks and mentions, without hiring an agency or a writer.';
 	}
 	if ( '' === $desc ) {
 		return;
@@ -381,6 +403,74 @@ function rynk_ai_seo_schema(): void {
 	echo '<script type="application/ld+json">' . wp_json_encode( $faq ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 add_action( 'wp_head', 'rynk_ai_seo_schema', 2 );
+
+/**
+ * FAQPage + BreadcrumbList structured data for the Content Marketing for
+ * Link Building page, mirroring the FAQ section rendered in the template.
+ *
+ * @return void
+ */
+function rynk_content_marketing_schema(): void {
+	if ( ! is_page_template( 'page-templates/content-marketing-for-link-building.php' ) ) {
+		return;
+	}
+
+	$page_url = home_url( '/content-marketing-for-link-building/' );
+
+	$breadcrumb = array(
+		'@context'        => 'https://schema.org',
+		'@type'           => 'BreadcrumbList',
+		'itemListElement' => array(
+			array(
+				'@type'    => 'ListItem',
+				'position' => 1,
+				'name'     => 'Home',
+				'item'     => home_url( '/' ),
+			),
+			array(
+				'@type'    => 'ListItem',
+				'position' => 2,
+				'name'     => 'Content Marketing for Link Building',
+				'item'     => $page_url,
+			),
+		),
+	);
+
+	$faq = array(
+		'@context'   => 'https://schema.org',
+		'@type'      => 'FAQPage',
+		'mainEntity' => array(
+			array(
+				'@type'          => 'Question',
+				'name'           => 'How can I use content generation for SEO?',
+				'acceptedAnswer' => array(
+					'@type' => 'Answer',
+					'text'  => 'Use content generation to consistently publish pages and blog posts built around what your customers are actually searching for, then pair that content with outreach so other sites have a reason to link to it. Rynk automates both steps and publishes directly to your site.',
+				),
+			),
+			array(
+				'@type'          => 'Question',
+				'name'           => "What's a good SEO audit tool to check my website?",
+				'acceptedAnswer' => array(
+					'@type' => 'Answer',
+					'text'  => "A good SEO audit tool should check your whole site the way a visitor and Google would, flag duplicate or thin pages, and tell you exactly what's missing. Rynk runs this audit automatically and shows you the results before making any changes.",
+				),
+			),
+			array(
+				'@type'          => 'Question',
+				'name'           => 'How can I improve my Google rankings quickly?',
+				'acceptedAnswer' => array(
+					'@type' => 'Answer',
+					'text'  => 'The fastest wins usually come from fixing technical issues, broken titles, missing meta descriptions, duplicate pages, and publishing content aligned to keywords your customers actually search. Rynk finds and fixes these issues and generates new content in the same automated workflow.',
+				),
+			),
+		),
+	);
+
+	echo '<script type="application/ld+json">' . wp_json_encode( $breadcrumb ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo '<script type="application/ld+json">' . wp_json_encode( $faq ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+add_action( 'wp_head', 'rynk_content_marketing_schema', 2 );
 
 /**
  * 301 the default WordPress scaffolding URLs (the "Hello world" sample post
@@ -484,7 +574,7 @@ add_action( 'after_switch_theme', 'rynk_scaffold_pages' );
  * Scaffold version. Bump whenever rynk_pages() gains a page so the new pages
  * are created on the next request without a manual theme re-activation.
  */
-const RYNK_SCAFFOLD_VERSION = '4';
+const RYNK_SCAFFOLD_VERSION = '5';
 
 /**
  * Re-run scaffolding once after a deploy that changed the page set.

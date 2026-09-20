@@ -140,7 +140,7 @@ get_header();
 						How Rynk automates it.
 					</h2>
 					<p class="mt-5 text-[15px] leading-[1.75] text-brand-textMute">
-						Rynk audits your site the way a visitor, Google, and an AI assistant would each see it, then fixes what&rsquo;s holding you back and generates what&rsquo;s missing. That includes rewriting titles and descriptions, reformatting pages for AI readability, cleaning up duplicate content, and building the credibility signals that make AI tools more likely to reference your business by name. See exactly how the pipeline runs in <a href="<?php echo esc_url( home_url( '/how-it-works/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 transition-colors hover:text-brand-text">how Rynk works in 4 steps</a>.
+						Rynk audits your site the way a visitor, Google, and an AI assistant would each see it, then fixes what&rsquo;s holding you back and generates what&rsquo;s missing. That includes rewriting titles and descriptions, reformatting pages for AI readability, cleaning up duplicate content, and building the credibility signals that make AI tools more likely to reference your business by name. See exactly how the pipeline runs in <a href="<?php echo esc_url( home_url( '/how-it-works/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 transition-colors hover:text-brand-text">how Rynk works in 4 steps</a>. Backlinks and mentions still matter too - see how <a href="<?php echo esc_url( home_url( '/content-marketing-for-link-building/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 transition-colors hover:text-brand-text">content marketing earns links automatically</a>.
 					</p>
 
 					<ul class="mt-6 space-y-2.5">
