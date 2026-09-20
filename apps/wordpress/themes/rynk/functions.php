@@ -700,12 +700,6 @@ function rynk_hello_world_schema(): void {
 				'name'     => 'Home',
 				'item'     => home_url( '/' ),
 			),
-			array(
-				'@type'    => 'ListItem',
-				'position' => 2,
-				'name'     => 'Hello World',
-				'item'     => home_url( '/hello-world/' ),
-			),
 		),
 	);
 
@@ -714,330 +708,147 @@ function rynk_hello_world_schema(): void {
 add_action( 'wp_head', 'rynk_hello_world_schema', 2 );
 
 /**
- * BreadcrumbList structured data for the default WordPress "Sample Page".
- *
- * @return void
- */
-function rynk_sample_page_schema(): void {
-	if ( ! is_page( 'sample-page' ) ) {
-		return;
-	}
-
-	$breadcrumb = array(
-		'@context'        => 'https://schema.org',
-		'@type'           => 'BreadcrumbList',
-		'itemListElement' => array(
-			array(
-				'@type'    => 'ListItem',
-				'position' => 1,
-				'name'     => 'Home',
-				'item'     => home_url( '/' ),
-			),
-			array(
-				'@type'    => 'ListItem',
-				'position' => 2,
-				'name'     => 'Sample Page',
-				'item'     => home_url( '/sample-page/' ),
-			),
-		),
-	);
-
-	echo '<script type="application/ld+json">' . wp_json_encode( $breadcrumb ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-}
-add_action( 'wp_head', 'rynk_sample_page_schema', 2 );
-
-/**
- * BreadcrumbList structured data for the /app placeholder page.
- *
- * `app` renders on the shared "Coming soon" template alongside `sign-in`, so
- * this is scoped with is_page( 'app' ) rather than is_page_template() to
- * avoid emitting the same breadcrumb on both URLs.
- *
- * @return void
- */
-function rynk_app_page_schema(): void {
-	if ( ! is_page( 'app' ) ) {
-		return;
-	}
-
-	$breadcrumb = array(
-		'@context'        => 'https://schema.org',
-		'@type'           => 'BreadcrumbList',
-		'itemListElement' => array(
-			array(
-				'@type'    => 'ListItem',
-				'position' => 1,
-				'name'     => 'Home',
-				'item'     => home_url( '/' ),
-			),
-			array(
-				'@type'    => 'ListItem',
-				'position' => 2,
-				'name'     => 'App',
-				'item'     => home_url( '/app/' ),
-			),
-		),
-	);
-
-	echo '<script type="application/ld+json">' . wp_json_encode( $breadcrumb ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-}
-add_action( 'wp_head', 'rynk_app_page_schema', 2 );
-
-/**
- * BreadcrumbList structured data for the /sign-in placeholder page.
- *
- * `sign-in` renders on the shared "Coming soon" template alongside `app`, so
- * this is scoped with is_page( 'sign-in' ) rather than is_page_template() to
- * avoid emitting the same breadcrumb on both URLs.
- *
- * @return void
- */
-function rynk_sign_in_page_schema(): void {
-	if ( ! is_page( 'sign-in' ) ) {
-		return;
-	}
-
-	$breadcrumb = array(
-		'@context'        => 'https://schema.org',
-		'@type'           => 'BreadcrumbList',
-		'itemListElement' => array(
-			array(
-				'@type'    => 'ListItem',
-				'position' => 1,
-				'name'     => 'Home',
-				'item'     => home_url( '/' ),
-			),
-			array(
-				'@type'    => 'ListItem',
-				'position' => 2,
-				'name'     => 'Sign In',
-				'item'     => home_url( '/sign-in/' ),
-			),
-		),
-	);
-
-	echo '<script type="application/ld+json">' . wp_json_encode( $breadcrumb ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-}
-add_action( 'wp_head', 'rynk_sign_in_page_schema', 2 );
-
-/**
- * BreadcrumbList structured data for the default "Uncategorized" category
- * archive.
- *
- * `rynk_legacy_redirects()` below 301s this URL to the home page, so this
- * schema is effectively dormant on the live site; it's kept in sync with the
- * other schema emitters here (see rynk_hello_world_schema()) in case the
- * redirect is ever relaxed for a specific environment.
- *
- * @return void
- */
-function rynk_uncategorized_category_schema(): void {
-	if ( ! is_category( 'uncategorized' ) ) {
-		return;
-	}
-
-	$breadcrumb = array(
-		'@context'        => 'https://schema.org',
-		'@type'           => 'BreadcrumbList',
-		'itemListElement' => array(
-			array(
-				'@type'    => 'ListItem',
-				'position' => 1,
-				'name'     => 'Home',
-				'item'     => home_url( '/' ),
-			),
-			array(
-				'@type'    => 'ListItem',
-				'position' => 2,
-				'name'     => 'Category',
-				'item'     => home_url( '/category/' ),
-			),
-			array(
-				'@type'    => 'ListItem',
-				'position' => 3,
-				'name'     => 'Uncategorized',
-				'item'     => home_url( '/category/uncategorized/' ),
-			),
-		),
-	);
-
-	echo '<script type="application/ld+json">' . wp_json_encode( $breadcrumb ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-}
-add_action( 'wp_head', 'rynk_uncategorized_category_schema', 2 );
-
-/**
- * BreadcrumbList structured data for the default "rynkai" author archive.
- *
- * `rynk_legacy_redirects()` below 301s this URL to the home page, so this
- * schema is effectively dormant on the live site; it's kept in sync with the
- * other schema emitters here (see rynk_hello_world_schema()) in case the
- * redirect is ever relaxed for a specific environment.
- *
- * @return void
- */
-function rynk_author_rynkai_schema(): void {
-	if ( ! is_author( 'rynkai' ) ) {
-		return;
-	}
-
-	$breadcrumb = array(
-		'@context'        => 'https://schema.org',
-		'@type'           => 'BreadcrumbList',
-		'itemListElement' => array(
-			array(
-				'@type'    => 'ListItem',
-				'position' => 1,
-				'name'     => 'Home',
-				'item'     => home_url( '/' ),
-			),
-			array(
-				'@type'    => 'ListItem',
-				'position' => 2,
-				'name'     => 'Author',
-				'item'     => home_url( '/author/' ),
-			),
-			array(
-				'@type'    => 'ListItem',
-				'position' => 3,
-				'name'     => 'Rynkai',
-				'item'     => home_url( '/author/rynkai/' ),
-			),
-		),
-	);
-
-	echo '<script type="application/ld+json">' . wp_json_encode( $breadcrumb ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-}
-add_action( 'wp_head', 'rynk_author_rynkai_schema', 2 );
-
-/**
- * 301 the default WordPress scaffolding URLs (the "Hello world" sample post
- * and the archives it seeds) back to the home page.
- *
- * A fresh WP install ships with a placeholder post, and that post alone is
- * enough to make the uncategorized category archive and the default author
- * archive publicly indexable — three URLs with no real content, duplicating
- * each other verbatim. None of that is used by the marketing site, so all
- * three permanently redirect to "/" rather than being left live for search
- * engines to crawl.
+ * 301 redirect the default WordPress "Hello World" sample post to the home
+ * page. WordPress ships this post on every fresh install; there's no reason
+ * for it to be indexable on a four-page marketing site.
  *
  * @return void
  */
 function rynk_legacy_redirects(): void {
-	$target = null;
-
 	if ( is_singular( 'post' ) && 'hello-world' === get_post_field( 'post_name', get_queried_object_id() ) ) {
-		$target = home_url( '/' );
-	} elseif ( is_category( 'uncategorized' ) ) {
-		$target = home_url( '/' );
-	} elseif ( is_author( 'rynkai' ) ) {
-		$target = home_url( '/' );
-	}
-
-	if ( null !== $target ) {
-		wp_safe_redirect( $target, 301 );
+		wp_safe_redirect( home_url( '/' ), 301 );
 		exit;
 	}
 }
 add_action( 'template_redirect', 'rynk_legacy_redirects' );
 
 /**
- * Create the marketing pages and point the front page at the landing template.
- *
- * Runs on activation, and is safe to run again — an existing page with the
- * same slug is reused rather than duplicated.
+ * Organization structured data — sitewide, describing Rynk itself. Anchors
+ * the site's other schema (SoftwareApplication, BreadcrumbList, FAQPage) to
+ * a single canonical entity for search engines and AI crawlers.
  *
  * @return void
  */
-function rynk_scaffold_pages(): void {
-	foreach ( rynk_pages() as $slug => $page ) {
-		$existing = get_page_by_path( $slug );
+function rynk_organization_schema(): void {
+	$organization = array(
+		'@context'    => 'https://schema.org',
+		'@type'       => 'Organization',
+		'name'        => 'Rynk',
+		'url'         => home_url( '/' ),
+		'description' => 'AI-powered SEO automation platform that audits websites, fixes technical issues, and generates optimized content to increase search visibility and leads.',
+	);
 
-		$page_id = $existing instanceof WP_Post
-			? $existing->ID
-			: wp_insert_post(
-				array(
-					'post_type'    => 'page',
-					'post_name'    => $slug,
-					'post_title'   => $page['title'],
-					'post_status'  => 'publish',
-					'post_content' => '',
-				)
-			);
+	echo '<script type="application/ld+json">' . wp_json_encode( $organization ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+add_action( 'wp_head', 'rynk_organization_schema', 2 );
 
-		if ( is_wp_error( $page_id ) || 0 === $page_id ) {
-			continue;
-		}
+/**
+ * WebSite structured data — sitewide, with a SearchAction pointing at the
+ * default WordPress search endpoint.
+ *
+ * @return void
+ */
+function rynk_website_schema(): void {
+	$website = array(
+		'@context'        => 'https://schema.org',
+		'@type'           => 'WebSite',
+		'name'            => 'Rynk',
+		'url'             => home_url( '/' ),
+		'potentialAction' => array(
+			'@type'       => 'SearchAction',
+			'target'      => array(
+				'@type'       => 'EntryPoint',
+				'urlTemplate' => home_url( '/?s={search_term_string}' ),
+			),
+			'query-input' => 'required name=search_term_string',
+		),
+	);
 
-		// Self-heal: an existing page might be a draft (invisible to the public,
-		// visible to logged-in editors — the exact "I see it, incognito 404s"
-		// symptom) or have lost its template meta. Force it back to a published
-		// page on the intended template every time we scaffold.
-		if ( $existing instanceof WP_Post && 'publish' !== $existing->post_status ) {
-			wp_update_post(
-				array(
-					'ID'          => $page_id,
-					'post_status' => 'publish',
-				)
-			);
-		}
+	echo '<script type="application/ld+json">' . wp_json_encode( $website ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+add_action( 'wp_head', 'rynk_website_schema', 2 );
 
-		update_post_meta( $page_id, '_wp_page_template', $page['template'] );
-	}
+/**
+ * LocalBusiness structured data — sitewide, describing Rynk as a SaaS
+ * business alongside the Organization schema above.
+ *
+ * @return void
+ */
+function rynk_local_business_schema(): void {
+	$local_business = array(
+		'@context'       => 'https://schema.org',
+		'@type'          => 'LocalBusiness',
+		'name'           => 'Rynk',
+		'url'            => home_url( '/' ),
+		'additionalType' => 'Software / SaaS',
+		'description'    => 'AI-powered SEO automation platform that audits websites, fixes technical issues, and generates optimized content to increase search visibility and leads.',
+	);
 
-	// Landing page — front-page.php renders it; the page exists so the site
-	// has a real front page in Settings > Reading rather than a post list.
-	$home = get_page_by_path( 'home' );
+	echo '<script type="application/ld+json">' . wp_json_encode( $local_business ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+add_action( 'wp_head', 'rynk_local_business_schema', 2 );
 
-	$home_id = $home instanceof WP_Post
-		? $home->ID
-		: wp_insert_post(
-			array(
-				'post_type'    => 'page',
-				'post_name'    => 'home',
-				'post_title'   => 'Home',
-				'post_status'  => 'publish',
-				'post_content' => '',
-			)
+/**
+ * Service structured data — sitewide, one Service block per core offering
+ * Rynk provides. Each is scoped as a distinct schema.org Service entity
+ * provided by the Organization schema above, so search and AI crawlers can
+ * resolve exactly what Rynk sells rather than inferring it from prose alone.
+ *
+ * @return void
+ */
+function rynk_services_schema(): void {
+	$provider = array(
+		'@type' => 'Organization',
+		'name'  => 'Rynk',
+		'url'   => home_url( '/' ),
+	);
+
+	$services = array(
+		'Website SEO audits',
+		'Technical SEO fixes',
+		'AI-optimized content generation',
+		'Page title and meta description optimization',
+	);
+
+	foreach ( $services as $service_name ) {
+		$service = array(
+			'@context' => 'https://schema.org',
+			'@type'    => 'Service',
+			'name'     => $service_name,
+			'provider' => $provider,
 		);
 
-	if ( ! is_wp_error( $home_id ) && 0 !== $home_id ) {
-		update_option( 'show_on_front', 'page' );
-		update_option( 'page_on_front', $home_id );
+		echo '<script type="application/ld+json">' . wp_json_encode( $service ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 }
-add_action( 'after_switch_theme', 'rynk_scaffold_pages' );
+add_action( 'wp_head', 'rynk_services_schema', 2 );
 
 /**
- * Scaffold version. Bump whenever rynk_pages() gains a page so the new pages
- * are created on the next request without a manual theme re-activation.
- */
-const RYNK_SCAFFOLD_VERSION = '5';
-
-/**
- * Re-run scaffolding once after a deploy that changed the page set.
- *
- * On the live site the theme is already active, so `after_switch_theme` never
- * fires again — a freshly added page (privacy policy, the coming-soon pages)
- * would otherwise never be created. This runs `rynk_scaffold_pages()` a single
- * time per version bump, guarded by a stored option so it is a cheap no-op on
- * every other request. Scaffolding itself is idempotent (existing pages are
- * reused, never duplicated).
+ * Person structured data for the Rynk founders — sitewide, one Person block
+ * per founder so each is a distinct schema.org entity linked to the
+ * Organization schema above. Mirrors the founder names surfaced in
+ * rynk_founders() on the About page.
  *
  * @return void
  */
-function rynk_maybe_scaffold_pages(): void {
-	if ( get_option( 'rynk_scaffold_version' ) === RYNK_SCAFFOLD_VERSION ) {
-		return;
+function rynk_person_schema(): void {
+	$works_for = array(
+		'@type' => 'Organization',
+		'name'  => 'Rynk',
+		'url'   => home_url( '/' ),
+	);
+
+	$founders = array( 'Rishik Khandavalli', 'Ashwika Khandavalli' );
+
+	foreach ( $founders as $founder_name ) {
+		$person = array(
+			'@context' => 'https://schema.org',
+			'@type'    => 'Person',
+			'name'     => $founder_name,
+			'worksFor' => $works_for,
+		);
+
+		echo '<script type="application/ld+json">' . wp_json_encode( $person ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
-
-	rynk_scaffold_pages();
-
-	// A page created via wp_insert_post() before the rewrite rules were built
-	// can 404 on its pretty permalink for the public until the rules are
-	// regenerated. Flush once per version bump so /privacy-policy/ (and any
-	// other scaffolded page) resolves for logged-out visitors.
-	flush_rewrite_rules( false );
-
-	update_option( 'rynk_scaffold_version', RYNK_SCAFFOLD_VERSION );
 }
-add_action( 'init', 'rynk_maybe_scaffold_pages' );
+add_action( 'wp_head', 'rynk_person_schema', 2 );
