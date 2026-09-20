@@ -473,6 +473,42 @@ function rynk_content_marketing_schema(): void {
 add_action( 'wp_head', 'rynk_content_marketing_schema', 2 );
 
 /**
+ * BreadcrumbList structured data for the Pricing page.
+ *
+ * Pricing has no FAQ section, so unlike the AI SEO guide and content
+ * marketing pages this only emits the breadcrumb trail, not a FAQPage block.
+ *
+ * @return void
+ */
+function rynk_pricing_schema(): void {
+	if ( ! is_page_template( 'page-templates/pricing.php' ) ) {
+		return;
+	}
+
+	$breadcrumb = array(
+		'@context'        => 'https://schema.org',
+		'@type'           => 'BreadcrumbList',
+		'itemListElement' => array(
+			array(
+				'@type'    => 'ListItem',
+				'position' => 1,
+				'name'     => 'Home',
+				'item'     => home_url( '/' ),
+			),
+			array(
+				'@type'    => 'ListItem',
+				'position' => 2,
+				'name'     => 'Pricing',
+				'item'     => home_url( '/pricing/' ),
+			),
+		),
+	);
+
+	echo '<script type="application/ld+json">' . wp_json_encode( $breadcrumb ) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+add_action( 'wp_head', 'rynk_pricing_schema', 2 );
+
+/**
  * 301 the default WordPress scaffolding URLs (the "Hello world" sample post
  * and the archives it seeds) back to the home page.
  *
