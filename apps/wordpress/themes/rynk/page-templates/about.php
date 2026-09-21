@@ -52,7 +52,8 @@ $founder_styles = rynk_founder_styles();
 						We built Rynk to solve that: one platform that automates your
 						visibility everywhere customers search, whether that&rsquo;s
 						Google, AI platforms, maps, or local listings. The best product
-						shouldn&rsquo;t lose to better marketing.
+						shouldn&rsquo;t lose to better marketing. Curious how that
+						actually happens? <a href="<?php echo esc_url( home_url( '/how-it-works/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 transition-colors hover:text-brand-text">see how our AI audits and deploys fixes</a>.
 					</p>
 				</div>
 			</div>
