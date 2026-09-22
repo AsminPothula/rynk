@@ -22,6 +22,28 @@ get_header();
 $founder_styles = rynk_founder_styles();
 ?>
 
+<?php // BreadcrumbList structured data for /about. ?>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://rynk.ai/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "About",
+      "item": "https://rynk.ai/about/"
+    }
+  ]
+}
+</script>
+
 <div class="relative text-brand-text overflow-x-hidden">
 	<?php // WHY WE STARTED RYNK. ?>
 	<section class="relative px-6 py-14 md:px-10 md:py-20">
@@ -49,7 +71,7 @@ $founder_styles = rynk_founder_styles();
 						creators all have valuable products, but nobody could find them.
 					</p>
 					<p>
-						We built Rynk to solve that: one platform that automates your
+						We built Rynk to solve that: one <a href="<?php echo esc_url( home_url( '/how-it-works/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">automated SEO platform</a> that automates your
 						visibility everywhere customers search, whether that&rsquo;s
 						Google, AI platforms, maps, or local listings. The best product
 						shouldn&rsquo;t lose to better marketing.

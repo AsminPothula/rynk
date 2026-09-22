@@ -7,11 +7,64 @@
  * the marketing shell (header + footer) so a visitor who clicks through never
  * lands on a broken or empty page.
  *
+ * Emits page-specific BreadcrumbList JSON-LD for /app and /sign-in.
+ *
  * @package rynk-ai
  */
 
 get_header();
+
+/*
+ * Determine which breadcrumb to emit based on the current page slug.
+ * Both /app and /sign-in use this template, so we resolve the label and URL
+ * dynamically rather than hard-coding one or the other.
+ */
+$current_slug = get_post_field( 'post_name', get_queried_object_id() );
+
+$breadcrumb_map = array(
+	'app'     => array(
+		'name' => 'App',
+		'item' => 'https://rynk.ai/app/',
+	),
+	'sign-in' => array(
+		'name' => 'Sign In',
+		'item' => 'https://rynk.ai/sign-in/',
+	),
+);
+
+$breadcrumb_leaf = isset( $breadcrumb_map[ $current_slug ] )
+	? $breadcrumb_map[ $current_slug ]
+	: array(
+		'name' => get_the_title(),
+		'item' => home_url( '/' . $current_slug . '/' ),
+	);
 ?>
+
+<script type="application/ld+json">
+<?php
+echo wp_json_encode(
+	array(
+		'@context'        => 'https://schema.org',
+		'@type'           => 'BreadcrumbList',
+		'itemListElement' => array(
+			array(
+				'@type'    => 'ListItem',
+				'position' => 1,
+				'name'     => 'Home',
+				'item'     => 'https://rynk.ai/',
+			),
+			array(
+				'@type'    => 'ListItem',
+				'position' => 2,
+				'name'     => $breadcrumb_leaf['name'],
+				'item'     => $breadcrumb_leaf['item'],
+			),
+		),
+	),
+	JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT
+);
+?>
+</script>
 
 <div class="relative text-brand-text overflow-x-hidden">
 	<section class="relative flex items-center px-6 py-20 md:px-10 lg:min-h-[max(calc(100dvh-8rem),480px)]">
