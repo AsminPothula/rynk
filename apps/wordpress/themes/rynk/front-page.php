@@ -192,6 +192,193 @@ $platforms  = rynk_platforms();
 			</div>
 		</div>
 	</section>
+
+	<?php // FAQ. ?>
+	<section class="relative px-6 py-14 md:px-10 md:py-16" itemscope itemtype="https://schema.org/FAQPage">
+		<div
+			aria-hidden="true"
+			class="pointer-events-none absolute -top-10 right-8 h-72 w-72 rounded-full bg-brand-blue/12 blur-3xl animate-float-slow"
+		></div>
+		<div
+			aria-hidden="true"
+			class="pointer-events-none absolute bottom-0 left-8 h-72 w-72 rounded-full bg-brand-violet/10 blur-3xl animate-float-slow"
+			style="animation-delay: 5s;"
+		></div>
+
+		<div class="relative mx-auto max-w-screen-xl">
+			<div class="mb-12">
+				<p class="font-mono text-[11px] uppercase tracking-[0.18em] text-brand-violetSoft">
+					FAQ
+				</p>
+				<h2 class="mt-3.5 font-serif text-5xl md:text-6xl font-medium tracking-tight text-brand-text">
+					Common <span class="italic text-brand-blueSoft">questions.</span>
+				</h2>
+				<p class="mt-6 text-[15px] leading-[1.75] text-brand-textMute">
+					Everything you need to know about Rynk and AI-powered SEO automation.
+				</p>
+			</div>
+
+			<div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+				<?php
+				$faqs = array(
+					array(
+						'question' => 'What is AI SEO automation and how can it help my business?',
+						'answer'   => 'AI SEO automation means software handles every step of improving your search visibility for you, from auditing your site to fixing technical problems to publishing new content. Rynk is an AI SEO automation platform built for small local businesses. Instead of hiring an agency or learning SEO yourself, you connect your site and Rynk does the work automatically, so more customers find you on Google and inside AI assistants like ChatGPT.',
+					),
+					array(
+						'question' => 'What is an automated SEO platform and how does it work?',
+						'answer'   => 'An automated SEO platform audits your website, identifies what is holding back your rankings, applies the fixes, and publishes optimized content, all without you doing it manually. Rynk is an automated SEO platform that runs this process on a continuous cycle: it scans your site, deploys technical fixes directly to WordPress, writes and publishes new pages and blog posts, and monitors your rankings every week so results keep improving over time.',
+					),
+					array(
+						'question' => 'What is automated SEO for small business?',
+						'answer'   => 'Automated SEO for small business is a done-for-you approach where software replaces the agency or consultant, handling audits, fixes, content, and monitoring on your behalf. Rynk was built specifically for this: it is scoped and priced for a single local business, starting at $149 per month, and requires zero SEO knowledge from the owner. You get the same results an agency delivers, without the cost or the learning curve.',
+					),
+					array(
+						'question' => 'How do I do SEO for my small business?',
+						'answer'   => 'SEO for a small business involves fixing technical issues on your site, writing keyword-rich content, optimizing your Google Business Profile, and building credibility signals so search engines trust you. The fastest way to do all of this without hiring an agency is to use a platform like Rynk, which audits your site, applies every fix automatically, and publishes the content your site needs, so you can focus on running your business while Rynk handles the visibility.',
+					),
+					array(
+						'question' => 'How can I get my business to show up in ChatGPT?',
+						'answer'   => 'To show up in ChatGPT and other AI assistants, your website needs clear, well-structured content that directly answers questions your customers ask, plus schema markup and credibility signals that AI crawlers can read and quote. Rynk builds all of this for you automatically, including FAQ content, structured data, and AI-readable page formatting, which is called Answer Engine Optimization or AEO. Businesses that use Rynk are continuously optimized to be cited by ChatGPT, Perplexity, Gemini, and Google AI Overviews.',
+					),
+					array(
+						'question' => 'What is AI search engine optimization?',
+						'answer'   => 'AI search engine optimization, also called AEO or GEO, is the practice of structuring your website so AI-powered answer engines like ChatGPT, Perplexity, and Google AI Overviews can read, understand, and cite your business in their responses. Unlike traditional SEO which targets ranked links, AI search optimization targets direct citations inside AI-generated answers. Rynk handles both at once, making your site visible on Google search results and inside AI assistant answers, with no manual work required from you.',
+					),
+					array(
+						'question' => 'What is the best local business SEO software?',
+						'answer'   => 'The best local business SEO software for a small owner is one that does the work for you, not just reports what is wrong. Rynk is built specifically for local businesses like restaurants, salons, spas, and service providers, and it is the only platform that automates both traditional Google SEO and AI assistant visibility in one tool. Plans start at $149 per month, with no SEO knowledge or agency required.',
+					),
+					array(
+						'question' => 'How can AI content generation help with my SEO?',
+						'answer'   => 'AI content generation helps your SEO by producing keyword-targeted blog posts, landing pages, and FAQ content at a pace and volume that would otherwise require a full content team. Rynk uses AI content generation to write and publish pages directly to your WordPress site every month, targeting the exact searches your local customers make. More relevant pages means more opportunities to rank on Google and get cited by AI assistants.',
+					),
+					array(
+						'question' => 'What is a website optimization tool and do I need one?',
+						'answer'   => 'A website optimization tool analyzes your site for technical issues, content gaps, and ranking opportunities, then helps you fix them so more customers find you online. If your business is not showing up when locals search for what you offer, yes, you need one. Rynk goes further than a standard website optimization tool by not just identifying problems but automatically applying the fixes and publishing new content, so you see real ranking improvements without touching a line of code.',
+					),
+					array(
+						'question' => 'How do I rank on Google and AI assistants at the same time?',
+						'answer'   => 'Ranking on Google and getting cited by AI assistants requires overlapping but distinct strategies: technical SEO, quality content, structured data, and AI-readable formatting all working together. Most tools focus on only one side. Rynk is built to do both simultaneously, running a continuous optimization cycle that covers technical fixes, on-page content, schema markup, and AEO signals so your business ranks in Google search results and appears in answers from ChatGPT, Perplexity, and Gemini.',
+					),
+				);
+				foreach ( $faqs as $faq ) :
+				?>
+					<div
+						class="group relative overflow-hidden rounded-2xl bg-white/[0.03] ring-1 ring-white/8 p-6 transition-all duration-300 hover:-translate-y-0.5"
+						itemscope
+						itemprop="mainEntity"
+						itemtype="https://schema.org/Question"
+					>
+						<div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-brand-violet/60 via-brand-blue/60 to-transparent" aria-hidden="true"></div>
+						<div
+							aria-hidden="true"
+							class="pointer-events-none absolute -top-10 -right-10 h-28 w-28 rounded-full bg-brand-violet/10 blur-2xl opacity-70 transition-opacity duration-500 group-hover:opacity-100"
+						></div>
+						<div class="relative">
+							<h3 class="font-serif text-[17px] font-medium leading-snug tracking-tight text-brand-text" itemprop="name">
+								<?php echo esc_html( $faq['question'] ); ?>
+							</h3>
+							<div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+								<p class="mt-3 text-[13.5px] leading-relaxed text-brand-textMute" itemprop="text">
+									<?php echo esc_html( $faq['answer'] ); ?>
+								</p>
+							</div>
+						</div>
+					</div>
+				<?php endforeach; ?>
+			</div>
+		</div>
+	</section>
+
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "FAQPage",
+		"mainEntity": [
+			{
+				"@type": "Question",
+				"name": "What is AI SEO automation and how can it help my business?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "AI SEO automation means software handles every step of improving your search visibility for you, from auditing your site to fixing technical problems to publishing new content. Rynk is an AI SEO automation platform built for small local businesses. Instead of hiring an agency or learning SEO yourself, you connect your site and Rynk does the work automatically, so more customers find you on Google and inside AI assistants like ChatGPT."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "What is an automated SEO platform and how does it work?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "An automated SEO platform audits your website, identifies what is holding back your rankings, applies the fixes, and publishes optimized content, all without you doing it manually. Rynk is an automated SEO platform that runs this process on a continuous cycle: it scans your site, deploys technical fixes directly to WordPress, writes and publishes new pages and blog posts, and monitors your rankings every week so results keep improving over time."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "What is automated SEO for small business?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Automated SEO for small business is a done-for-you approach where software replaces the agency or consultant, handling audits, fixes, content, and monitoring on your behalf. Rynk was built specifically for this: it is scoped and priced for a single local business, starting at $149 per month, and requires zero SEO knowledge from the owner. You get the same results an agency delivers, without the cost or the learning curve."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "How do I do SEO for my small business?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "SEO for a small business involves fixing technical issues on your site, writing keyword-rich content, optimizing your Google Business Profile, and building credibility signals so search engines trust you. The fastest way to do all of this without hiring an agency is to use a platform like Rynk, which audits your site, applies every fix automatically, and publishes the content your site needs, so you can focus on running your business while Rynk handles the visibility."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "How can I get my business to show up in ChatGPT?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "To show up in ChatGPT and other AI assistants, your website needs clear, well-structured content that directly answers questions your customers ask, plus schema markup and credibility signals that AI crawlers can read and quote. Rynk builds all of this for you automatically, including FAQ content, structured data, and AI-readable page formatting, which is called Answer Engine Optimization or AEO. Businesses that use Rynk are continuously optimized to be cited by ChatGPT, Perplexity, Gemini, and Google AI Overviews."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "What is AI search engine optimization?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "AI search engine optimization, also called AEO or GEO, is the practice of structuring your website so AI-powered answer engines like ChatGPT, Perplexity, and Google AI Overviews can read, understand, and cite your business in their responses. Unlike traditional SEO which targets ranked links, AI search optimization targets direct citations inside AI-generated answers. Rynk handles both at once, making your site visible on Google search results and inside AI assistant answers, with no manual work required from you."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "What is the best local business SEO software?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "The best local business SEO software for a small owner is one that does the work for you, not just reports what is wrong. Rynk is built specifically for local businesses like restaurants, salons, spas, and service providers, and it is the only platform that automates both traditional Google SEO and AI assistant visibility in one tool. Plans start at $149 per month, with no SEO knowledge or agency required."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "How can AI content generation help with my SEO?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "AI content generation helps your SEO by producing keyword-targeted blog posts, landing pages, and FAQ content at a pace and volume that would otherwise require a full content team. Rynk uses AI content generation to write and publish pages directly to your WordPress site every month, targeting the exact searches your local customers make. More relevant pages means more opportunities to rank on Google and get cited by AI assistants."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "What is a website optimization tool and do I need one?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "A website optimization tool analyzes your site for technical issues, content gaps, and ranking opportunities, then helps you fix them so more customers find you online. If your business is not showing up when locals search for what you offer, yes, you need one. Rynk goes further than a standard website optimization tool by not just identifying problems but automatically applying the fixes and publishing new content, so you see real ranking improvements without touching a line of code."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "How do I rank on Google and AI assistants at the same time?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Ranking on Google and getting cited by AI assistants requires overlapping but distinct strategies: technical SEO, quality content, structured data, and AI-readable formatting all working together. Most tools focus on only one side. Rynk is built to do both simultaneously, running a continuous optimization cycle that covers technical fixes, on-page content, schema markup, and AEO signals so your business ranks in Google search results and appears in answers from ChatGPT, Perplexity, and Gemini."
+				}
+			}
+		]
+	}
+	</script>
 </div>
 
 <?php
