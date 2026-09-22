@@ -139,7 +139,7 @@ get_header();
 					class="mt-6 text-[17px] leading-[1.8] text-brand-textMute animate-rise"
 					style="animation-delay: 160ms;"
 				>
-					If customers search for what you do and your business is nowhere to be found, you are not alone — and it is almost never about the quality of your work.
+					If customers search for what you do and your business is nowhere to be found, you are not alone &mdash; and it is almost never about the quality of your work.
 				</p>
 			</div>
 		</div>
@@ -382,7 +382,7 @@ get_header();
 										'How Rynk fixes it automatically',
 										'Frequently asked questions',
 									);
-									foreach ( $toc as $i => $item ) :
+									foreach ( $toc as $item ) :
 									?>
 										<li class="flex items-start gap-2.5">
 											<span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-violet/50" aria-hidden="true"></span>
