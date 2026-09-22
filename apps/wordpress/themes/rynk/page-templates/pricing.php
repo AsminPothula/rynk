@@ -263,9 +263,9 @@ $tier_styles = rynk_tier_styles();
 
 			<?php // INTERNAL LINKS TO BLOG. ?>
 			<div class="relative mt-5 overflow-hidden rounded-2xl bg-white/[0.02] ring-1 ring-white/8 px-7 py-6 md:flex md:items-center md:justify-between md:gap-10">
-				<div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-brand-violet/30 to-transparent" aria-hidden="true"></div>
+				<div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-brand-blue/30 to-transparent" aria-hidden="true"></div>
 				<p class="text-[15px] leading-[1.7] text-brand-textMute mb-4 md:mb-0">
-					Not sure if Rynk is right for you? Read our guide on exactly why businesses stay invisible on Google &mdash; and how automated SEO changes that.
+					Not sure if Rynk is right for you? Read our guide on why businesses stay invisible on Google and how automated SEO changes that.
 				</p>
 				<a
 					href="<?php echo esc_url( home_url( '/blog/why-isnt-my-business-showing-up-on-google/' ) ); ?>"

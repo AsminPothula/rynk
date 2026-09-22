@@ -77,7 +77,7 @@ $tint_styles = rynk_tint_styles();
 					The outcomes, up front.
 				</h2>
 				<p class="mt-5 text-[15px] leading-[1.75] text-brand-textMute">
-					More customers reaching out to you &mdash; here&rsquo;s what Rynk delivers.
+					More customers reaching out to you — here&rsquo;s what Rynk delivers.
 				</p>
 			</div>
 
@@ -118,7 +118,7 @@ $tint_styles = rynk_tint_styles();
 				</h2>
 				<p class="mt-5 text-[15px] leading-[1.75] text-brand-textMute">
 					Rynk audits your site, updates what&rsquo;s broken, generates and
-					publishes new content, and monitors what happens next &mdash; the same
+					publishes new content, and monitors what happens next — the same
 					four steps, running on autopilot.
 				</p>
 			</div>
@@ -456,7 +456,7 @@ $tint_styles = rynk_tint_styles();
 			<div class="relative overflow-hidden rounded-2xl bg-white/[0.02] ring-1 ring-white/8 px-7 py-6 md:flex md:items-center md:justify-between md:gap-10">
 				<div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-brand-violet/30 to-transparent" aria-hidden="true"></div>
 				<p class="text-[15px] leading-[1.7] text-brand-textMute mb-4 md:mb-0">
-					Wondering why your business isn&rsquo;t showing up on Google yet? We broke down the exact causes and fixes &mdash; from missing page titles to an incomplete Google Business Profile.
+					Wondering why your business isn&rsquo;t showing up on Google yet? We broke down the exact causes and fixes.
 				</p>
 				<a
 					href="<?php echo esc_url( home_url( '/blog/why-isnt-my-business-showing-up-on-google/' ) ); ?>"

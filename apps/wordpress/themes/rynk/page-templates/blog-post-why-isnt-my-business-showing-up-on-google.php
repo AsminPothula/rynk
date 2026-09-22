@@ -139,7 +139,7 @@ get_header();
 					class="mt-6 text-[17px] leading-[1.8] text-brand-textMute animate-rise"
 					style="animation-delay: 160ms;"
 				>
-					If customers search for what you do and your business is nowhere to be found, you are not alone &mdash; and it is almost never about the quality of your work.
+					If customers search for what you do and your business is nowhere to be found, you are not alone — and it is almost never about the quality of your work.
 				</p>
 			</div>
 		</div>
@@ -283,6 +283,21 @@ get_header();
 						</p>
 					</div>
 
+					<?php // Internal link to keyword ranking article. ?>
+					<div class="mb-12 relative overflow-hidden rounded-2xl bg-white/[0.02] ring-1 ring-white/8 px-7 py-6 md:flex md:items-center md:justify-between md:gap-10">
+						<div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-brand-emerald/30 to-transparent" aria-hidden="true"></div>
+						<p class="text-[15px] leading-[1.7] text-brand-textMute mb-4 md:mb-0">
+							Once you understand why you are not showing up, the next step is to check exactly where you rank for your most important search terms.
+						</p>
+						<a
+							href="<?php echo esc_url( home_url( '/blog/how-to-check-keyword-ranking-google/' ) ); ?>"
+							class="group inline-flex shrink-0 items-center gap-2 font-serif text-[15px] text-brand-blueSoft transition-colors hover:text-brand-text"
+						>
+							How to check your keyword rankings
+							<?php echo rynk_icon( 'arrow-right', 'h-4 w-4 transition-transform group-hover:translate-x-0.5' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						</a>
+					</div>
+
 					<?php // FAQ section. ?>
 					<div class="mb-12">
 						<h2 class="font-serif text-3xl md:text-4xl font-medium tracking-tight text-brand-text mb-8">
@@ -382,7 +397,7 @@ get_header();
 										'How Rynk fixes it automatically',
 										'Frequently asked questions',
 									);
-									foreach ( $toc as $item ) :
+									foreach ( $toc as $i => $item ) :
 									?>
 										<li class="flex items-start gap-2.5">
 											<span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-violet/50" aria-hidden="true"></span>
@@ -395,8 +410,14 @@ get_header();
 
 						<div class="relative overflow-hidden rounded-2xl bg-white/[0.02] ring-1 ring-white/8 p-6">
 							<div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-brand-emerald/40 to-transparent" aria-hidden="true"></div>
-							<p class="font-mono text-[10px] uppercase tracking-[0.18em] text-brand-emeraldSoft mb-3">Explore Rynk</p>
+							<p class="font-mono text-[10px] uppercase tracking-[0.18em] text-brand-emeraldSoft mb-3">Related reading</p>
 							<ul class="space-y-2.5">
+								<li>
+									<a href="<?php echo esc_url( home_url( '/blog/how-to-check-keyword-ranking-google/' ) ); ?>" class="text-[13.5px] text-brand-textMute transition-colors hover:text-brand-text flex items-center gap-1.5">
+										<?php echo rynk_icon( 'arrow-right', 'h-3.5 w-3.5 shrink-0' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+										How to check your keyword rankings
+									</a>
+								</li>
 								<li>
 									<a href="<?php echo esc_url( home_url( '/how-it-works/' ) ); ?>" class="text-[13.5px] text-brand-textMute transition-colors hover:text-brand-text flex items-center gap-1.5">
 										<?php echo rynk_icon( 'arrow-right', 'h-3.5 w-3.5 shrink-0' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
