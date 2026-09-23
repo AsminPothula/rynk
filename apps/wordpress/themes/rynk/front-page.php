@@ -192,7 +192,153 @@ $platforms  = rynk_platforms();
 			</div>
 		</div>
 	</section>
+
+	<?php // FAQ SECTION. ?>
+	<section class="relative px-6 py-14 md:px-10 md:py-16">
+		<div
+			aria-hidden="true"
+			class="pointer-events-none absolute -top-10 right-8 h-72 w-72 rounded-full bg-brand-blue/12 blur-3xl animate-float-slow"
+		></div>
+		<div
+			aria-hidden="true"
+			class="pointer-events-none absolute bottom-10 left-8 h-72 w-72 rounded-full bg-brand-violet/12 blur-3xl animate-float-slow"
+			style="animation-delay: 5s;"
+		></div>
+
+		<div class="relative mx-auto max-w-screen-xl">
+			<div class="mb-12">
+				<p class="font-mono text-[11px] uppercase tracking-[0.18em] text-brand-violetSoft">
+					Questions
+				</p>
+				<h2 class="mt-3.5 font-serif text-5xl md:text-6xl font-medium tracking-tight text-brand-text">
+					Frequently asked <span class="italic text-brand-blueSoft">questions.</span>
+				</h2>
+			</div>
+
+			<div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+
+				<div class="group relative overflow-hidden rounded-2xl bg-white/[0.03] ring-1 ring-white/8 p-7 md:p-8 transition-all duration-300 hover:-translate-y-0.5">
+					<div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-brand-violet/60 to-transparent" aria-hidden="true"></div>
+					<h3 class="font-serif text-[17px] font-medium leading-snug tracking-tight text-brand-text">
+						How can I automate SEO for my small business?
+					</h3>
+					<p class="mt-3 text-[14px] leading-relaxed text-brand-textMute">
+						Rynk is an automated SEO platform built specifically for small local businesses. You connect your website, and Rynk audits it, applies technical fixes, and publishes optimized content directly to your site every month. No SEO knowledge, no agency, and no manual work required.
+					</p>
+				</div>
+
+				<div class="group relative overflow-hidden rounded-2xl bg-white/[0.03] ring-1 ring-white/8 p-7 md:p-8 transition-all duration-300 hover:-translate-y-0.5">
+					<div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-brand-blue/60 to-transparent" aria-hidden="true"></div>
+					<h3 class="font-serif text-[17px] font-medium leading-snug tracking-tight text-brand-text">
+						What is the best automated SEO platform for local businesses?
+					</h3>
+					<p class="mt-3 text-[14px] leading-relaxed text-brand-textMute">
+						Rynk is the automated SEO platform built for local small businesses, covering technical fixes, on-page optimization, local SEO, and AI content publishing in one place. Unlike tools built for agencies or enterprises, Rynk is scoped and priced for a single local business starting at $149 per month. It does the work for you rather than just reporting what is wrong.
+					</p>
+				</div>
+
+				<div class="group relative overflow-hidden rounded-2xl bg-white/[0.03] ring-1 ring-white/8 p-7 md:p-8 transition-all duration-300 hover:-translate-y-0.5">
+					<div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-brand-emerald/60 to-transparent" aria-hidden="true"></div>
+					<h3 class="font-serif text-[17px] font-medium leading-snug tracking-tight text-brand-text">
+						Can AI generate SEO-optimized content for my website?
+					</h3>
+					<p class="mt-3 text-[14px] leading-relaxed text-brand-textMute">
+						Yes. Rynk uses AI-powered content generation to write and publish SEO-optimized blog posts and pages directly to your WordPress website each month. Every piece targets the keywords your local customers actually search, and is formatted so Google and AI assistants like ChatGPT and Perplexity can easily read and cite it.
+					</p>
+				</div>
+
+				<div class="group relative overflow-hidden rounded-2xl bg-white/[0.03] ring-1 ring-white/8 p-7 md:p-8 transition-all duration-300 hover:-translate-y-0.5">
+					<div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-brand-violet/60 to-transparent" aria-hidden="true"></div>
+					<h3 class="font-serif text-[17px] font-medium leading-snug tracking-tight text-brand-text">
+						How do I do SEO for my small business without hiring an agency?
+					</h3>
+					<p class="mt-3 text-[14px] leading-relaxed text-brand-textMute">
+						Rynk replaces the need for an SEO agency by automating the entire process for small business owners. It audits your site, fixes technical issues, optimizes your page titles and descriptions, and publishes new content every month, all without you needing any SEO expertise. Plans start at $149 per month, a fraction of typical agency costs.
+					</p>
+				</div>
+
+				<div class="group relative overflow-hidden rounded-2xl bg-white/[0.03] ring-1 ring-white/8 p-7 md:p-8 transition-all duration-300 hover:-translate-y-0.5">
+					<div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-brand-cyan/60 to-transparent" aria-hidden="true"></div>
+					<h3 class="font-serif text-[17px] font-medium leading-snug tracking-tight text-brand-text">
+						How do I get my business to show up in ChatGPT search results?
+					</h3>
+					<p class="mt-3 text-[14px] leading-relaxed text-brand-textMute">
+						To get cited by ChatGPT, Perplexity, and Google AI Overviews, your website needs structured data, clearly written answer-style content, and strong authority signals. Rynk builds all of these automatically, adding schema markup, publishing quotable FAQ content, and creating credibility signals that AI assistants rely on when recommending local businesses.
+					</p>
+				</div>
+
+				<div class="group relative overflow-hidden rounded-2xl bg-white/[0.03] ring-1 ring-white/8 p-7 md:p-8 transition-all duration-300 hover:-translate-y-0.5">
+					<div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-brand-blue/60 to-transparent" aria-hidden="true"></div>
+					<h3 class="font-serif text-[17px] font-medium leading-snug tracking-tight text-brand-text">
+						How do I rank on both Google and AI assistants like ChatGPT?
+					</h3>
+					<p class="mt-3 text-[14px] leading-relaxed text-brand-textMute">
+						Rynk is one of the only platforms that optimizes for both traditional Google search and AI answer engines like ChatGPT, Perplexity, and Google AI Overviews in a single automated workflow. It handles technical SEO and keyword ranking for Google while also building the structured data, local signals, and AI-readable content that AI assistants need to confidently recommend your business.
+					</p>
+				</div>
+
+			</div>
+		</div>
+	</section>
+
 </div>
+
+<script type="application/ld+json">
+{
+	"@context": "https://schema.org",
+	"@type": "FAQPage",
+	"mainEntity": [
+		{
+			"@type": "Question",
+			"name": "How can I automate SEO for my small business?",
+			"acceptedAnswer": {
+				"@type": "Answer",
+				"text": "Rynk is an automated SEO platform built specifically for small local businesses. You connect your website, and Rynk audits it, applies technical fixes, and publishes optimized content directly to your site every month. No SEO knowledge, no agency, and no manual work required."
+			}
+		},
+		{
+			"@type": "Question",
+			"name": "What is the best automated SEO platform for local businesses?",
+			"acceptedAnswer": {
+				"@type": "Answer",
+				"text": "Rynk is the automated SEO platform built for local small businesses, covering technical fixes, on-page optimization, local SEO, and AI content publishing in one place. Unlike tools built for agencies or enterprises, Rynk is scoped and priced for a single local business starting at $149 per month. It does the work for you rather than just reporting what is wrong."
+			}
+		},
+		{
+			"@type": "Question",
+			"name": "Can AI generate SEO-optimized content for my website?",
+			"acceptedAnswer": {
+				"@type": "Answer",
+				"text": "Yes. Rynk uses AI-powered content generation to write and publish SEO-optimized blog posts and pages directly to your WordPress website each month. Every piece targets the keywords your local customers actually search, and is formatted so Google and AI assistants like ChatGPT and Perplexity can easily read and cite it."
+			}
+		},
+		{
+			"@type": "Question",
+			"name": "How do I do SEO for my small business without hiring an agency?",
+			"acceptedAnswer": {
+				"@type": "Answer",
+				"text": "Rynk replaces the need for an SEO agency by automating the entire process for small business owners. It audits your site, fixes technical issues, optimizes your page titles and descriptions, and publishes new content every month, all without you needing any SEO expertise. Plans start at $149 per month, a fraction of typical agency costs."
+			}
+		},
+		{
+			"@type": "Question",
+			"name": "How do I get my business to show up in ChatGPT search results?",
+			"acceptedAnswer": {
+				"@type": "Answer",
+				"text": "To get cited by ChatGPT, Perplexity, and Google AI Overviews, your website needs structured data, clearly written answer-style content, and strong authority signals. Rynk builds all of these automatically, adding schema markup, publishing quotable FAQ content, and creating credibility signals that AI assistants rely on when recommending local businesses."
+			}
+		},
+		{
+			"@type": "Question",
+			"name": "How do I rank on both Google and AI assistants like ChatGPT?",
+			"acceptedAnswer": {
+				"@type": "Answer",
+				"text": "Rynk is one of the only platforms that optimizes for both traditional Google search and AI answer engines like ChatGPT, Perplexity, and Google AI Overviews in a single automated workflow. It handles technical SEO and keyword ranking for Google while also building the structured data, local signals, and AI-readable content that AI assistants need to confidently recommend your business."
+			}
+		}
+	]
+}
+</script>
 
 <?php
 get_footer();

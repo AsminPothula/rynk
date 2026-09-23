@@ -19,6 +19,27 @@ get_header();
 $tint_styles = rynk_tint_styles();
 ?>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://rynk.ai/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "How It Works",
+      "item": "https://rynk.ai/how-it-works/"
+    }
+  ]
+}
+</script>
+
 <div class="relative text-brand-text overflow-x-hidden">
 	<?php // HERO - compact, so the outcomes below share the first screen. ?>
 	<section class="relative px-6 pt-16 pb-6 md:px-10 md:pt-20 md:pb-8">
@@ -34,6 +55,7 @@ $tint_styles = rynk_tint_styles();
 				style="animation-delay: 160ms;"
 			>
 				Rynk runs four steps on autopilot: audit, fix, generate, and monitor. Every month, your site gets stronger on Google and more visible to AI assistants like ChatGPT and Perplexity.
+				Ready to get started? <a href="<?php echo esc_url( home_url( '/pricing/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">See Rynk pricing plans.</a>
 			</p>
 		</div>
 	</section>
