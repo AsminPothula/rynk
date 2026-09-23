@@ -14,6 +14,27 @@
 get_header();
 ?>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://rynk.ai/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Privacy Policy",
+      "item": "https://rynk.ai/privacy-policy/"
+    }
+  ]
+}
+</script>
+
 <style>
 	.legal-prose { color: #a5adc8; }
 	.legal-prose h2 {
@@ -91,10 +112,10 @@ get_header();
 			</p>
 
 			<div class="legal-prose mt-10 animate-rise" style="animation-delay: 180ms;">
-			<p>Rynk (“Rynk,” “we,” “us,” or “our”) is an AI-driven software company that helps small and midsize businesses improve how they are discovered and represented across AI assistants, such as ChatGPT, Gemini, Copilot, Perplexity, and Claude, and traditional search engines.</p>
-			<p>Our platform uses artificial intelligence, automated data processing, and machine-generated analysis to evaluate, recommend, and, where authorized by a client, implement changes to a client’s online presence, website content, business listings, and structured data.</p>
+			<p>Rynk ("Rynk," "we," "us," or "our") is an AI-driven software company that helps small and midsize businesses improve how they are discovered and represented across AI assistants, such as ChatGPT, Gemini, Copilot, Perplexity, and Claude, and traditional search engines.</p>
+			<p>Our platform uses artificial intelligence, automated data processing, and machine-generated analysis to evaluate, recommend, and, where authorized by a client, implement changes to a client's online presence, website content, business listings, and structured data.</p>
 			<p>This Privacy Policy explains what information we collect, where we obtain it, how we use and disclose it, how our AI systems process it, how long we retain it, and the choices available to you.</p>
-			<p>This Privacy Policy applies when you visit our website, create a Rynk account, communicate with us, or use our products and services collectively referred to as the “Services.”</p>
+			<p>This Privacy Policy applies when you visit our website, create a Rynk account, communicate with us, or use our products and services collectively referred to as the "Services."</p>
 			<p>This Privacy Policy is a notice of our privacy practices and does not replace or modify our Terms of Service, Data Processing Addendum, or any other agreement between Rynk and a client.</p>
 			<h2>1. Information We Collect</h2>
 			<p>We may collect the following categories of information:</p>
@@ -146,7 +167,7 @@ get_header();
 			<li>Recommendations;</li>
 			<li>Draft content;</li>
 			<li>Suggested edits; and</li>
-			<li>Other interactions with Rynk’s AI-enabled features.</li>
+			<li>Other interactions with Rynk's AI-enabled features.</li>
 			</ul>
 			<h3>Communications</h3>
 			<p>We may collect information you provide when you contact us for sales, support, billing assistance, product feedback, or other communications.</p>
@@ -171,7 +192,7 @@ get_header();
 			<ul>
 			<li>Create, administer, authenticate, and support user accounts;</li>
 			<li>Operate, maintain, secure, and improve the Services;</li>
-			<li>Analyze a client’s online presence;</li>
+			<li>Analyze a client's online presence;</li>
 			<li>Generate visibility scores, reports, competitive comparisons, and recommendations;</li>
 			<li>Develop content, structured data, business listing, and search-visibility recommendations;</li>
 			<li>Create drafts and suggested edits for client review;</li>
@@ -190,9 +211,9 @@ get_header();
 			</ul>
 			<p>Rynk does not sell personal information for monetary compensation.</p>
 			<h2>4. Use of Customer Data for AI Training</h2>
-			<p>Rynk does not use Client Data, customer prompts, customer inputs, or customer-specific AI outputs to train generalized artificial intelligence or machine-learning models without the client’s prior written approval.</p>
-			<p>For purposes of this Policy, “Client Data” means information submitted to, uploaded to, connected to, or processed through the Services on behalf of a client. Client Data includes nonpublic website information, connected analytics, prompts, instructions, files, drafts, reports, recommendations, and customer-specific AI outputs.</p>
-			<p>Written approval must be affirmative, specific, and provided by an authorized representative of the client. A client’s use of the Services alone does not constitute approval for model training.</p>
+			<p>Rynk does not use Client Data, customer prompts, customer inputs, or customer-specific AI outputs to train generalized artificial intelligence or machine-learning models without the client's prior written approval.</p>
+			<p>For purposes of this Policy, "Client Data" means information submitted to, uploaded to, connected to, or processed through the Services on behalf of a client. Client Data includes nonpublic website information, connected analytics, prompts, instructions, files, drafts, reports, recommendations, and customer-specific AI outputs.</p>
+			<p>Written approval must be affirmative, specific, and provided by an authorized representative of the client. A client's use of the Services alone does not constitute approval for model training.</p>
 			<p>Unless a client provides written approval, Rynk will not use Client Data to:</p>
 			<ul>
 			<li>Train or fine-tune a generalized Rynk model;</li>
@@ -204,7 +225,7 @@ get_header();
 			<p>Rynk will take reasonable measures designed to prevent de-identified information from being associated with an identifiable person or client and will not attempt to reidentify information that has been properly de-identified.</p>
 			<p>Rynk may use feedback voluntarily submitted by a user to evaluate and improve the Services. Where feedback contains Client Data or personal information, the restrictions described in this section continue to apply unless the client separately authorizes broader use in writing.</p>
 			<h2>5. How Our AI Systems Process Information</h2>
-			<p>Rynk’s Services use automated and AI-assisted processing to analyze connected data sources and generate outputs such as:</p>
+			<p>Rynk's Services use automated and AI-assisted processing to analyze connected data sources and generate outputs such as:</p>
 			<ul>
 			<li>Visibility scores;</li>
 			<li>Content recommendations;</li>
@@ -230,7 +251,7 @@ get_header();
 			</ul>
 			<p>Access to Client Data is subject to appropriate authorization, confidentiality obligations, and access controls.</p>
 			<p>The Services are not intended to make decisions that produce legal or similarly significant effects concerning individuals without appropriate human review.</p>
-			<h2>6. Rynk’s Role as Controller and Processor</h2>
+			<h2>6. Rynk's Role as Controller and Processor</h2>
 			<p>Depending on the context, Rynk may act as either a controller of personal information or a processor acting on behalf of a client.</p>
 			<h3>Rynk as a Controller</h3>
 			<p>Rynk acts as a controller, or in an equivalent role under applicable privacy law, when it determines the purposes and means of processing personal information for its own business operations.</p>
@@ -249,7 +270,7 @@ get_header();
 			</ul>
 			<p>When Rynk acts as a controller, this Privacy Policy governs how Rynk processes personal information.</p>
 			<h3>Rynk as a Processor</h3>
-			<p>Rynk acts as a processor, service provider, contractor, or equivalent entity when it processes Client Data on behalf of a client and under the client’s instructions.</p>
+			<p>Rynk acts as a processor, service provider, contractor, or equivalent entity when it processes Client Data on behalf of a client and under the client's instructions.</p>
 			<p>Processor activities may include:</p>
 			<ul>
 			<li>Analyzing client websites and online profiles;</li>
@@ -263,7 +284,7 @@ get_header();
 			<p>When Rynk acts as a processor, the client generally determines why and how the personal information is processed. Individuals seeking to exercise rights concerning information processed by Rynk solely on behalf of a client should ordinarily direct their requests to that client.</p>
 			<p>Rynk will reasonably assist clients in responding to applicable privacy requests where required by law or contract.</p>
 			<h3>Data Processing Addendum</h3>
-			<p>Rynk offers a Data Processing Addendum, or “DPA,” governing Rynk’s processing of Client Data on behalf of clients.</p>
+			<p>Rynk offers a Data Processing Addendum, or "DPA," governing Rynk's processing of Client Data on behalf of clients.</p>
 			<p>The DPA addresses matters including:</p>
 			<ul>
 			<li>The subject matter and duration of processing;</li>
@@ -279,8 +300,8 @@ get_header();
 			<li>Audit and compliance obligations; and</li>
 			<li>International data-transfer safeguards.</li>
 			</ul>
-			<p>Where the DPA conflicts with this Privacy Policy regarding Rynk’s processing of Client Data as a processor, the DPA and the applicable client agreement will control.</p>
-			<p>Clients may request Rynk’s DPA by contacting privacy@rynk.ai.</p>
+			<p>Where the DPA conflicts with this Privacy Policy regarding Rynk's processing of Client Data as a processor, the DPA and the applicable client agreement will control.</p>
+			<p>Clients may request Rynk's DPA by contacting privacy@rynk.ai.</p>
 			<h2>7. How We Disclose Information</h2>
 			<p>We may disclose information to the following categories of recipients:</p>
 			<h3>Service Providers and Subprocessors</h3>
@@ -305,7 +326,7 @@ get_header();
 			<p>Rynk seeks to configure and contract with these providers so that Client Data is not used to train their generalized models unless the affected client has provided prior written approval.</p>
 			<h3>AI Assistants, Search Engines, and Online Platforms</h3>
 			<p>When a client authorizes publication or submission, Rynk may disclose approved content, business listings, website information, or structured data to search engines, AI assistants, business directories, content platforms, or other third-party services.</p>
-			<p>Information submitted to these platforms may become publicly available and may be indexed, cached, copied, transformed, or retained by third parties outside Rynk’s control.</p>
+			<p>Information submitted to these platforms may become publicly available and may be indexed, cached, copied, transformed, or retained by third parties outside Rynk's control.</p>
 			<h3>Professional Advisers</h3>
 			<p>We may disclose information to lawyers, accountants, auditors, insurers, consultants, and other professional advisers where reasonably necessary for legitimate business or legal purposes.</p>
 			<h3>Legal and Safety Purposes</h3>
@@ -335,11 +356,11 @@ get_header();
 			<li>Incident-response capabilities; and</li>
 			<li>Compliance with applicable data-protection requirements.</li>
 			</ul>
-			<p>Where Rynk acts as a processor, subprocessors are required to process Client Data only for authorized purposes and in accordance with contractual obligations that are materially consistent with Rynk’s obligations to the client.</p>
-			<p>Rynk may maintain a current list of material subprocessors on its website or make the list available upon request. Clients may contact privacy@rynk.ai to request information about Rynk’s current subprocessors.</p>
+			<p>Where Rynk acts as a processor, subprocessors are required to process Client Data only for authorized purposes and in accordance with contractual obligations that are materially consistent with Rynk's obligations to the client.</p>
+			<p>Rynk may maintain a current list of material subprocessors on its website or make the list available upon request. Clients may contact privacy@rynk.ai to request information about Rynk's current subprocessors.</p>
 			<p>Where required by the applicable DPA, Rynk will provide notice of new material subprocessors and an opportunity for the client to raise reasonable data-protection concerns.</p>
 			<h2>9. Client-Approved Changes to Online Content</h2>
-			<p>The Services may recommend, draft, or implement changes to a client’s website, listings, content, or structured data based on AI-generated analysis.</p>
+			<p>The Services may recommend, draft, or implement changes to a client's website, listings, content, or structured data based on AI-generated analysis.</p>
 			<p>Where client approval is required, Rynk will implement or publish a recommended change only after receiving approval from an authorized user or representative of the client.</p>
 			<p>Client approval authorizes Rynk to carry out the approved change. Clients are responsible for reviewing proposed changes for accuracy, suitability, legal compliance, brand alignment, and business impact before approval.</p>
 			<p>Approval of a change does not authorize Rynk to publish content that materially differs from what the client approved.</p>
@@ -354,7 +375,7 @@ get_header();
 			<li>Warranty limitations; and</li>
 			<li>Limitations of liability</li>
 			</ul>
-			<p>are contained in Rynk’s Terms of Service or applicable client agreement.</p>
+			<p>are contained in Rynk's Terms of Service or applicable client agreement.</p>
 			<p>Nothing in this Privacy Policy waives or limits rights or remedies that cannot lawfully be waived or limited.</p>
 			<h2>10. Cookies and Tracking Technologies</h2>
 			<p>We use cookies and similar technologies to:</p>
@@ -383,7 +404,7 @@ get_header();
 			<li>Support and business communications: Generally retained for up to three years after the communication or closure of the related matter.</li>
 			<li>Billing, tax, and transaction records: Generally retained for up to seven years or for another period required by applicable tax, accounting, or legal obligations.</li>
 			<li>Cookie and analytics information: Retained according to the duration of the applicable cookie or analytics configuration, which may vary depending on the technology used.</li>
-			<li>Backups: Deleted information may remain in encrypted backups for up to 90 days before being overwritten through Rynk’s ordinary backup cycle.</li>
+			<li>Backups: Deleted information may remain in encrypted backups for up to 90 days before being overwritten through Rynk's ordinary backup cycle.</li>
 			</ul>
 			<p>We may retain information for a longer period when reasonably necessary to:</p>
 			<ul>
@@ -395,7 +416,7 @@ get_header();
 			<li>Honor a legal hold.</li>
 			</ul>
 			<p>When information is no longer required, we may delete, aggregate, anonymize, or de-identify it.</p>
-			<p>Information published to third-party websites, search engines, AI assistants, directories, or other platforms may remain available after it has been deleted from Rynk’s systems. Rynk may not be able to delete information retained or independently processed by those third parties.</p>
+			<p>Information published to third-party websites, search engines, AI assistants, directories, or other platforms may remain available after it has been deleted from Rynk's systems. Rynk may not be able to delete information retained or independently processed by those third parties.</p>
 			<h2>12. Data Security</h2>
 			<p>Rynk uses commercially reasonable administrative, technical, and physical safeguards designed to protect information against unauthorized access, loss, misuse, alteration, or disclosure.</p>
 			<p>Depending on the nature of the Services and information involved, safeguards may include:</p>
@@ -422,8 +443,8 @@ get_header();
 			<p>Where required, Rynk may rely on recognized transfer mechanisms, including:</p>
 			<ul>
 			<li>Adequacy decisions;</li>
-			<li>The European Commission’s Standard Contractual Clauses;</li>
-			<li>The United Kingdom’s International Data Transfer Addendum or International Data Transfer Agreement;</li>
+			<li>The European Commission's Standard Contractual Clauses;</li>
+			<li>The United Kingdom's International Data Transfer Addendum or International Data Transfer Agreement;</li>
 			<li>Contractual protections with recipients;</li>
 			<li>Consent where legally permitted; or</li>
 			<li>Another valid transfer mechanism recognized under applicable law.</li>
@@ -450,8 +471,8 @@ get_header();
 			<p>Email: privacy@rynk.ai</p>
 			<p>Your request should describe the right you wish to exercise and identify the information or account involved.</p>
 			<p>We may request additional information to reasonably verify your identity and authority to make the request. We will use verification information only to process and document the request.</p>
-			<p>Where permitted by law, an authorized agent may submit a request on your behalf. We may require evidence of the agent’s authority and may ask you to verify your identity directly.</p>
-			<p>If we deny a request, you may have the right to appeal by emailing privacy@rynk.ai and including “Privacy Request Appeal” in the subject line.</p>
+			<p>Where permitted by law, an authorized agent may submit a request on your behalf. We may require evidence of the agent's authority and may ask you to verify your identity directly.</p>
+			<p>If we deny a request, you may have the right to appeal by emailing privacy@rynk.ai and including "Privacy Request Appeal" in the subject line.</p>
 			<p>Where Rynk processes personal information solely as a processor for a client, we may refer your request to the applicable client or instruct you to contact that client directly.</p>
 			<h2>15. Marketing Communications</h2>
 			<p>You may opt out of promotional email communications by using the unsubscribe link contained in the email or by contacting us.</p>
@@ -479,7 +500,7 @@ get_header();
 			<li>Other highly sensitive or legally protected information.</li>
 			</ul>
 			<p>If Rynk learns that prohibited or unnecessary sensitive information has been submitted, it may delete or restrict access to that information.</p>
-			<h2>17. Children’s Privacy</h2>
+			<h2>17. Children's Privacy</h2>
 			<p>The Services are intended for business users and are not directed to children.</p>
 			<p>Individuals must be at least 18 years old, or the age of legal majority in their jurisdiction, to create a Rynk account unless an authorized organization has established a legally compliant arrangement permitting otherwise.</p>
 			<p>We do not knowingly collect personal information directly from children through the Services. If you believe a child has provided personal information to Rynk, contact privacy@rynk.ai so that we can review and take appropriate action.</p>
@@ -499,11 +520,11 @@ get_header();
 			<li>Security practices; or</li>
 			<li>Business operations.</li>
 			</ul>
-			<p>We will post the revised Privacy Policy with a new “Last Updated” date.</p>
+			<p>We will post the revised Privacy Policy with a new "Last Updated" date.</p>
 			<p>Where required by law or appropriate based on the nature of the change, we may provide additional notice through the Services, by email, or through another reasonable method.</p>
-			<p>If a change would materially expand Rynk’s use of Client Data for model training or another materially different purpose, Rynk will not apply that use retroactively without any notice, consent, or written approval required by applicable law and our contractual commitments.</p>
+			<p>If a change would materially expand Rynk's use of Client Data for model training or another materially different purpose, Rynk will not apply that use retroactively without any notice, consent, or written approval required by applicable law and our contractual commitments.</p>
 			<h2>20. Contact Us</h2>
-			<p>If you have questions about this Privacy Policy, Rynk’s privacy practices, the DPA, subprocessors, international transfers, or a privacy-rights request, contact us at:</p>
+			<p>If you have questions about this Privacy Policy, Rynk's privacy practices, the DPA, subprocessors, international transfers, or a privacy-rights request, contact us at:</p>
 			<p>Rynk<br />Legal entity: Rynk.ai, Inc.</p>
 			<p>Mailing address: 16803 Dallas Parkway, Suite 300, Addison TX 75001<br />Email: privacy@rynk.ai<br />Website: rynk.ai</p>
 			</div>
