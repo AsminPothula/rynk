@@ -169,6 +169,25 @@ $founder_styles = rynk_founder_styles();
 		</div>
 	</section>
 
+	<?php // INTERNAL LINK TO BLOG. ?>
+	<section class="relative px-6 pb-6 md:px-10 md:pb-8">
+		<div class="relative mx-auto max-w-screen-xl">
+			<div class="relative overflow-hidden rounded-2xl bg-white/[0.02] ring-1 ring-white/8 px-7 py-6 md:flex md:items-center md:justify-between md:gap-10">
+				<div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-brand-emerald/30 to-transparent" aria-hidden="true"></div>
+				<p class="text-[15px] leading-[1.7] text-brand-textMute mb-4 md:mb-0">
+					Curious about how Rynk actually gets local businesses found on Google? Our blog breaks it down step by step.
+				</p>
+				<a
+					href="<?php echo esc_url( home_url( '/blog/why-isnt-my-business-showing-up-on-google/' ) ); ?>"
+					class="group inline-flex shrink-0 items-center gap-2 font-serif text-[15px] text-brand-blueSoft transition-colors hover:text-brand-text"
+				>
+					Read the guide
+					<?php echo rynk_icon( 'arrow-right', 'h-4 w-4 transition-transform group-hover:translate-x-0.5' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				</a>
+			</div>
+		</div>
+	</section>
+
 	<?php // BOTTOM CTA. ?>
 	<section class="relative px-6 py-14 md:px-10 md:py-16">
 		<div class="relative mx-auto max-w-screen-xl overflow-hidden rounded-[32px] bg-white/[0.02] px-8 py-12 md:px-14 md:py-14 ring-1 ring-white/8">

@@ -35,6 +35,18 @@ function rynk_pages(): array {
 			'title'    => 'About',
 			'template' => 'page-templates/about.php',
 		),
+		'blog'           => array(
+			'title'    => 'Blog',
+			'template' => 'page-templates/blog-hub.php',
+		),
+		'why-isnt-my-business-showing-up-on-google' => array(
+			'title'    => 'Why Your Business Is Not Showing Up on Google (And How to Fix It)',
+			'template' => 'page-templates/blog-post-why-isnt-my-business-showing-up-on-google.php',
+		),
+		'how-to-check-keyword-ranking-google' => array(
+			'title'    => 'How to Check Your Keyword Ranking on Google (And What to Do About It)',
+			'template' => 'page-templates/blog-post-how-to-check-keyword-ranking-google.php',
+		),
 		// Placeholder pages — live until the real destinations ship. The app,
 		// sign-in, and free-scan CTAs all land on a "Coming soon" screen rather
 		// than a dead link.
@@ -63,6 +75,7 @@ function rynk_nav_links(): array {
 		'how-it-works' => 'How it works',
 		'pricing'      => 'Pricing',
 		'about'        => 'About',
+		'blog'         => 'Blog',
 	);
 }
 
@@ -77,7 +90,14 @@ function rynk_nav_links(): array {
  * @return string Tailwind classes.
  */
 function rynk_nav_link_class( string $slug ): string {
+	// Mark "Blog" as active for both the hub and any blog post pages.
 	$is_active = is_page( $slug );
+	if ( 'blog' === $slug && is_page_template( 'page-templates/blog-post-why-isnt-my-business-showing-up-on-google.php' ) ) {
+		$is_active = true;
+	}
+	if ( 'blog' === $slug && is_page_template( 'page-templates/blog-post-how-to-check-keyword-ranking-google.php' ) ) {
+		$is_active = true;
+	}
 
 	return 'font-serif text-[16px] transition-colors ' . (
 		$is_active ? 'text-brand-text' : 'text-brand-textMute hover:text-brand-text'
@@ -148,9 +168,9 @@ function rynk_title_separator(): string {
 }
 
 /**
- * Keyword-rich <title> for the About page so it competes for category searches
- * instead of a brand-only "About - Rynk AI". Returning a non-empty string here
- * short-circuits WordPress' default title, so this is the full tag.
+ * Keyword-rich <title> for pages so they compete for category searches.
+ * Returning a non-empty string here short-circuits WordPress' default title,
+ * so this is the full tag.
  *
  * @param string $title Default document title.
  * @return string
@@ -158,6 +178,21 @@ function rynk_title_separator(): string {
 function rynk_about_document_title( string $title ): string {
 	if ( is_page_template( 'page-templates/about.php' ) ) {
 		return 'About Rynk - AI SEO Platform for Small Businesses';
+	}
+	if ( is_page_template( 'page-templates/pricing.php' ) ) {
+		return 'Rynk AI Pricing: Automated SEO for Small Business from $149/month';
+	}
+	if ( is_page_template( 'page-templates/how-it-works.php' ) ) {
+		return 'How Rynk AI Works: Automated SEO for Small Business in 4 Steps';
+	}
+	if ( is_page_template( 'page-templates/blog-post-why-isnt-my-business-showing-up-on-google.php' ) ) {
+		return 'Why Your Business Is Not Showing Up on Google | Rynk AI';
+	}
+	if ( is_page_template( 'page-templates/blog-post-how-to-check-keyword-ranking-google.php' ) ) {
+		return 'How to Check Keyword Ranking on Google for Your Local Business | Rynk AI';
+	}
+	if ( is_page_template( 'page-templates/blog-hub.php' ) ) {
+		return 'Blog - SEO Insights for Local Businesses | Rynk AI';
 	}
 	return $title;
 }
@@ -274,6 +309,16 @@ function rynk_meta_description(): void {
 		$desc = 'Rynk is an AI-powered SEO platform that audits your site, fixes what holds back your search visibility, and generates content automatically - so more customers find you.';
 	} elseif ( is_page_template( 'page-templates/about.php' ) ) {
 		$desc = 'Meet the team behind Rynk - the AI-powered SEO and AI-visibility platform helping local businesses get found in search.';
+	} elseif ( is_page_template( 'page-templates/pricing.php' ) ) {
+		$desc = 'Rynk AI starts at $149 per month. Automated SEO audits, technical fixes, new content pages, and AI-search optimization, all done for you. No agency needed.';
+	} elseif ( is_page_template( 'page-templates/how-it-works.php' ) ) {
+		$desc = 'Rynk audits your site, fixes the technical gaps, writes and publishes new pages, and tracks your rankings, all automatically. No SEO knowledge needed.';
+	} elseif ( is_page_template( 'page-templates/blog-post-why-isnt-my-business-showing-up-on-google.php' ) ) {
+		$desc = 'Not showing up on Google? Learn the real reasons local businesses stay invisible in search, and how automated SEO fixes it without any technical knowledge.';
+	} elseif ( is_page_template( 'page-templates/blog-post-how-to-check-keyword-ranking-google.php' ) ) {
+		$desc = 'Learn how to find your Google keyword rankings, what a good rank means for a local business, and how automated SEO keeps you moving up without manual work.';
+	} elseif ( is_page_template( 'page-templates/blog-hub.php' ) ) {
+		$desc = 'Practical SEO guides for local business owners. Learn how to get found on Google, AI assistants, and maps — without needing any technical expertise.';
 	}
 	if ( '' === $desc ) {
 		return;
@@ -284,6 +329,34 @@ function rynk_meta_description(): void {
 add_action( 'wp_head', 'rynk_meta_description', 1 );
 
 /**
+ * Blog post data for the hub page and any sidebar listings.
+ *
+ * Keyed array so future posts can be added here without changing the template.
+ *
+ * @return array<int, array{title: string, url: string, excerpt: string, category: string, image: string, image_alt: string}>
+ */
+function rynk_blog_posts(): array {
+	return array(
+		array(
+			'title'     => 'Why Your Business Is Not Showing Up on Google (And How to Fix It)',
+			'url'       => home_url( '/blog/why-isnt-my-business-showing-up-on-google/' ),
+			'excerpt'   => 'If customers search for what you do and your business is nowhere to be found, you are not alone. Here are the real reasons — and the fixes.',
+			'category'  => 'SEO Basics',
+			'image'     => 'assets/img/rynk/blog-why-isnt-my-business-showing-up-on-google-1.jpg',
+			'image_alt' => 'A local hair salon owner looking at a phone with a puzzled expression',
+		),
+		array(
+			'title'     => 'How to Check Your Keyword Ranking on Google (And What to Do About It)',
+			'url'       => home_url( '/blog/how-to-check-keyword-ranking-google/' ),
+			'excerpt'   => 'Knowing where you rank for the searches your customers make is the starting point for any real improvement in your online visibility.',
+			'category'  => 'SEO Basics',
+			'image'     => 'assets/img/rynk/blog-how-to-check-keyword-ranking-google-1.jpg',
+			'image_alt' => 'A small business owner sitting at a wooden desk with a laptop open, natural light coming through a window',
+		),
+	);
+}
+
+/**
  * Create the marketing pages and point the front page at the landing template.
  *
  * Runs on activation, and is safe to run again — an existing page with the
@@ -292,7 +365,21 @@ add_action( 'wp_head', 'rynk_meta_description', 1 );
  * @return void
  */
 function rynk_scaffold_pages(): void {
+	// The blog post page needs to be a child of the blog hub page.
+	// First pass: create all top-level pages.
+	$blog_parent_id = 0;
+
+	$blog_child_slugs = array(
+		'why-isnt-my-business-showing-up-on-google',
+		'how-to-check-keyword-ranking-google',
+	);
+
 	foreach ( rynk_pages() as $slug => $page ) {
+		// Skip blog child pages on the first pass; we need the blog hub ID first.
+		if ( in_array( $slug, $blog_child_slugs, true ) ) {
+			continue;
+		}
+
 		$existing = get_page_by_path( $slug );
 
 		$page_id = $existing instanceof WP_Post
@@ -311,10 +398,7 @@ function rynk_scaffold_pages(): void {
 			continue;
 		}
 
-		// Self-heal: an existing page might be a draft (invisible to the public,
-		// visible to logged-in editors — the exact "I see it, incognito 404s"
-		// symptom) or have lost its template meta. Force it back to a published
-		// page on the intended template every time we scaffold.
+		// Self-heal: an existing page might be a draft or have lost its template.
 		if ( $existing instanceof WP_Post && 'publish' !== $existing->post_status ) {
 			wp_update_post(
 				array(
@@ -325,6 +409,49 @@ function rynk_scaffold_pages(): void {
 		}
 
 		update_post_meta( $page_id, '_wp_page_template', $page['template'] );
+
+		if ( 'blog' === $slug ) {
+			$blog_parent_id = $page_id;
+		}
+	}
+
+	// Second pass: create all blog child pages under the blog hub.
+	foreach ( $blog_child_slugs as $blog_post_slug ) {
+		$blog_post_page = rynk_pages()[ $blog_post_slug ];
+
+		// WordPress resolves child pages by "parent-slug/child-slug" in get_page_by_path.
+		$existing_post = get_page_by_path( 'blog/' . $blog_post_slug );
+		if ( ! $existing_post instanceof WP_Post ) {
+			// Also check without parent in case it was created flat previously.
+			$existing_post = get_page_by_path( $blog_post_slug );
+		}
+
+		$blog_post_id = $existing_post instanceof WP_Post
+			? $existing_post->ID
+			: wp_insert_post(
+				array(
+					'post_type'    => 'page',
+					'post_name'    => $blog_post_slug,
+					'post_title'   => $blog_post_page['title'],
+					'post_status'  => 'publish',
+					'post_content' => '',
+					'post_parent'  => $blog_parent_id,
+				)
+			);
+
+		if ( ! is_wp_error( $blog_post_id ) && 0 !== $blog_post_id ) {
+			if ( $existing_post instanceof WP_Post ) {
+				// Ensure it is published and parented correctly.
+				wp_update_post(
+					array(
+						'ID'          => $blog_post_id,
+						'post_status' => 'publish',
+						'post_parent' => $blog_parent_id,
+					)
+				);
+			}
+			update_post_meta( $blog_post_id, '_wp_page_template', $blog_post_page['template'] );
+		}
 	}
 
 	// Landing page — front-page.php renders it; the page exists so the site
@@ -354,7 +481,7 @@ add_action( 'after_switch_theme', 'rynk_scaffold_pages' );
  * Scaffold version. Bump whenever rynk_pages() gains a page so the new pages
  * are created on the next request without a manual theme re-activation.
  */
-const RYNK_SCAFFOLD_VERSION = '3';
+const RYNK_SCAFFOLD_VERSION = '5';
 
 /**
  * Re-run scaffolding once after a deploy that changed the page set.
