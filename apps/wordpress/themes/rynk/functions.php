@@ -787,6 +787,25 @@ function rynk_redirect_sample_page(): void {
 add_action( 'template_redirect', 'rynk_redirect_sample_page' );
 
 /**
+ * Retired blog URL: the page was removed, so send its traffic to the hub.
+ *
+ * @return void
+ */
+function rynk_redirect_retired_blog_post(): void {
+	if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+		return;
+	}
+
+	$uri = strtok( (string) $_SERVER['REQUEST_URI'], '?' );
+
+	if ( '/blog/why-isnt-my-business-showing-up-on-google/' === $uri ) {
+		wp_redirect( home_url( '/blog/' ), 301 );
+		exit;
+	}
+}
+add_action( 'template_redirect', 'rynk_redirect_retired_blog_post' );
+
+/**
  * Inject internal links into blog post content at render time.
  *
  * For the two target posts we add a natural in-content anchor by filtering
@@ -892,6 +911,7 @@ function rynk_scaffold_pages(): void {
 		}
 
 		update_post_meta( $page_id, '_wp_page_template', $page['template'] );
+		update_post_meta( $page_id, '_rynk_scaffolded', '1' );
 
 		// Store ID so child pages can reference this as a parent.
 		$parent_ids[ $slug ] = $page_id;
@@ -917,14 +937,56 @@ function rynk_scaffold_pages(): void {
 		update_option( 'show_on_front', 'page' );
 		update_option( 'page_on_front', $home_id );
 	}
+
+	rynk_retire_orphaned_pages();
 }
 add_action( 'after_switch_theme', 'rynk_scaffold_pages' );
+
+/**
+ * Trash pages this theme scaffolded whose template is no longer registered.
+ *
+ * wp_insert_post() writes a database row that reverting the commit cannot undo,
+ * so a removed template used to leave a live page with nothing rendering it.
+ * Only rows tagged _rynk_scaffolded are considered, so a client's own pages and
+ * anything created before this tagging existed are never touched.
+ *
+ * @return void
+ */
+function rynk_retire_orphaned_pages(): void {
+	$registered = array_keys( rynk_pages() );
+
+	$owned = get_posts(
+		array(
+			'post_type'      => 'page',
+			'post_status'    => array( 'publish', 'draft', 'pending', 'private' ),
+			'posts_per_page' => -1,
+			'fields'         => 'ids',
+			'meta_key'       => '_rynk_scaffolded',
+			'meta_value'     => '1',
+		)
+	);
+
+	foreach ( $owned as $page_id ) {
+		$uri = get_page_uri( $page_id );
+
+		if ( ! is_string( $uri ) || '' === $uri || 'home' === $uri ) {
+			continue;
+		}
+
+		if ( in_array( $uri, $registered, true ) ) {
+			continue;
+		}
+
+		// Trash, never delete: recoverable if a template comes back.
+		wp_trash_post( $page_id );
+	}
+}
 
 /**
  * Scaffold version. Bump whenever rynk_pages() gains a page so the new pages
  * are created on the next request without a manual theme re-activation.
  */
-const RYNK_SCAFFOLD_VERSION = '6';
+const RYNK_SCAFFOLD_VERSION = '7';
 
 /**
  * Re-run scaffolding once after a deploy that changed the page set.
