@@ -22,6 +22,27 @@ get_header();
 $founder_styles = rynk_founder_styles();
 ?>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://rynk.ai/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "About",
+      "item": "https://rynk.ai/about/"
+    }
+  ]
+}
+</script>
+
 <div class="relative text-brand-text overflow-x-hidden">
 	<?php // WHY WE STARTED RYNK. ?>
 	<section class="relative px-6 py-14 md:px-10 md:py-20">
@@ -52,7 +73,8 @@ $founder_styles = rynk_founder_styles();
 						We built Rynk to solve that: one platform that automates your
 						visibility everywhere customers search, whether that&rsquo;s
 						Google, AI platforms, maps, or local listings. The best product
-						shouldn&rsquo;t lose to better marketing.
+						shouldn&rsquo;t lose to better marketing. Learn more about
+						<a href="<?php echo esc_url( home_url( '/how-it-works/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">how the platform works</a>.
 					</p>
 				</div>
 			</div>

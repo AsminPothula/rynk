@@ -284,6 +284,562 @@ function rynk_meta_description(): void {
 add_action( 'wp_head', 'rynk_meta_description', 1 );
 
 /**
+ * Emit a canonical <link> tag for thin or duplicate archive URLs.
+ *
+ * The uncategorized category archive and the machine author archive both
+ * surface placeholder content under URLs that duplicate the blog index.
+ * Pointing them at the real blog index prevents search engines indexing
+ * thin duplicate pages.
+ *
+ * @return void
+ */
+function rynk_archive_canonical(): void {
+	if ( is_category( 'uncategorized' ) || is_author( 'rynkai' ) ) {
+		printf(
+			'<link rel="canonical" href="%s" />' . "\n",
+			esc_url( 'https://rynk.ai/blog/' )
+		);
+	}
+}
+add_action( 'wp_head', 'rynk_archive_canonical', 1 );
+
+/**
+ * Output site-wide JSON-LD structured data blocks.
+ *
+ * Emits Organization, WebSite, LocalBusiness, Person, Service, SoftwareApplication,
+ * and FAQPage schema on every page so search engines and AI assistants have a
+ * consistent, machine-readable description of Rynk and what it does.
+ *
+ * @return void
+ */
+function rynk_structured_data(): void {
+	$schemas = array(
+		array(
+			'@context'    => 'https://schema.org',
+			'@type'       => 'Organization',
+			'name'        => 'Rynk AI',
+			'url'         => 'https://rynk.ai/',
+			'description' => 'rynk is an AI-powered SEO, AEO and GEO platform that automatically audits a small local business\'s website, fixes the technical and on-page gaps, and writes and publishes optimized content, so the business gets found on Google and inside AI assistants like ChatGPT, Perplexity and Google\'s AI Overviews. No SEO knowledge, no agency, no manual work.',
+		),
+		array(
+			'@context'        => 'https://schema.org',
+			'@type'           => 'WebSite',
+			'name'            => 'Rynk AI',
+			'url'             => 'https://rynk.ai/',
+			'potentialAction' => array(
+				'@type'       => 'SearchAction',
+				'target'      => array(
+					'@type'       => 'EntryPoint',
+					'urlTemplate' => 'https://rynk.ai/?s={search_term_string}',
+				),
+				'query-input' => 'required name=search_term_string',
+			),
+		),
+		array(
+			'@context'       => 'https://schema.org',
+			'@type'          => 'LocalBusiness',
+			'name'           => 'Rynk AI',
+			'url'            => 'https://rynk.ai/',
+			'additionalType' => 'Software as a Service (SaaS) / AI SEO software',
+			'description'    => 'rynk is an AI-powered SEO, AEO and GEO platform that automatically audits a small local business\'s website, fixes the technical and on-page gaps, and writes and publishes optimized content, so the business gets found on Google and inside AI assistants like ChatGPT, Perplexity and Google\'s AI Overviews. No SEO knowledge, no agency, no manual work.',
+		),
+		array(
+			'@context'  => 'https://schema.org',
+			'@type'     => 'Person',
+			'name'      => 'Rishik Khandavalli, Ashwika Khandavalli',
+			'worksFor'  => array(
+				'@type' => 'Organization',
+				'name'  => 'Rynk AI',
+				'url'   => 'https://rynk.ai/',
+			),
+		),
+		array(
+			'@context'            => 'https://schema.org',
+			'@type'               => 'SoftwareApplication',
+			'name'                => 'Rynk AI',
+			'url'                 => 'https://rynk.ai/',
+			'description'         => 'Rynk is an AI-powered SEO, AEO and GEO platform that audits your website, applies technical and on-page fixes automatically, and generates and publishes optimized content so small local businesses rank on Google and get cited by ChatGPT, Perplexity, and Google AI Overviews.',
+			'applicationCategory' => 'BusinessApplication',
+			'operatingSystem'     => 'Web',
+			'offers'              => array(
+				array(
+					'@type'              => 'Offer',
+					'name'               => 'Gold',
+					'price'              => '149',
+					'priceCurrency'      => 'USD',
+					'priceSpecification' => array(
+						'@type'         => 'UnitPriceSpecification',
+						'price'         => '149',
+						'priceCurrency' => 'USD',
+						'unitCode'      => 'MON',
+					),
+				),
+				array(
+					'@type'              => 'Offer',
+					'name'               => 'Platinum',
+					'price'              => '299',
+					'priceCurrency'      => 'USD',
+					'priceSpecification' => array(
+						'@type'         => 'UnitPriceSpecification',
+						'price'         => '299',
+						'priceCurrency' => 'USD',
+						'unitCode'      => 'MON',
+					),
+				),
+			),
+			'featureList'         => array(
+				'Automated SEO audit',
+				'Automated technical SEO fixes',
+				'On-page optimization',
+				'Structured data and schema markup',
+				'AI content generation and publishing',
+				'Answer Engine Optimization (AEO)',
+				'Generative Engine Optimization (GEO)',
+				'Local SEO and Google Business Profile optimization',
+				'Keyword research and rank tracking',
+				'Continuous monitoring and re-optimization',
+			),
+			'screenshot'          => 'https://rynk.ai/wp-content/themes/rynk/assets/img/logo.png',
+			'publisher'           => array(
+				'@type' => 'Organization',
+				'name'  => 'Rynk AI',
+				'url'   => 'https://rynk.ai/',
+			),
+		),
+		array(
+			'@context'    => 'https://schema.org',
+			'@type'       => 'Service',
+			'name'        => 'AI-Powered SEO Audit and Automated Technical SEO Fixes',
+			'description' => 'Rynk performs an AI-powered SEO audit of your website and automatically applies technical SEO fixes - no manual intervention required. Fixes are deployed directly to your site, not just reported.',
+			'provider'    => array(
+				'@type' => 'Organization',
+				'name'  => 'Rynk AI',
+				'url'   => 'https://rynk.ai/',
+			),
+		),
+		array(
+			'@context'    => 'https://schema.org',
+			'@type'       => 'Service',
+			'name'        => 'On-Page SEO Optimization',
+			'description' => 'Rynk optimizes meta titles, meta descriptions, headings, and internal linking across your website to improve search visibility and click-through rates.',
+			'provider'    => array(
+				'@type' => 'Organization',
+				'name'  => 'Rynk AI',
+				'url'   => 'https://rynk.ai/',
+			),
+		),
+		array(
+			'@context'    => 'https://schema.org',
+			'@type'       => 'Service',
+			'name'        => 'Structured Data, AI Content Generation, and Answer Engine Optimization',
+			'description' => 'Rynk generates and publishes structured data schema markup, creates AI-optimized content, and implements Answer Engine Optimization (AEO) strategies so your business gets cited in ChatGPT, Perplexity, Google AI Overviews, and other AI assistants.',
+			'provider'    => array(
+				'@type' => 'Organization',
+				'name'  => 'Rynk AI',
+				'url'   => 'https://rynk.ai/',
+			),
+		),
+		array(
+			'@context'   => 'https://schema.org',
+			'@type'      => 'FAQPage',
+			'mainEntity' => array(
+				array(
+					'@type'          => 'Question',
+					'name'           => 'How can I automate SEO for my small business?',
+					'acceptedAnswer' => array(
+						'@type' => 'Answer',
+						'text'  => 'Rynk is an automated SEO platform built specifically for small local businesses. You connect your website, and Rynk audits it, applies technical fixes, and publishes optimized content directly to your site every month. No SEO knowledge, no agency, and no manual work required.',
+					),
+				),
+				array(
+					'@type'          => 'Question',
+					'name'           => 'What is the best automated SEO platform for local businesses?',
+					'acceptedAnswer' => array(
+						'@type' => 'Answer',
+						'text'  => 'Rynk is the automated SEO platform built for local small businesses, covering technical fixes, on-page optimization, local SEO, and AI content publishing in one place. Unlike tools built for agencies or enterprises, Rynk is scoped and priced for a single local business starting at $149 per month. It does the work for you rather than just reporting what is wrong.',
+					),
+				),
+				array(
+					'@type'          => 'Question',
+					'name'           => 'Can AI generate SEO-optimized content for my website?',
+					'acceptedAnswer' => array(
+						'@type' => 'Answer',
+						'text'  => 'Yes. Rynk uses AI-powered content generation to write and publish SEO-optimized blog posts and pages directly to your WordPress website each month. Every piece targets the keywords your local customers actually search, and is formatted so Google and AI assistants like ChatGPT and Perplexity can easily read and cite it.',
+					),
+				),
+				array(
+					'@type'          => 'Question',
+					'name'           => 'How do I do SEO for my small business without hiring an agency?',
+					'acceptedAnswer' => array(
+						'@type' => 'Answer',
+						'text'  => 'Rynk replaces the need for an SEO agency by automating the entire process for small business owners. It audits your site, fixes technical issues, optimizes your page titles and descriptions, and publishes new content every month, all without you needing any SEO expertise. Plans start at $149 per month, a fraction of typical agency costs.',
+					),
+				),
+				array(
+					'@type'          => 'Question',
+					'name'           => 'How do I get my business to show up in ChatGPT search results?',
+					'acceptedAnswer' => array(
+						'@type' => 'Answer',
+						'text'  => 'To get cited by ChatGPT, Perplexity, and Google AI Overviews, your website needs structured data, clearly written answer-style content, and strong authority signals. Rynk builds all of these automatically, adding schema markup, publishing quotable FAQ content, and creating credibility signals that AI assistants rely on when recommending local businesses.',
+					),
+				),
+				array(
+					'@type'          => 'Question',
+					'name'           => 'How do I rank on both Google and AI assistants like ChatGPT?',
+					'acceptedAnswer' => array(
+						'@type' => 'Answer',
+						'text'  => 'Rynk is one of the only platforms that optimizes for both traditional Google search and AI answer engines like ChatGPT, Perplexity, and Google AI Overviews in a single automated workflow. It handles technical SEO and keyword ranking for Google while also building the structured data, local signals, and AI-readable content that AI assistants need to confidently recommend your business.',
+					),
+				),
+			),
+		),
+	);
+
+	foreach ( $schemas as $schema ) {
+		printf(
+			'<script type="application/ld+json">%s</script>' . "\n",
+			wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT )
+		);
+	}
+}
+add_action( 'wp_head', 'rynk_structured_data', 10 );
+
+/**
+ * Output BreadcrumbList JSON-LD for singular blog posts.
+ *
+ * Fires on every single post so individual blog articles each carry their
+ * own breadcrumb trail: Home > Blog > Post Title.
+ *
+ * For specific posts, a canonical breadcrumb name is used to match the
+ * action requirement.
+ *
+ * @return void
+ */
+function rynk_post_breadcrumb_schema(): void {
+	if ( ! is_singular( 'post' ) ) {
+		return;
+	}
+
+	$post  = get_queried_object();
+	$title = ( $post instanceof WP_Post ) ? get_the_title( $post ) : '';
+	$url   = ( $post instanceof WP_Post ) ? get_permalink( $post ) : '';
+	$slug  = ( $post instanceof WP_Post ) ? $post->post_name : '';
+
+	if ( ! $title || ! $url ) {
+		return;
+	}
+
+	// Map specific post slugs to their canonical breadcrumb names.
+	$breadcrumb_name_map = array(
+		'why-isnt-my-business-showing-up-on-google' => 'Why Isnt My Business Showing Up On Google',
+		'how-to-check-keyword-ranking-google'        => 'How To Check Keyword Ranking Google',
+	);
+
+	$breadcrumb_name = isset( $breadcrumb_name_map[ $slug ] )
+		? $breadcrumb_name_map[ $slug ]
+		: $title;
+
+	$schema = array(
+		'@context'        => 'https://schema.org',
+		'@type'           => 'BreadcrumbList',
+		'itemListElement' => array(
+			array(
+				'@type'    => 'ListItem',
+				'position' => 1,
+				'name'     => 'Home',
+				'item'     => 'https://rynk.ai/',
+			),
+			array(
+				'@type'    => 'ListItem',
+				'position' => 2,
+				'name'     => 'Blog',
+				'item'     => 'https://rynk.ai/blog/',
+			),
+			array(
+				'@type'    => 'ListItem',
+				'position' => 3,
+				'name'     => $breadcrumb_name,
+				'item'     => $url,
+			),
+		),
+	);
+
+	printf(
+		'<script type="application/ld+json">%s</script>' . "\n",
+		wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT )
+	);
+}
+add_action( 'wp_head', 'rynk_post_breadcrumb_schema', 10 );
+
+/**
+ * Output BreadcrumbList JSON-LD for category archive pages.
+ *
+ * Fires on category archives so pages like /category/uncategorized/ each
+ * carry: Home > Category > Term Name.
+ *
+ * @return void
+ */
+function rynk_category_breadcrumb_schema(): void {
+	if ( ! is_category() ) {
+		return;
+	}
+
+	$term = get_queried_object();
+	if ( ! ( $term instanceof WP_Term ) ) {
+		return;
+	}
+
+	$term_url  = get_term_link( $term );
+	$term_name = $term->name;
+
+	if ( is_wp_error( $term_url ) ) {
+		return;
+	}
+
+	$schema = array(
+		'@context'        => 'https://schema.org',
+		'@type'           => 'BreadcrumbList',
+		'itemListElement' => array(
+			array(
+				'@type'    => 'ListItem',
+				'position' => 1,
+				'name'     => 'Home',
+				'item'     => 'https://rynk.ai/',
+			),
+			array(
+				'@type'    => 'ListItem',
+				'position' => 2,
+				'name'     => 'Category',
+				'item'     => 'https://rynk.ai/category/',
+			),
+			array(
+				'@type'    => 'ListItem',
+				'position' => 3,
+				'name'     => $term_name,
+				'item'     => $term_url,
+			),
+		),
+	);
+
+	printf(
+		'<script type="application/ld+json">%s</script>' . "\n",
+		wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT )
+	);
+}
+add_action( 'wp_head', 'rynk_category_breadcrumb_schema', 10 );
+
+/**
+ * Serve a static robots.txt via WordPress when no physical file exists.
+ *
+ * Blocks Googlebot from wasting crawl budget on thin WordPress default URLs
+ * and points crawlers at the sitemap.
+ *
+ * @return void
+ */
+function rynk_robots_txt( string $output, bool $public ): string {
+	if ( ! $public ) {
+		return $output;
+	}
+
+	return "User-agent: *\n"
+		. "Disallow: /wp-admin/\n"
+		. "Disallow: /wp-login.php\n"
+		. "Disallow: /xmlrpc.php\n"
+		. "Disallow: /hello-world/\n"
+		. "Disallow: /sample-page/\n"
+		. "Disallow: /category/uncategorized/\n"
+		. "Disallow: /author/rynkai/\n"
+		. "Allow: /wp-admin/admin-ajax.php\n"
+		. "\n"
+		. "Sitemap: https://rynk.ai/sitemap.xml\n";
+}
+add_filter( 'robots_txt', 'rynk_robots_txt', 10, 2 );
+
+/**
+ * Serve a hand-crafted sitemap.xml that covers only canonical, indexable pages.
+ *
+ * Intercepts requests for /sitemap.xml before WordPress serves a 404, outputs
+ * the XML directly, and exits. This keeps crawl budget focused on the pages
+ * that matter: homepage, how-it-works, pricing, and about.
+ *
+ * To extend it with blog posts, add <url> entries in the $urls array below.
+ *
+ * @return void
+ */
+function rynk_serve_sitemap(): void {
+	if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+		return;
+	}
+
+	$uri = strtok( (string) $_SERVER['REQUEST_URI'], '?' );
+
+	if ( '/sitemap.xml' !== $uri ) {
+		return;
+	}
+
+	$today = gmdate( 'Y-m-d' );
+
+	$urls = array(
+		array( 'loc' => 'https://rynk.ai/', 'priority' => '1.0', 'changefreq' => 'weekly' ),
+		array( 'loc' => 'https://rynk.ai/how-it-works/', 'priority' => '0.9', 'changefreq' => 'monthly' ),
+		array( 'loc' => 'https://rynk.ai/pricing/', 'priority' => '0.9', 'changefreq' => 'monthly' ),
+		array( 'loc' => 'https://rynk.ai/about/', 'priority' => '0.8', 'changefreq' => 'monthly' ),
+	);
+
+	header( 'Content-Type: application/xml; charset=UTF-8', true, 200 );
+	echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+	echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+
+	foreach ( $urls as $entry ) {
+		echo "\t<url>\n";
+		echo "\t\t<loc>" . esc_url( $entry['loc'] ) . "</loc>\n";
+		echo "\t\t<lastmod>" . esc_html( $today ) . "</lastmod>\n";
+		echo "\t\t<changefreq>" . esc_html( $entry['changefreq'] ) . "</changefreq>\n";
+		echo "\t\t<priority>" . esc_html( $entry['priority'] ) . "</priority>\n";
+		echo "\t</url>\n";
+	}
+
+	echo '</urlset>';
+	exit;
+}
+add_action( 'init', 'rynk_serve_sitemap', 1 );
+
+/**
+ * Serve llms.txt for AI crawlers.
+ *
+ * Intercepts requests for /llms.txt and outputs a plain-text file that
+ * describes Rynk, lists the canonical pages AI assistants should read, and
+ * follows the llms.txt draft spec format.
+ *
+ * @return void
+ */
+function rynk_serve_llms_txt(): void {
+	if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+		return;
+	}
+
+	$uri = strtok( (string) $_SERVER['REQUEST_URI'], '?' );
+
+	if ( '/llms.txt' !== $uri ) {
+		return;
+	}
+
+	header( 'Content-Type: text/plain; charset=UTF-8', true, 200 );
+
+	echo "# Rynk AI\n\n";
+	echo "> Rynk is an AI-powered SEO, AEO, and GEO platform for small and local businesses. It audits your website, automatically applies technical and on-page fixes, and generates and publishes optimized content so your business ranks on Google and gets cited by AI assistants like ChatGPT, Perplexity, and Google AI Overviews. No SEO expertise, no agency, and no manual work required. Plans start at \$149 per month.\n\n";
+	echo "## Business category\n\n";
+	echo "SaaS / AI-powered SEO software\n\n";
+	echo "## Target audience\n\n";
+	echo "Small and local business owners who want more customers from search without hiring an SEO agency.\n\n";
+	echo "## Canonical pages\n\n";
+	echo "- [Home](https://rynk.ai/)\n";
+	echo "- [How it works](https://rynk.ai/how-it-works/)\n";
+	echo "- [Pricing](https://rynk.ai/pricing/)\n";
+	echo "- [About](https://rynk.ai/about/)\n\n";
+	echo "## Optional\n\n";
+	echo "- [Privacy Policy](https://rynk.ai/privacy-policy/)\n";
+
+	exit;
+}
+add_action( 'init', 'rynk_serve_llms_txt', 1 );
+
+/**
+ * 301 redirect /hello-world/ to /blog/ to reclaim crawl budget from the
+ * default WordPress placeholder post.
+ *
+ * @return void
+ */
+function rynk_redirect_hello_world(): void {
+	if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+		return;
+	}
+
+	$uri = strtok( (string) $_SERVER['REQUEST_URI'], '?' );
+
+	if ( '/hello-world/' === $uri ) {
+		wp_redirect( 'https://rynk.ai/blog/', 301 );
+		exit;
+	}
+}
+add_action( 'template_redirect', 'rynk_redirect_hello_world' );
+
+/**
+ * 301 redirect /sample-page/ to the homepage.
+ *
+ * The default WordPress sample page contains thin placeholder content with no
+ * value for visitors or search engines. Redirecting it to the homepage
+ * reclaims any crawl budget spent on it and eliminates the unprofessional URL.
+ *
+ * @return void
+ */
+function rynk_redirect_sample_page(): void {
+	if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+		return;
+	}
+
+	$uri = strtok( (string) $_SERVER['REQUEST_URI'], '?' );
+
+	if ( '/sample-page/' === $uri ) {
+		wp_redirect( 'https://rynk.ai/', 301 );
+		exit;
+	}
+}
+add_action( 'template_redirect', 'rynk_redirect_sample_page' );
+
+/**
+ * Inject internal links into blog post content at render time.
+ *
+ * For the two target posts we add a natural in-content anchor by filtering
+ * the_content. Each filter fires only on the specific post slug so no other
+ * content is affected.
+ *
+ * @param string $content Post content.
+ * @return string
+ */
+function rynk_inject_internal_links( string $content ): string {
+	if ( ! is_singular( 'post' ) ) {
+		return $content;
+	}
+
+	$post = get_post();
+	if ( ! ( $post instanceof WP_Post ) ) {
+		return $content;
+	}
+
+	$slug = $post->post_name;
+
+	// /blog/why-isnt-my-business-showing-up-on-google/ -> link to /how-it-works/.
+	if ( 'why-isnt-my-business-showing-up-on-google' === $slug ) {
+		$anchor      = 'how Rynk fixes it automatically';
+		$linked      = '<a href="' . esc_url( home_url( '/how-it-works/' ) ) . '" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">' . $anchor . '</a>';
+		$new_content = str_replace( $anchor, $linked, $content );
+		if ( $new_content !== $content ) {
+			return $new_content;
+		}
+		// Anchor text not found verbatim: append a contextual sentence before the closing paragraph.
+		$append = '<p>See <a href="' . esc_url( home_url( '/how-it-works/' ) ) . '" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">how Rynk fixes it automatically</a> - no manual intervention needed.</p>';
+		return $content . $append;
+	}
+
+	// /blog/how-to-check-keyword-ranking-google/ -> link to /pricing/.
+	if ( 'how-to-check-keyword-ranking-google' === $slug ) {
+		$anchor      = 'automated rank tracking with Rynk';
+		$linked      = '<a href="' . esc_url( home_url( '/pricing/' ) ) . '" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">' . $anchor . '</a>';
+		$new_content = str_replace( $anchor, $linked, $content );
+		if ( $new_content !== $content ) {
+			return $new_content;
+		}
+		// Anchor text not found verbatim: append a contextual sentence.
+		$append = '<p>Get started with <a href="' . esc_url( home_url( '/pricing/' ) ) . '" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">automated rank tracking with Rynk</a> - plans start at $149/month.</p>';
+		return $content . $append;
+	}
+
+	return $content;
+}
+add_filter( 'the_content', 'rynk_inject_internal_links' );
+
+/**
  * Create the marketing pages and point the front page at the landing template.
  *
  * Runs on activation, and is safe to run again — an existing page with the

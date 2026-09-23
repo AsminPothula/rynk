@@ -7,11 +7,50 @@
  * the marketing shell (header + footer) so a visitor who clicks through never
  * lands on a broken or empty page.
  *
+ * BreadcrumbList structured data is emitted conditionally for /app and /sign-in.
+ *
  * @package rynk-ai
  */
 
 get_header();
+
+$slug = get_post_field( 'post_name', get_queried_object_id() );
+
+$breadcrumbs = array(
+	'app'     => array(
+		'name' => 'App',
+		'item' => 'https://rynk.ai/app/',
+	),
+	'sign-in' => array(
+		'name' => 'Sign In',
+		'item' => 'https://rynk.ai/sign-in/',
+	),
+);
+
+if ( isset( $breadcrumbs[ $slug ] ) ) :
+	$crumb = $breadcrumbs[ $slug ];
 ?>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://rynk.ai/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "<?php echo esc_js( $crumb['name'] ); ?>",
+      "item": "<?php echo esc_url( $crumb['item'] ); ?>"
+    }
+  ]
+}
+</script>
+<?php endif; ?>
 
 <div class="relative text-brand-text overflow-x-hidden">
 	<section class="relative flex items-center px-6 py-20 md:px-10 lg:min-h-[max(calc(100dvh-8rem),480px)]">
