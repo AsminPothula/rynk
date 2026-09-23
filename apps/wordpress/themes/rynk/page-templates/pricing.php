@@ -17,6 +17,27 @@ get_header();
 $tier_styles = rynk_tier_styles();
 ?>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://rynk.ai/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Pricing",
+      "item": "https://rynk.ai/pricing/"
+    }
+  ]
+}
+</script>
+
 <div class="relative text-brand-text overflow-x-hidden">
 	<?php // HERO. ?>
 	<section class="relative px-6 py-5 md:px-10 md:py-5">
@@ -35,7 +56,9 @@ $tier_styles = rynk_tier_styles();
 				class="mt-4 mb-5 text-[16px] leading-[1.75] text-brand-textMute animate-rise"
 				style="animation-delay: 160ms;"
 			>
-				Pick the tier that fits your business.
+				Pick the tier that fits your business. Not sure where to start? Read about
+				<a href="<?php echo esc_url( home_url( '/blog/why-isnt-my-business-showing-up-on-google/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">why local businesses stay invisible on Google</a>
+				and what Rynk does about it.
 			</p>
 		</div>
 	</section>
@@ -138,7 +161,7 @@ $tier_styles = rynk_tier_styles();
 							<span class="font-mono text-sm text-brand-textMute">one-time</span>
 						</div>
 						<a
-							href="<?php echo esc_url( home_url( '/contact' ) ); ?>"
+							href="<?php echo esc_url( rynk_app_url( '/sign-up' ) ); ?>"
 							class="group inline-flex h-12 items-center gap-2.5 rounded-full bg-white px-7 font-serif text-[16px] font-medium text-brand-ink transition-all hover:shadow-[0_14px_36px_-14px_rgba(255,255,255,0.4)]"
 						>
 							Get my site built
