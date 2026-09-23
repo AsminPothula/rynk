@@ -47,6 +47,10 @@ function rynk_pages(): array {
 			'title'    => 'AI-Powered Content Generation for SEO: What It Is and How Small Businesses Use It',
 			'template' => 'page-templates/blog-post-ai-powered-content-generation.php',
 		),
+		'blog/how-to-check-keyword-ranking-google' => array(
+			'title'    => 'How to Check Keyword Ranking in Google',
+			'template' => 'page-templates/blog-post-how-to-check-keyword-ranking-google.php',
+		),
 		// Placeholder pages — live until the real destinations ship. The app,
 		// sign-in, and free-scan CTAs all land on a "Coming soon" screen rather
 		// than a dead link.
@@ -95,7 +99,8 @@ function rynk_nav_link_class( string $slug ): string {
 	// Also highlight "Blog" when viewing any blog child page.
 	if ( 'blog' === $slug && (
 		is_page_template( 'page-templates/blog-post-how-to-search-keyword.php' ) ||
-		is_page_template( 'page-templates/blog-post-ai-powered-content-generation.php' )
+		is_page_template( 'page-templates/blog-post-ai-powered-content-generation.php' ) ||
+		is_page_template( 'page-templates/blog-post-how-to-check-keyword-ranking-google.php' )
 	) ) {
 		$is_active = true;
 	}
@@ -189,6 +194,9 @@ function rynk_about_document_title( string $title ): string {
 	}
 	if ( is_page_template( 'page-templates/blog-post-ai-powered-content-generation.php' ) ) {
 		return 'AI-Powered Content Generation for SEO | Rynk AI';
+	}
+	if ( is_page_template( 'page-templates/blog-post-how-to-check-keyword-ranking-google.php' ) ) {
+		return 'How to Check Keyword Ranking in Google | Rynk AI';
 	}
 	return $title;
 }
@@ -313,6 +321,8 @@ function rynk_meta_description(): void {
 		$desc = 'Practical guides on SEO, AI search visibility, and getting more customers to find your business online - from the team at Rynk.';
 	} elseif ( is_page_template( 'page-templates/blog-post-ai-powered-content-generation.php' ) ) {
 		$desc = 'AI-powered content generation helps small businesses publish SEO-optimized pages and blog posts automatically. See how Rynk writes and publishes content that ranks on Google and gets cited by AI assistants.';
+	} elseif ( is_page_template( 'page-templates/blog-post-how-to-check-keyword-ranking-google.php' ) ) {
+		$desc = 'Learn how to check your keyword rankings in Google for free, what the numbers mean, and how Rynk tracks and improves your rankings automatically every week.';
 	}
 	if ( '' === $desc ) {
 		return;
@@ -771,6 +781,10 @@ function rynk_serve_sitemap(): void {
 		array( 'loc' => 'https://rynk.ai/how-it-works/', 'priority' => '0.9', 'changefreq' => 'monthly' ),
 		array( 'loc' => 'https://rynk.ai/pricing/', 'priority' => '0.9', 'changefreq' => 'monthly' ),
 		array( 'loc' => 'https://rynk.ai/about/', 'priority' => '0.8', 'changefreq' => 'monthly' ),
+		array( 'loc' => 'https://rynk.ai/blog/', 'priority' => '0.8', 'changefreq' => 'weekly' ),
+		array( 'loc' => 'https://rynk.ai/blog/how-to-search-for-a-keyword-on-a-web-page/', 'priority' => '0.7', 'changefreq' => 'monthly' ),
+		array( 'loc' => 'https://rynk.ai/blog/ai-powered-content-generation-for-seo/', 'priority' => '0.7', 'changefreq' => 'monthly' ),
+		array( 'loc' => 'https://rynk.ai/blog/how-to-check-keyword-ranking-google/', 'priority' => '0.7', 'changefreq' => 'monthly' ),
 	);
 
 	header( 'Content-Type: application/xml; charset=UTF-8', true, 200 );
@@ -1012,7 +1026,7 @@ add_action( 'after_switch_theme', 'rynk_scaffold_pages' );
  * Scaffold version. Bump whenever rynk_pages() gains a page so the new pages
  * are created on the next request without a manual theme re-activation.
  */
-const RYNK_SCAFFOLD_VERSION = '5';
+const RYNK_SCAFFOLD_VERSION = '6';
 
 /**
  * Re-run scaffolding once after a deploy that changed the page set.
@@ -1065,6 +1079,14 @@ function rynk_blog_articles(): array {
 			'label'    => 'Guide',
 			'image'    => 'blog-ai-powered-content-generation-for-seo-1.jpg',
 			'imageAlt' => 'A tidy home office desk with a laptop, a small succulent plant, and a ceramic mug, warm afternoon light through a window, no screens or writing visible, clean and calm atmosphere',
+		),
+		array(
+			'path'     => '/blog/how-to-check-keyword-ranking-google/',
+			'title'    => 'How to Check Keyword Ranking in Google (Free Methods and Automated Tracking)',
+			'intro'    => 'Knowing where your pages rank for the keywords your customers search is the starting point for any SEO improvement. Here is how to find your rankings for free and what to do with the information.',
+			'label'    => 'Guide',
+			'image'    => 'blog-how-to-search-for-a-keyword-on-a-web-page-1.jpg',
+			'imageAlt' => 'Close-up of a laptop keyboard on a wooden desk, soft natural light, no screen visible',
 		),
 	);
 }
