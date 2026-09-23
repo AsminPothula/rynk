@@ -355,8 +355,8 @@ add_action( 'wp_head', 'rynk_archive_canonical', 1 );
 /**
  * Output site-wide JSON-LD structured data blocks.
  *
- * Emits Organization, WebSite, LocalBusiness, Person, Service, SoftwareApplication,
- * and FAQPage schema on every page so search engines and AI assistants have a
+ * Emits Organization, WebSite, LocalBusiness, Person, Service and SoftwareApplication
+ * schema on every page so search engines and AI assistants have a
  * consistent, machine-readable description of Rynk and what it does.
  *
  * @return void
@@ -486,60 +486,6 @@ function rynk_structured_data(): void {
 				'@type' => 'Organization',
 				'name'  => 'Rynk AI',
 				'url'   => 'https://rynk.ai/',
-			),
-		),
-		array(
-			'@context'   => 'https://schema.org',
-			'@type'      => 'FAQPage',
-			'mainEntity' => array(
-				array(
-					'@type'          => 'Question',
-					'name'           => 'How can I automate SEO for my small business?',
-					'acceptedAnswer' => array(
-						'@type' => 'Answer',
-						'text'  => 'Rynk is an automated SEO platform built specifically for small local businesses. You connect your website, and Rynk audits it, applies technical fixes, and publishes optimized content directly to your site every month. No SEO knowledge, no agency, and no manual work required.',
-					),
-				),
-				array(
-					'@type'          => 'Question',
-					'name'           => 'What is the best automated SEO platform for local businesses?',
-					'acceptedAnswer' => array(
-						'@type' => 'Answer',
-						'text'  => 'Rynk is the automated SEO platform built for local small businesses, covering technical fixes, on-page optimization, local SEO, and AI content publishing in one place. Unlike tools built for agencies or enterprises, Rynk is scoped and priced for a single local business starting at $149 per month. It does the work for you rather than just reporting what is wrong.',
-					),
-				),
-				array(
-					'@type'          => 'Question',
-					'name'           => 'Can AI generate SEO-optimized content for my website?',
-					'acceptedAnswer' => array(
-						'@type' => 'Answer',
-						'text'  => 'Yes. Rynk uses AI-powered content generation to write and publish SEO-optimized blog posts and pages directly to your WordPress website each month. Every piece targets the keywords your local customers actually search, and is formatted so Google and AI assistants like ChatGPT and Perplexity can easily read and cite it.',
-					),
-				),
-				array(
-					'@type'          => 'Question',
-					'name'           => 'How do I do SEO for my small business without hiring an agency?',
-					'acceptedAnswer' => array(
-						'@type' => 'Answer',
-						'text'  => 'Rynk replaces the need for an SEO agency by automating the entire process for small business owners. It audits your site, fixes technical issues, optimizes your page titles and descriptions, and publishes new content every month, all without you needing any SEO expertise. Plans start at $149 per month, a fraction of typical agency costs.',
-					),
-				),
-				array(
-					'@type'          => 'Question',
-					'name'           => 'How do I get my business to show up in ChatGPT search results?',
-					'acceptedAnswer' => array(
-						'@type' => 'Answer',
-						'text'  => 'To get cited by ChatGPT, Perplexity, and Google AI Overviews, your website needs structured data, clearly written answer-style content, and strong authority signals. Rynk builds all of these automatically, adding schema markup, publishing quotable FAQ content, and creating credibility signals that AI assistants rely on when recommending local businesses.',
-					),
-				),
-				array(
-					'@type'          => 'Question',
-					'name'           => 'How do I rank on both Google and AI assistants like ChatGPT?',
-					'acceptedAnswer' => array(
-						'@type' => 'Answer',
-						'text'  => 'Rynk is one of the only platforms that optimizes for both traditional Google search and AI answer engines like ChatGPT, Perplexity, and Google AI Overviews in a single automated workflow. It handles technical SEO and keyword ranking for Google while also building the structured data, local signals, and AI-readable content that AI assistants need to confidently recommend your business.',
-					),
-				),
 			),
 		),
 	);
@@ -676,54 +622,6 @@ function rynk_category_breadcrumb_schema(): void {
 	);
 }
 add_action( 'wp_head', 'rynk_category_breadcrumb_schema', 10 );
-
-/**
- * Output BreadcrumbList JSON-LD for the specific page template
- * /blog/why-isnt-my-business-showing-up-on-google/ if it is ever served
- * as a WordPress page rather than a post.
- *
- * The rynk_post_breadcrumb_schema() function already handles this URL when it
- * is a post type. This companion function covers the case where the slug is
- * served via a page template, ensuring the BreadcrumbList is always present.
- *
- * @return void
- */
-function rynk_why_not_showing_breadcrumb_schema(): void {
-	if ( ! is_page( 'why-isnt-my-business-showing-up-on-google' ) ) {
-		return;
-	}
-
-	$schema = array(
-		'@context'        => 'https://schema.org',
-		'@type'           => 'BreadcrumbList',
-		'itemListElement' => array(
-			array(
-				'@type'    => 'ListItem',
-				'position' => 1,
-				'name'     => 'Home',
-				'item'     => 'https://rynk.ai/',
-			),
-			array(
-				'@type'    => 'ListItem',
-				'position' => 2,
-				'name'     => 'Blog',
-				'item'     => 'https://rynk.ai/blog/',
-			),
-			array(
-				'@type'    => 'ListItem',
-				'position' => 3,
-				'name'     => 'Why Isnt My Business Showing Up On Google',
-				'item'     => 'https://rynk.ai/blog/why-isnt-my-business-showing-up-on-google/',
-			),
-		),
-	);
-
-	printf(
-		'<script type="application/ld+json">%s</script>' . "\n",
-		wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT )
-	);
-}
-add_action( 'wp_head', 'rynk_why_not_showing_breadcrumb_schema', 10 );
 
 /**
  * Serve a static robots.txt via WordPress when no physical file exists.
