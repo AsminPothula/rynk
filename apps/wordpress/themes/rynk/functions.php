@@ -668,6 +668,54 @@ function rynk_category_breadcrumb_schema(): void {
 add_action( 'wp_head', 'rynk_category_breadcrumb_schema', 10 );
 
 /**
+ * Output BreadcrumbList JSON-LD for the specific page template
+ * /blog/why-isnt-my-business-showing-up-on-google/ if it is ever served
+ * as a WordPress page rather than a post.
+ *
+ * The rynk_post_breadcrumb_schema() function already handles this URL when it
+ * is a post type. This companion function covers the case where the slug is
+ * served via a page template, ensuring the BreadcrumbList is always present.
+ *
+ * @return void
+ */
+function rynk_why_not_showing_breadcrumb_schema(): void {
+	if ( ! is_page( 'why-isnt-my-business-showing-up-on-google' ) ) {
+		return;
+	}
+
+	$schema = array(
+		'@context'        => 'https://schema.org',
+		'@type'           => 'BreadcrumbList',
+		'itemListElement' => array(
+			array(
+				'@type'    => 'ListItem',
+				'position' => 1,
+				'name'     => 'Home',
+				'item'     => 'https://rynk.ai/',
+			),
+			array(
+				'@type'    => 'ListItem',
+				'position' => 2,
+				'name'     => 'Blog',
+				'item'     => 'https://rynk.ai/blog/',
+			),
+			array(
+				'@type'    => 'ListItem',
+				'position' => 3,
+				'name'     => 'Why Isnt My Business Showing Up On Google',
+				'item'     => 'https://rynk.ai/blog/why-isnt-my-business-showing-up-on-google/',
+			),
+		),
+	);
+
+	printf(
+		'<script type="application/ld+json">%s</script>' . "\n",
+		wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT )
+	);
+}
+add_action( 'wp_head', 'rynk_why_not_showing_breadcrumb_schema', 10 );
+
+/**
  * Serve a static robots.txt via WordPress when no physical file exists.
  *
  * Blocks Googlebot from wasting crawl budget on thin WordPress default URLs
