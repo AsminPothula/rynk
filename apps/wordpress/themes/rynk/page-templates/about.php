@@ -169,6 +169,26 @@ $founder_styles = rynk_founder_styles();
 		</div>
 	</section>
 
+	<?php // BLOG CALLOUT - internal link to new AI content generation article. ?>
+	<section class="px-6 pb-6 md:px-10 md:pb-8">
+		<div class="mx-auto max-w-screen-xl">
+			<div class="rounded-2xl bg-white/[0.03] ring-1 ring-white/10 px-7 py-6 md:px-8">
+				<p class="font-mono text-[10px] uppercase tracking-[0.16em] text-brand-violetSoft">From the blog</p>
+				<p class="mt-2 font-serif text-xl font-medium tracking-tight text-brand-text">
+					Curious how Rynk generates content for your site?
+				</p>
+				<p class="mt-1.5 text-[14px] leading-relaxed text-brand-textMute">
+					Our guide on
+					<a
+						href="<?php echo esc_url( home_url( '/blog/ai-powered-content-generation-for-seo/' ) ); ?>"
+						class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors"
+					>AI-powered content generation for SEO</a>
+					explains exactly how Rynk researches, writes, and publishes pages that help small businesses rank on Google and get cited by AI assistants.
+				</p>
+			</div>
+		</div>
+	</section>
+
 	<?php // BOTTOM CTA. ?>
 	<section class="relative px-6 py-14 md:px-10 md:py-16">
 		<div class="relative mx-auto max-w-screen-xl overflow-hidden rounded-[32px] bg-white/[0.02] px-8 py-12 md:px-14 md:py-14 ring-1 ring-white/8">
