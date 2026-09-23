@@ -35,6 +35,18 @@ function rynk_pages(): array {
 			'title'    => 'About',
 			'template' => 'page-templates/about.php',
 		),
+		'blog'           => array(
+			'title'    => 'Blog',
+			'template' => 'page-templates/blog-hub.php',
+		),
+		'blog/how-to-search-for-a-keyword-on-a-web-page' => array(
+			'title'    => 'How to Search for a Keyword on a Web Page',
+			'template' => 'page-templates/blog-post-how-to-search-keyword.php',
+		),
+		'blog/ai-powered-content-generation-for-seo' => array(
+			'title'    => 'AI-Powered Content Generation for SEO: What It Is and How Small Businesses Use It',
+			'template' => 'page-templates/blog-post-ai-powered-content-generation.php',
+		),
 		// Placeholder pages — live until the real destinations ship. The app,
 		// sign-in, and free-scan CTAs all land on a "Coming soon" screen rather
 		// than a dead link.
@@ -63,6 +75,7 @@ function rynk_nav_links(): array {
 		'how-it-works' => 'How it works',
 		'pricing'      => 'Pricing',
 		'about'        => 'About',
+		'blog'         => 'Blog',
 	);
 }
 
@@ -78,6 +91,14 @@ function rynk_nav_links(): array {
  */
 function rynk_nav_link_class( string $slug ): string {
 	$is_active = is_page( $slug );
+
+	// Also highlight "Blog" when viewing any blog child page.
+	if ( 'blog' === $slug && (
+		is_page_template( 'page-templates/blog-post-how-to-search-keyword.php' ) ||
+		is_page_template( 'page-templates/blog-post-ai-powered-content-generation.php' )
+	) ) {
+		$is_active = true;
+	}
 
 	return 'font-serif text-[16px] transition-colors ' . (
 		$is_active ? 'text-brand-text' : 'text-brand-textMute hover:text-brand-text'
@@ -148,9 +169,7 @@ function rynk_title_separator(): string {
 }
 
 /**
- * Keyword-rich <title> for the About page so it competes for category searches
- * instead of a brand-only "About - Rynk AI". Returning a non-empty string here
- * short-circuits WordPress' default title, so this is the full tag.
+ * Keyword-rich <title> overrides for specific page templates.
  *
  * @param string $title Default document title.
  * @return string
@@ -158,6 +177,18 @@ function rynk_title_separator(): string {
 function rynk_about_document_title( string $title ): string {
 	if ( is_page_template( 'page-templates/about.php' ) ) {
 		return 'About Rynk - AI SEO Platform for Small Businesses';
+	}
+	if ( is_page_template( 'page-templates/how-it-works.php' ) ) {
+		return 'How Rynk Works: Automated SEO Platform for Local Businesses';
+	}
+	if ( is_page_template( 'page-templates/blog-post-how-to-search-keyword.php' ) ) {
+		return 'How to Search for a Keyword on a Web Page | Rynk AI';
+	}
+	if ( is_page_template( 'page-templates/blog-hub.php' ) ) {
+		return 'Blog - SEO and AI Search Guides | Rynk AI';
+	}
+	if ( is_page_template( 'page-templates/blog-post-ai-powered-content-generation.php' ) ) {
+		return 'AI-Powered Content Generation for SEO | Rynk AI';
 	}
 	return $title;
 }
@@ -272,8 +303,16 @@ function rynk_meta_description(): void {
 	$desc = '';
 	if ( is_front_page() ) {
 		$desc = 'Rynk is an AI-powered SEO platform that audits your site, fixes what holds back your search visibility, and generates content automatically - so more customers find you.';
+	} elseif ( is_page_template( 'page-templates/how-it-works.php' ) ) {
+		$desc = 'Rynk audits your site, fixes technical SEO issues, generates and publishes keyword-targeted content, and monitors your rankings automatically. No expertise needed.';
 	} elseif ( is_page_template( 'page-templates/about.php' ) ) {
 		$desc = 'Meet the team behind Rynk - the AI-powered SEO and AI-visibility platform helping local businesses get found in search.';
+	} elseif ( is_page_template( 'page-templates/blog-post-how-to-search-keyword.php' ) ) {
+		$desc = 'Learn how to search for a keyword on any web page in seconds, what the results mean for your SEO, and how Rynk automatically tracks every keyword across your site.';
+	} elseif ( is_page_template( 'page-templates/blog-hub.php' ) ) {
+		$desc = 'Practical guides on SEO, AI search visibility, and getting more customers to find your business online - from the team at Rynk.';
+	} elseif ( is_page_template( 'page-templates/blog-post-ai-powered-content-generation.php' ) ) {
+		$desc = 'AI-powered content generation helps small businesses publish SEO-optimized pages and blog posts automatically. See how Rynk writes and publishes content that ranks on Google and gets cited by AI assistants.';
 	}
 	if ( '' === $desc ) {
 		return;
@@ -292,7 +331,21 @@ add_action( 'wp_head', 'rynk_meta_description', 1 );
  * @return void
  */
 function rynk_scaffold_pages(): void {
+	// Track parent IDs so child pages can be nested correctly.
+	$parent_ids = array();
+
 	foreach ( rynk_pages() as $slug => $page ) {
+		// Determine parent slug for nested pages (e.g. "blog/some-post" -> parent "blog").
+		$parent_id  = 0;
+		$page_slug  = $slug;
+		$slash_pos  = strpos( $slug, '/' );
+
+		if ( false !== $slash_pos ) {
+			$parent_slug = substr( $slug, 0, $slash_pos );
+			$page_slug   = substr( $slug, $slash_pos + 1 );
+			$parent_id   = $parent_ids[ $parent_slug ] ?? 0;
+		}
+
 		$existing = get_page_by_path( $slug );
 
 		$page_id = $existing instanceof WP_Post
@@ -300,10 +353,11 @@ function rynk_scaffold_pages(): void {
 			: wp_insert_post(
 				array(
 					'post_type'    => 'page',
-					'post_name'    => $slug,
+					'post_name'    => $page_slug,
 					'post_title'   => $page['title'],
 					'post_status'  => 'publish',
 					'post_content' => '',
+					'post_parent'  => $parent_id,
 				)
 			);
 
@@ -311,10 +365,7 @@ function rynk_scaffold_pages(): void {
 			continue;
 		}
 
-		// Self-heal: an existing page might be a draft (invisible to the public,
-		// visible to logged-in editors — the exact "I see it, incognito 404s"
-		// symptom) or have lost its template meta. Force it back to a published
-		// page on the intended template every time we scaffold.
+		// Self-heal: force back to published on the intended template.
 		if ( $existing instanceof WP_Post && 'publish' !== $existing->post_status ) {
 			wp_update_post(
 				array(
@@ -325,6 +376,9 @@ function rynk_scaffold_pages(): void {
 		}
 
 		update_post_meta( $page_id, '_wp_page_template', $page['template'] );
+
+		// Store ID so child pages can reference this as a parent.
+		$parent_ids[ $slug ] = $page_id;
 	}
 
 	// Landing page — front-page.php renders it; the page exists so the site
@@ -354,7 +408,7 @@ add_action( 'after_switch_theme', 'rynk_scaffold_pages' );
  * Scaffold version. Bump whenever rynk_pages() gains a page so the new pages
  * are created on the next request without a manual theme re-activation.
  */
-const RYNK_SCAFFOLD_VERSION = '3';
+const RYNK_SCAFFOLD_VERSION = '5';
 
 /**
  * Re-run scaffolding once after a deploy that changed the page set.
@@ -384,3 +438,29 @@ function rynk_maybe_scaffold_pages(): void {
 	update_option( 'rynk_scaffold_version', RYNK_SCAFFOLD_VERSION );
 }
 add_action( 'init', 'rynk_maybe_scaffold_pages' );
+
+/**
+ * Blog articles registry — the single source of truth for the blog hub card grid.
+ *
+ * @return array<int, array<string, string>>
+ */
+function rynk_blog_articles(): array {
+	return array(
+		array(
+			'path'     => '/blog/how-to-search-for-a-keyword-on-a-web-page/',
+			'title'    => 'How to Search for a Keyword on a Web Page (And What It Tells You About Your SEO)',
+			'intro'    => 'Finding out whether a keyword actually appears on your page takes about five seconds. Knowing what to do with that information is where most small business owners get stuck.',
+			'label'    => 'Guide',
+			'image'    => 'blog-how-to-search-for-a-keyword-on-a-web-page-1.jpg',
+			'imageAlt' => 'Close-up of a laptop keyboard, a single finger pressing the F key, warm natural side light',
+		),
+		array(
+			'path'     => '/blog/ai-powered-content-generation-for-seo/',
+			'title'    => 'AI-Powered Content Generation for SEO: What It Is and How Small Businesses Use It',
+			'intro'    => 'Most small businesses know they need more content. Almost none of them have the time to write it. AI-powered content generation closes that gap, but only when it is built around the right keywords and published to the right pages.',
+			'label'    => 'Guide',
+			'image'    => 'blog-ai-powered-content-generation-for-seo-1.jpg',
+			'imageAlt' => 'A tidy home office desk with a laptop, a small succulent plant, and a ceramic mug, warm afternoon light through a window, no screens or writing visible, clean and calm atmosphere',
+		),
+	);
+}

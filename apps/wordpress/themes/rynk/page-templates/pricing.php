@@ -35,7 +35,7 @@ $tier_styles = rynk_tier_styles();
 				class="mt-4 mb-5 text-[16px] leading-[1.75] text-brand-textMute animate-rise"
 				style="animation-delay: 160ms;"
 			>
-				Pick the tier that fits your business.
+				One flat monthly price. Rynk audits your site, publishes new pages, and keeps your rankings moving, without you doing any of the work.
 			</p>
 		</div>
 	</section>
@@ -71,7 +71,7 @@ $tier_styles = rynk_tier_styles();
 						<?php endif; ?>
 
 						<div class="relative">
-							<h3 class="font-serif text-2xl font-medium tracking-tight"><?php echo esc_html( $tier['name'] ); ?></h3>
+							<h2 class="font-serif text-2xl font-medium tracking-tight"><?php echo esc_html( $tier['name'] ); ?></h2>
 							<p class="mt-1 text-[13px] text-brand-textMute"><?php echo esc_html( $tier['target'] ); ?></p>
 							<div class="mt-4 flex items-baseline gap-1.5">
 								<span class="<?php echo esc_attr( 'font-serif text-5xl font-medium tracking-tight ' . $s['price'] ); ?>">
@@ -124,11 +124,11 @@ $tier_styles = rynk_tier_styles();
 				<div class="relative grid gap-8 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] md:items-center">
 					<div>
 						<h2 class="font-serif text-3xl md:text-4xl font-medium leading-[1.05] tracking-tight text-brand-text">
-							Getting started?
-							<span class="italic text-brand-highlight">We can build the site too.</span>
+							Need a site first?
+							<span class="italic text-brand-highlight">We build that too.</span>
 						</h2>
 						<p class="mt-4 text-[15px] leading-[1.7] text-brand-textMute">
-							A full WordPress website with 2-3 pages, SEO-optimized from day one &mdash; so Rynk has a foundation to grow from.
+							If your business does not yet have a website, or the one you have is not worth optimising, Rynk can build a clean WordPress site with two to three pages, SEO-optimised from day one, for a one-time fee of $499. That gives Rynk a proper foundation to grow from in the first month.
 						</p>
 					</div>
 
@@ -150,12 +150,140 @@ $tier_styles = rynk_tier_styles();
 		</div>
 	</section>
 
+	<?php // BLOG CALLOUT - internal links to blog articles. ?>
+	<section class="px-6 pb-4 md:px-10 md:pb-6">
+		<div class="mx-auto max-w-screen-xl">
+			<div class="rounded-2xl bg-white/[0.03] ring-1 ring-white/10 px-7 py-6 md:px-8">
+				<p class="font-mono text-[10px] uppercase tracking-[0.16em] text-brand-violetSoft">From the blog</p>
+				<p class="mt-2 font-serif text-xl font-medium tracking-tight text-brand-text">
+					Want to understand what Rynk actually fixes?
+				</p>
+				<p class="mt-1.5 text-[14px] leading-relaxed text-brand-textMute">
+					See how
+					<a
+						href="<?php echo esc_url( home_url( '/blog/ai-powered-content-generation-for-seo/' ) ); ?>"
+						class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors"
+					>AI-powered content generation</a>
+					works in practice, or start with our guide on
+					<a
+						href="<?php echo esc_url( home_url( '/blog/how-to-search-for-a-keyword-on-a-web-page/' ) ); ?>"
+						class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors"
+					>how to search for a keyword on a web page</a>
+					to see the gaps Rynk closes automatically.
+				</p>
+			</div>
+		</div>
+	</section>
+
+	<?php // FAQ. ?>
+	<section class="relative px-6 py-10 md:px-10 md:py-12">
+		<div
+			aria-hidden="true"
+			class="pointer-events-none absolute -top-10 left-10 h-64 w-64 rounded-full bg-brand-violet/12 blur-3xl animate-float-slow"
+		></div>
+		<div class="relative mx-auto max-w-screen-xl">
+			<div class="mx-auto max-w-3xl">
+				<h2 class="font-serif text-3xl md:text-4xl font-medium tracking-tight text-brand-text">
+					Frequently asked questions
+				</h2>
+				<div class="mt-8 grid gap-4">
+
+					<?php
+					$faqs = array(
+						array(
+							'q' => 'What does the $149 Gold plan actually do each month?',
+							'a' => 'Rynk audits your site, applies technical fixes directly to your WordPress installation, publishes five new hyperlocal pages, five keyword-targeted pages, and updates five existing pages. It also tracks your rankings and compares them to your local competitors. Everything is done for you.',
+						),
+						array(
+							'q' => 'Do I need any SEO knowledge to use Rynk?',
+							'a' => 'None at all. Rynk is built for local business owners who have no SEO background. You connect your site, and Rynk handles the auditing, fixing, writing, and publishing. There is no dashboard to master and no jargon to decode.',
+						),
+						array(
+							'q' => 'What is the difference between the Gold and Platinum plans?',
+							'a' => 'Platinum doubles the number of pages published and updated each month, switches tracking from monthly to bi-weekly, and adds priority support. If you want to close the gap on competitors faster, or if your site has a lot of ground to cover, Platinum gets you there in half the time.',
+						),
+						array(
+							'q' => 'What local business SEO software actually works for small businesses?',
+							'a' => 'The tools that produce real results for local businesses are the ones that combine technical SEO, content publishing, and local keyword targeting in one automated system, without requiring the owner to have SEO expertise. Rynk was built specifically for that: one platform, flat monthly pricing, everything applied directly to your site.',
+						),
+						array(
+							'q' => 'Can I cancel if I am not happy?',
+							'a' => 'Yes. Rynk is a monthly subscription with no long-term contract. If you are not seeing progress, you can cancel at any time.',
+						),
+					);
+					foreach ( $faqs as $faq ) :
+					?>
+						<div class="rounded-2xl bg-white/[0.03] ring-1 ring-white/10 p-6">
+							<h3 class="font-serif text-[18px] font-medium leading-snug tracking-tight text-brand-text">
+								<?php echo esc_html( $faq['q'] ); ?>
+							</h3>
+							<p class="mt-3 text-[14.5px] leading-[1.75] text-brand-textMute">
+								<?php echo esc_html( $faq['a'] ); ?>
+							</p>
+						</div>
+					<?php endforeach; ?>
+
+				</div>
+			</div>
+		</div>
+
+		<?php // FAQPage JSON-LD. ?>
+		<script type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@type": "FAQPage",
+			"mainEntity": [
+				{
+					"@type": "Question",
+					"name": "What does the $149 Gold plan actually do each month?",
+					"acceptedAnswer": {
+						"@type": "Answer",
+						"text": "Rynk audits your site, applies technical fixes directly to your WordPress installation, publishes five new hyperlocal pages, five keyword-targeted pages, and updates five existing pages. It also tracks your rankings and compares them to your local competitors. Everything is done for you."
+					}
+				},
+				{
+					"@type": "Question",
+					"name": "Do I need any SEO knowledge to use Rynk?",
+					"acceptedAnswer": {
+						"@type": "Answer",
+						"text": "None at all. Rynk is built for local business owners who have no SEO background. You connect your site, and Rynk handles the auditing, fixing, writing, and publishing. There is no dashboard to master and no jargon to decode."
+					}
+				},
+				{
+					"@type": "Question",
+					"name": "What is the difference between the Gold and Platinum plans?",
+					"acceptedAnswer": {
+						"@type": "Answer",
+						"text": "Platinum doubles the number of pages published and updated each month, switches tracking from monthly to bi-weekly, and adds priority support. If you want to close the gap on competitors faster, or if your site has a lot of ground to cover, Platinum gets you there in half the time."
+					}
+				},
+				{
+					"@type": "Question",
+					"name": "What local business SEO software actually works for small businesses?",
+					"acceptedAnswer": {
+						"@type": "Answer",
+						"text": "The tools that produce real results for local businesses are the ones that combine technical SEO, content publishing, and local keyword targeting in one automated system, without requiring the owner to have SEO expertise. Rynk was built specifically for that: one platform, flat monthly pricing, everything applied directly to your site."
+					}
+				},
+				{
+					"@type": "Question",
+					"name": "Can I cancel if I am not happy?",
+					"acceptedAnswer": {
+						"@type": "Answer",
+						"text": "Yes. Rynk is a monthly subscription with no long-term contract. If you are not seeing progress, you can cancel at any time."
+					}
+				}
+			]
+		}
+		</script>
+	</section>
+
 	<?php // WATCH RYNK WORK (free scan). ?>
 	<section class="relative px-0 py-4 md:px-0 md:py-4">
-		<div class="relative mx-auto max-w-screen-xl overflow-hidden rounded-[32px]  ring-0 ring-white/8 px-2 py-12 md:px-2 md:py-14">
+		<div class="relative mx-auto max-w-screen-xl overflow-hidden rounded-[32px] ring-0 ring-white/8 px-2 py-12 md:px-2 md:py-14">
 			<div
 				aria-hidden="true"
-				class="pointer-events-none absolute -top-20 right-24 h-72 w-72 rounded-full  blur-3xl animate-float-slow"
+				class="pointer-events-none absolute -top-20 right-24 h-72 w-72 rounded-full blur-3xl animate-float-slow"
 			></div>
 
 			<div class="relative grid gap-4 md:grid-cols-[.9fr_1fr] md:items-center">
@@ -164,7 +292,7 @@ $tier_styles = rynk_tier_styles();
 						Watch Rynk live <span class="italic text-brand-blueSoft">on your site.</span>
 					</h2>
 					<p class="mt-3 w-full text-[15px] leading-[1.7] text-brand-textMute">
-						Enter your website URL and see the immediate assessment - why your customers aren&rsquo;t finding your site on Google or AI.
+						Enter your website URL and see the immediate assessment. Find out exactly what is stopping your customers from finding you on Google or AI.
 					</p>
 				</div>
 
