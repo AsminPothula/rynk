@@ -12,33 +12,6 @@ get_header();
 $image_base = get_theme_file_uri( 'assets/img/rynk/' );
 ?>
 
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "Home",
-      "item": "https://rynk.ai/"
-    },
-    {
-      "@type": "ListItem",
-      "position": 2,
-      "name": "Blog",
-      "item": "https://rynk.ai/blog/"
-    },
-    {
-      "@type": "ListItem",
-      "position": 3,
-      "name": "How To Check Keyword Ranking Google",
-      "item": "https://rynk.ai/blog/how-to-check-keyword-ranking-google/"
-    }
-  ]
-}
-</script>
-
 <div class="relative text-brand-text overflow-x-hidden">
 
 	<?php // HERO / BREADCRUMB. ?>
