@@ -59,7 +59,8 @@ $tier_styles = rynk_tier_styles();
 				One flat monthly price. Rynk audits your site, publishes new pages, and keeps your rankings moving, without you doing any of the work.
 				Not sure where to start? Read about
 				<a href="<?php echo esc_url( home_url( '/blog/why-isnt-my-business-showing-up-on-google/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">why local businesses stay invisible on Google</a>
-				and what Rynk does about it.
+				and what Rynk does about it. Curious about the people building this?
+				<a href="<?php echo esc_url( home_url( '/about/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">Meet the team behind Rynk.</a>
 			</p>
 		</div>
 	</section>

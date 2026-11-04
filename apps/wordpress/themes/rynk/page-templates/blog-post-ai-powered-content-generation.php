@@ -12,6 +12,33 @@ get_header();
 $image_base = get_theme_file_uri( 'assets/img/rynk/' );
 ?>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://rynk.ai/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Blog",
+      "item": "https://rynk.ai/blog/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Ai Powered Content Generation For Seo",
+      "item": "https://rynk.ai/blog/ai-powered-content-generation-for-seo/"
+    }
+  ]
+}
+</script>
+
 <div class="relative text-brand-text overflow-x-hidden">
 
 	<?php // HERO / BREADCRUMB. ?>
@@ -188,7 +215,9 @@ $image_base = get_theme_file_uri( 'assets/img/rynk/' );
 						Rynk starts with a full audit of your site and your competitive landscape. It identifies the keywords your customers search for, the pages your competitors rank for that you do not, and the questions your site currently fails to answer. From that, it generates full pages and blog posts: main content, headings, internal links, images, and meta information. Then it publishes them directly to your WordPress site.
 					</p>
 					<p class="mt-4 text-[16px] leading-[1.8] text-brand-textMute">
-						Every month, Rynk adds new hyperlocal pages (targeting your specific area and service), keyword-targeted pages (targeting the searches your customers make), and updated versions of existing pages that have slipped in rankings. None of this requires you to write, review, or upload anything. You can read more about the full process on the <a href="<?php echo esc_url( home_url( '/how-it-works/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">how it works page</a>.
+						Every month, Rynk adds new hyperlocal pages (targeting your specific area and service), keyword-targeted pages (targeting the searches your customers make), and updated versions of existing pages that have slipped in rankings. None of this requires you to write, review, or upload anything. You can read more about
+						<a href="<?php echo esc_url( home_url( '/how-it-works/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">how Rynk publishes content automatically each month</a>
+						on the how it works page.
 					</p>
 				</div>
 				<figure class="mt-6 w-full max-w-sm shrink-0 lg:mt-0 lg:w-64 xl:w-72">

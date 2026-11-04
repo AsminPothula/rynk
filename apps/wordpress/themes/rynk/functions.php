@@ -175,11 +175,17 @@ function rynk_title_separator(): string {
  * @return string
  */
 function rynk_about_document_title( string $title ): string {
+	if ( is_front_page() ) {
+		return 'Rynk AI: Automated SEO for Small Local Businesses';
+	}
 	if ( is_page_template( 'page-templates/about.php' ) ) {
-		return 'About Rynk - AI SEO Platform for Small Businesses';
+		return 'About Rynk: AI SEO Platform Built for Local Businesses';
 	}
 	if ( is_page_template( 'page-templates/how-it-works.php' ) ) {
-		return 'How Rynk Works: Automated SEO Platform for Local Businesses';
+		return 'How Rynk Works: Automated SEO for Small Business';
+	}
+	if ( is_page_template( 'page-templates/pricing.php' ) ) {
+		return 'Rynk Pricing: AI SEO Plans for Small Local Businesses';
 	}
 	if ( is_page_template( 'page-templates/blog-post-how-to-search-keyword.php' ) ) {
 		return 'How to Search for a Keyword on a Web Page | Rynk AI';
@@ -302,11 +308,13 @@ add_action( 'wp_head', 'rynk_favicon_links', 5 );
 function rynk_meta_description(): void {
 	$desc = '';
 	if ( is_front_page() ) {
-		$desc = 'Rynk is an AI-powered SEO platform that audits your site, fixes what holds back your search visibility, and generates content automatically - so more customers find you.';
+		$desc = 'Rynk audits your site, applies the fixes, and publishes content automatically. Built for salons, restaurants, and local businesses. No SEO knowledge needed.';
 	} elseif ( is_page_template( 'page-templates/how-it-works.php' ) ) {
-		$desc = 'Rynk audits your site, fixes technical SEO issues, generates and publishes keyword-targeted content, and monitors your rankings automatically. No expertise needed.';
+		$desc = 'Rynk audits, fixes, generates, and publishes SEO content automatically each month. Get found on Google, ChatGPT, and Perplexity without lifting a finger.';
 	} elseif ( is_page_template( 'page-templates/about.php' ) ) {
-		$desc = 'Meet the team behind Rynk - the AI-powered SEO and AI-visibility platform helping local businesses get found in search.';
+		$desc = 'Rynk automates SEO, AEO, and GEO for hyperlocal small businesses. No agency, no jargon, no manual work. Priced for one local business, not enterprise.';
+	} elseif ( is_page_template( 'page-templates/pricing.php' ) ) {
+		$desc = 'Rynk starts at $149 per month. Get automated SEO fixes, AI content publishing, and rank tracking built for local businesses. No agency or expertise required.';
 	} elseif ( is_page_template( 'page-templates/blog-post-how-to-search-keyword.php' ) ) {
 		$desc = 'Learn how to search for a keyword on any web page in seconds, what the results mean for your SEO, and how Rynk automatically tracks every keyword across your site.';
 	} elseif ( is_page_template( 'page-templates/blog-hub.php' ) ) {
