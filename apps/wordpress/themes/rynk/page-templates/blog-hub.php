@@ -12,6 +12,27 @@ get_header();
 $articles = rynk_blog_articles();
 ?>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://rynk.ai/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Blog",
+      "item": "https://rynk.ai/blog/"
+    }
+  ]
+}
+</script>
+
 <div class="relative text-brand-text overflow-x-hidden">
 	<section class="relative px-6 pt-16 pb-10 md:px-10 md:pt-20 md:pb-12">
 		<div class="pointer-events-none absolute inset-0 bg-grid-brand opacity-50" aria-hidden="true"></div>
@@ -30,7 +51,7 @@ $articles = rynk_blog_articles();
 					class="mt-6 text-[16px] leading-[1.8] text-brand-textMute animate-rise"
 					style="animation-delay: 160ms;"
 				>
-					Practical guides on SEO, AI search visibility, and getting more customers to find your business online.
+					Practical guides on AI SEO automation, answer engine optimization, and getting your small business found on Google and AI assistants like ChatGPT.
 				</p>
 			</div>
 		</div>

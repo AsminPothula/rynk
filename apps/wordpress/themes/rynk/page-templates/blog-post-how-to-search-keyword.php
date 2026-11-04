@@ -12,6 +12,33 @@ get_header();
 $image_base = get_theme_file_uri( 'assets/img/rynk/' );
 ?>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://rynk.ai/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Blog",
+      "item": "https://rynk.ai/blog/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "How To Search For A Keyword On A Web Page",
+      "item": "https://rynk.ai/blog/how-to-search-for-a-keyword-on-a-web-page/"
+    }
+  ]
+}
+</script>
+
 <div class="relative text-brand-text overflow-x-hidden">
 
 	<?php // HERO / BREADCRUMB. ?>
@@ -240,6 +267,9 @@ $image_base = get_theme_file_uri( 'assets/img/rynk/' );
 				</p>
 				<p class="mt-4 text-[16px] leading-[1.8] text-brand-textMute">
 					The same logic applies to AI assistants. ChatGPT, Perplexity, and Google AI Overviews pull answers from pages where the relevant terms appear clearly and repeatedly. A page that buries its keyword once in paragraph seven is unlikely to get cited when someone asks an AI for a recommendation.
+				</p>
+				<p class="mt-4 text-[16px] leading-[1.8] text-brand-textMute">
+					Finding the gaps is only the first step. See how <a href="<?php echo esc_url( home_url( '/blog/ai-powered-content-generation-for-seo/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">AI content generation closes the keyword gap automatically</a>, so you do not have to rewrite pages one by one.
 				</p>
 			</div>
 		</div>
