@@ -75,6 +75,7 @@ $founder_styles = rynk_founder_styles();
 						Google, AI platforms, maps, or local listings. The best product
 						shouldn&rsquo;t lose to better marketing. Learn more about
 						<a href="<?php echo esc_url( home_url( '/how-it-works/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">how the platform works</a>.
+						We offer <a href="<?php echo esc_url( home_url( '/pricing/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">simple flat-rate plans built for one local business</a>, with no agency and no long-term commitment required.
 					</p>
 				</div>
 			</div>
