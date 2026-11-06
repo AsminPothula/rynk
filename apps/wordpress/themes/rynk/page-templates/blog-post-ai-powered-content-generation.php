@@ -108,7 +108,7 @@ $image_base = get_theme_file_uri( 'assets/img/rynk/' );
 						Google rewards sites that answer questions. A restaurant with only a homepage and a contact page gives Google almost nothing to match to a local search. A restaurant that also has pages covering its menu, its neighbourhood, dietary options, and frequently asked questions gives Google dozens of reasons to surface it. Most small business owners cannot write those pages themselves. AI makes it possible without the time investment.
 					</p>
 					<p class="mt-4 text-[16px] leading-[1.8] text-brand-textMute">
-						AI assistants like ChatGPT, Perplexity, and Google AI Overviews add a second layer. They cite specific pages that contain clear, well-structured answers to common questions. A business with ten well-structured pages is far more likely to appear in those citations than one with a single thin homepage.
+						AI assistants like ChatGPT, Perplexity, and Google AI Overviews add a second layer. They cite specific pages that contain clear, well-structured answers to common questions. A business with ten well-structured pages is far more likely to appear in those citations than one with a single thin homepage. This is exactly what <a href="<?php echo esc_url( home_url( '/blog/answer-engine-optimization/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">answer engine optimization</a> is designed to build.
 					</p>
 				</div>
 				<figure class="mt-6 w-full max-w-sm shrink-0 lg:mt-0 lg:w-64 xl:w-72">
@@ -251,6 +251,9 @@ $image_base = get_theme_file_uri( 'assets/img/rynk/' );
 				</p>
 				<p class="mt-4 text-[16px] leading-[1.8] text-brand-textMute">
 					Rynk combines AI generation with real keyword data, your specific business details, and automated technical optimisation. The result is content that is built to rank, not just content that exists. See <a href="<?php echo esc_url( home_url( '/pricing/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">what it costs</a> to have Rynk handle this for you every month.
+				</p>
+				<p class="mt-4 text-[16px] leading-[1.8] text-brand-textMute">
+					Content generation is also just one part of what makes a site visible to AI tools. Read our guide on <a href="<?php echo esc_url( home_url( '/blog/answer-engine-optimization/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">answer engine optimization for small businesses</a> to see how structured data and question-answer formatting work alongside content to get your business cited by ChatGPT and Perplexity.
 				</p>
 			</div>
 		</div>

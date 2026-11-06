@@ -47,6 +47,10 @@ function rynk_pages(): array {
 			'title'    => 'AI-Powered Content Generation for SEO: What It Is and How Small Businesses Use It',
 			'template' => 'page-templates/blog-post-ai-powered-content-generation.php',
 		),
+		'blog/answer-engine-optimization' => array(
+			'title'    => 'Answer Engine Optimization for Small Business',
+			'template' => 'page-templates/answer-engine-optimization.php',
+		),
 		// Placeholder pages — live until the real destinations ship. The app,
 		// sign-in, and free-scan CTAs all land on a "Coming soon" screen rather
 		// than a dead link.
@@ -95,7 +99,8 @@ function rynk_nav_link_class( string $slug ): string {
 	// Also highlight "Blog" when viewing any blog child page.
 	if ( 'blog' === $slug && (
 		is_page_template( 'page-templates/blog-post-how-to-search-keyword.php' ) ||
-		is_page_template( 'page-templates/blog-post-ai-powered-content-generation.php' )
+		is_page_template( 'page-templates/blog-post-ai-powered-content-generation.php' ) ||
+		is_page_template( 'page-templates/answer-engine-optimization.php' )
 	) ) {
 		$is_active = true;
 	}
@@ -189,6 +194,9 @@ function rynk_about_document_title( string $title ): string {
 	}
 	if ( is_page_template( 'page-templates/blog-post-ai-powered-content-generation.php' ) ) {
 		return 'AI-Powered Content Generation for SEO | Rynk AI';
+	}
+	if ( is_page_template( 'page-templates/answer-engine-optimization.php' ) ) {
+		return 'Answer Engine Optimization for Small Business | Rynk AI';
 	}
 	return $title;
 }
@@ -313,6 +321,8 @@ function rynk_meta_description(): void {
 		$desc = 'Practical guides on SEO, AI search visibility, and getting more customers to find your business online - from the team at Rynk.';
 	} elseif ( is_page_template( 'page-templates/blog-post-ai-powered-content-generation.php' ) ) {
 		$desc = 'AI-powered content generation helps small businesses publish SEO-optimized pages and blog posts automatically. See how Rynk writes and publishes content that ranks on Google and gets cited by AI assistants.';
+	} elseif ( is_page_template( 'page-templates/answer-engine-optimization.php' ) ) {
+		$desc = 'AEO gets your small business cited in ChatGPT, Perplexity, and Google AI Overviews. Rynk automates answer engine optimization for local businesses - no expertise needed.';
 	}
 	if ( '' === $desc ) {
 		return;
@@ -671,6 +681,7 @@ function rynk_serve_sitemap(): void {
 		array( 'loc' => 'https://rynk.ai/blog/', 'priority' => '0.8', 'changefreq' => 'weekly' ),
 		array( 'loc' => 'https://rynk.ai/blog/how-to-search-for-a-keyword-on-a-web-page/', 'priority' => '0.7', 'changefreq' => 'monthly' ),
 		array( 'loc' => 'https://rynk.ai/blog/ai-powered-content-generation-for-seo/', 'priority' => '0.7', 'changefreq' => 'monthly' ),
+		array( 'loc' => 'https://rynk.ai/blog/answer-engine-optimization/', 'priority' => '0.7', 'changefreq' => 'monthly' ),
 	);
 
 	header( 'Content-Type: application/xml; charset=UTF-8', true, 200 );
@@ -724,6 +735,11 @@ function rynk_serve_llms_txt(): void {
 	echo "- [How it works](https://rynk.ai/how-it-works/)\n";
 	echo "- [Pricing](https://rynk.ai/pricing/)\n";
 	echo "- [About](https://rynk.ai/about/)\n\n";
+	echo "## Blog\n\n";
+	echo "- [Blog](https://rynk.ai/blog/)\n";
+	echo "- [Answer Engine Optimization for Small Business](https://rynk.ai/blog/answer-engine-optimization/)\n";
+	echo "- [AI-Powered Content Generation for SEO](https://rynk.ai/blog/ai-powered-content-generation-for-seo/)\n";
+	echo "- [How to Search for a Keyword on a Web Page](https://rynk.ai/blog/how-to-search-for-a-keyword-on-a-web-page/)\n\n";
 	echo "## Optional\n\n";
 	echo "- [Privacy Policy](https://rynk.ai/privacy-policy/)\n";
 
@@ -796,6 +812,28 @@ function rynk_redirect_retired_blog_post(): void {
 	}
 }
 add_action( 'template_redirect', 'rynk_redirect_retired_blog_post' );
+
+/**
+ * 301 redirect /answer-engine-optimization/ to the canonical blog child URL.
+ *
+ * The page was registered under /blog/answer-engine-optimization/. Any traffic
+ * arriving at the root-level path is redirected there permanently.
+ *
+ * @return void
+ */
+function rynk_redirect_aeo_root(): void {
+	if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+		return;
+	}
+
+	$uri = strtok( (string) $_SERVER['REQUEST_URI'], '?' );
+
+	if ( '/answer-engine-optimization/' === $uri ) {
+		wp_redirect( home_url( '/blog/answer-engine-optimization/' ), 301 );
+		exit;
+	}
+}
+add_action( 'template_redirect', 'rynk_redirect_aeo_root' );
 
 /**
  * Inject internal links into blog post content at render time.
@@ -965,7 +1003,7 @@ function rynk_retire_orphaned_pages(): void {
  * Scaffold version. Bump whenever rynk_pages() gains a page so the new pages
  * are created on the next request without a manual theme re-activation.
  */
-const RYNK_SCAFFOLD_VERSION = '8';
+const RYNK_SCAFFOLD_VERSION = '9';
 
 /**
  * Re-run scaffolding once after a deploy that changed the page set.
@@ -1003,6 +1041,14 @@ add_action( 'init', 'rynk_maybe_scaffold_pages' );
  */
 function rynk_blog_articles(): array {
 	return array(
+		array(
+			'path'     => '/blog/answer-engine-optimization/',
+			'title'    => 'Answer Engine Optimization for Small Business',
+			'intro'    => 'For the salon owner, restaurateur, or local service provider who just found out customers are asking ChatGPT for recommendations instead of searching Google.',
+			'label'    => 'Guide',
+			'image'    => 'answer-engine-optimization-1.jpg',
+			'imageAlt' => 'A small restaurant dining room with warm pendant lighting, neatly set tables, no customers yet, calm early-evening atmosphere, shot from just inside the entrance looking in',
+		),
 		array(
 			'path'     => '/blog/how-to-search-for-a-keyword-on-a-web-page/',
 			'title'    => 'How to Search for a Keyword on a Web Page (And What It Tells You About Your SEO)',
