@@ -126,7 +126,7 @@ $image_base = get_theme_file_uri( 'assets/img/rynk/' );
 					Most local SEO tools show you a list of problems and leave you to fix them yourself. Rynk is different: it audits your site, applies the technical fixes directly to your WordPress installation, and publishes the new pages your site needs to rank, all automatically, every month. No dashboard to master, no jargon to decode, no agency to hire.
 				</p>
 				<p class="mt-4 text-[16px] leading-[1.8] text-brand-textMute">
-					Rynk is built specifically for hyperlocal small businesses: salons, spas, restaurants, clinics, auto shops, cleaners, plumbers, and other local service providers with one or a few locations and 1 to 20 employees. If you do great work but your phone is not ringing enough, the gap is almost always online visibility, and Rynk closes it automatically.
+					Rynk is built specifically for hyperlocal small businesses: salons, spas, restaurants, clinics, auto shops, cleaners, plumbers, and other local service providers with one or a few locations and 1 to 20 employees. If you do great work but your phone is not ringing enough, the gap is almost always online visibility, and Rynk closes it automatically. Need the full picture of what that means in practice? See our page on <a href="<?php echo esc_url( home_url( '/automated-seo-for-small-business/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">automated SEO for small business</a>.
 				</p>
 			</div>
 		</div>
@@ -239,7 +239,7 @@ $image_base = get_theme_file_uri( 'assets/img/rynk/' );
 					How Rynk compares to traditional SEO tools
 				</h2>
 				<p class="mt-5 text-[16px] leading-[1.8] text-brand-textMute">
-					Tools like Semrush and Ahrefs are powerful research platforms built for SEO professionals. They show you data and leave the analysis, writing, and fixing to you. Rynk is built for local business owners who do not have that time or background.
+					Tools like Semrush and Ahrefs are powerful research platforms built for SEO professionals. They show you data and leave the analysis, writing, and fixing to you. Rynk is built for local business owners who do not have that time or background. For a deeper look at the full automated workflow, see our guide to <a href="<?php echo esc_url( home_url( '/automated-seo-for-small-business/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">automated SEO for small business</a>.
 				</p>
 
 				<div class="mt-8 grid gap-4 sm:grid-cols-2">

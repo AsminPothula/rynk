@@ -71,7 +71,7 @@ $tint_styles = rynk_tint_styles();
 					The outcomes, up front.
 				</h2>
 				<p class="mt-5 text-[15px] leading-[1.75] text-brand-textMute">
-					Most local businesses are invisible online not because their work is poor, but because their site is missing the technical signals, the content, and the structured information that Google and AI assistants look for. Rynk fixes all three automatically, every month, without you needing to understand any of it. If you are looking for <a href="<?php echo esc_url( home_url( '/local-seo-software/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">local SEO software</a> that does the work for you rather than just reporting on it, Rynk is built for exactly that.
+					Most local businesses are invisible online not because their work is poor, but because their site is missing the technical signals, the content, and the structured information that Google and AI assistants look for. Rynk fixes all three automatically, every month, without you needing to understand any of it. If you are looking for <a href="<?php echo esc_url( home_url( '/local-seo-software/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">local SEO software</a> that does the work for you rather than just reporting on it, Rynk is built for exactly that. We also offer a complete <a href="<?php echo esc_url( home_url( '/automated-seo-for-small-business/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">automated SEO solution for small businesses</a> that covers every step of the process.
 				</p>
 			</div>
 
@@ -272,7 +272,12 @@ $tint_styles = rynk_tint_styles();
 						href="<?php echo esc_url( home_url( '/local-seo-software/' ) ); ?>"
 						class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors"
 					>local SEO software</a>
-					page.
+					page, or read the full breakdown of our
+					<a
+						href="<?php echo esc_url( home_url( '/automated-seo-for-small-business/' ) ); ?>"
+						class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors"
+					>automated SEO for small business</a>
+					workflow.
 				</p>
 			</div>
 		</div>

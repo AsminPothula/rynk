@@ -59,6 +59,10 @@ function rynk_pages(): array {
 			'title'    => 'Local SEO Software for Small Businesses',
 			'template' => 'page-templates/local-seo-software.php',
 		),
+		'automated-seo-for-small-business' => array(
+			'title'    => 'Automated SEO for Small Business',
+			'template' => 'page-templates/automated-seo-for-small-business.php',
+		),
 		// Placeholder pages — live until the real destinations ship. The app,
 		// sign-in, and free-scan CTAs all land on a "Coming soon" screen rather
 		// than a dead link.
@@ -212,6 +216,9 @@ function rynk_about_document_title( string $title ): string {
 	if ( is_page_template( 'page-templates/local-seo-software.php' ) ) {
 		return 'Local SEO Software for Small Businesses | Rynk AI';
 	}
+	if ( is_page_template( 'page-templates/automated-seo-for-small-business.php' ) ) {
+		return 'Automated SEO for Small Business | Rynk AI';
+	}
 	return $title;
 }
 add_filter( 'pre_get_document_title', 'rynk_about_document_title' );
@@ -341,6 +348,8 @@ function rynk_meta_description(): void {
 		$desc = 'GEO helps local businesses get cited in AI-generated answers from ChatGPT, Gemini, and Perplexity. Rynk automates GEO alongside SEO so you rank on Google and AI search.';
 	} elseif ( is_page_template( 'page-templates/local-seo-software.php' ) ) {
 		$desc = 'Rynk is local business SEO software that audits your site, fixes technical issues, and publishes optimized content automatically. No agency, no SEO knowledge needed.';
+	} elseif ( is_page_template( 'page-templates/automated-seo-for-small-business.php' ) ) {
+		$desc = 'Rynk is an automated SEO platform for small businesses. It audits your site, fixes issues, and publishes content automatically every month. No expertise or agency needed.';
 	}
 	if ( '' === $desc ) {
 		return;
@@ -522,6 +531,17 @@ function rynk_structured_data(): void {
 			'@type'       => 'Service',
 			'name'        => 'Local SEO Software for Small Businesses',
 			'description' => 'Rynk is local business SEO software that audits your site, applies technical fixes automatically, and publishes optimized content every month so small local businesses rank higher on Google Maps and Google Search.',
+			'provider'    => array(
+				'@type' => 'Organization',
+				'name'  => 'Rynk AI',
+				'url'   => 'https://rynk.ai/',
+			),
+		),
+		array(
+			'@context'    => 'https://schema.org',
+			'@type'       => 'Service',
+			'name'        => 'Automated SEO for Small Business',
+			'description' => 'Rynk automates the full SEO cycle for small local businesses: monthly audit, technical fixes, keyword-targeted content publishing, and rank tracking - all without any manual work from the business owner.',
 			'provider'    => array(
 				'@type' => 'Organization',
 				'name'  => 'Rynk AI',
@@ -724,6 +744,7 @@ function rynk_serve_sitemap(): void {
 		array( 'loc' => 'https://rynk.ai/blog/answer-engine-optimization/', 'priority' => '0.7', 'changefreq' => 'monthly' ),
 		array( 'loc' => 'https://rynk.ai/generative-engine-optimization/', 'priority' => '0.8', 'changefreq' => 'monthly' ),
 		array( 'loc' => 'https://rynk.ai/local-seo-software/', 'priority' => '0.8', 'changefreq' => 'monthly' ),
+		array( 'loc' => 'https://rynk.ai/automated-seo-for-small-business/', 'priority' => '0.8', 'changefreq' => 'monthly' ),
 	);
 
 	header( 'Content-Type: application/xml; charset=UTF-8', true, 200 );
@@ -778,7 +799,8 @@ function rynk_serve_llms_txt(): void {
 	echo "- [Pricing](https://rynk.ai/pricing/)\n";
 	echo "- [About](https://rynk.ai/about/)\n";
 	echo "- [Generative Engine Optimization](https://rynk.ai/generative-engine-optimization/)\n";
-	echo "- [Local SEO Software for Small Businesses](https://rynk.ai/local-seo-software/)\n\n";
+	echo "- [Local SEO Software for Small Businesses](https://rynk.ai/local-seo-software/)\n";
+	echo "- [Automated SEO for Small Business](https://rynk.ai/automated-seo-for-small-business/)\n\n";
 	echo "## Blog\n\n";
 	echo "- [Blog](https://rynk.ai/blog/)\n";
 	echo "- [Answer Engine Optimization for Small Business](https://rynk.ai/blog/answer-engine-optimization/)\n";
@@ -1047,7 +1069,7 @@ function rynk_retire_orphaned_pages(): void {
  * Scaffold version. Bump whenever rynk_pages() gains a page so the new pages
  * are created on the next request without a manual theme re-activation.
  */
-const RYNK_SCAFFOLD_VERSION = '11';
+const RYNK_SCAFFOLD_VERSION = '12';
 
 /**
  * Re-run scaffolding once after a deploy that changed the page set.
