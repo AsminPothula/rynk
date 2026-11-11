@@ -71,7 +71,7 @@ $tint_styles = rynk_tint_styles();
 					The outcomes, up front.
 				</h2>
 				<p class="mt-5 text-[15px] leading-[1.75] text-brand-textMute">
-					Most local businesses are invisible online not because their work is poor, but because their site is missing the technical signals, the content, and the structured information that Google and AI assistants look for. Rynk fixes all three automatically, every month, without you needing to understand any of it.
+					Most local businesses are invisible online not because their work is poor, but because their site is missing the technical signals, the content, and the structured information that Google and AI assistants look for. Rynk fixes all three automatically, every month, without you needing to understand any of it. If you are looking for <a href="<?php echo esc_url( home_url( '/local-seo-software/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">local SEO software</a> that does the work for you rather than just reporting on it, Rynk is built for exactly that.
 				</p>
 			</div>
 
@@ -267,7 +267,12 @@ $tint_styles = rynk_tint_styles();
 						href="<?php echo esc_url( home_url( '/blog/ai-powered-content-generation-for-seo/' ) ); ?>"
 						class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors"
 					>AI-powered content generation</a>
-					feeds directly into your rankings.
+					feeds directly into your rankings. Need a local SEO platform that handles everything for you? See our dedicated
+					<a
+						href="<?php echo esc_url( home_url( '/local-seo-software/' ) ); ?>"
+						class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors"
+					>local SEO software</a>
+					page.
 				</p>
 			</div>
 		</div>
