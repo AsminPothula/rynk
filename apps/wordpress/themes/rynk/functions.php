@@ -59,9 +59,9 @@ function rynk_pages(): array {
 			'title'    => 'Local SEO Software for Small Businesses',
 			'template' => 'page-templates/local-seo-software.php',
 		),
-		'automated-seo-for-small-business' => array(
-			'title'    => 'Automated SEO for Small Business',
-			'template' => 'page-templates/automated-seo-for-small-business.php',
+		'ai-content-strategy' => array(
+			'title'    => 'AI Content Strategy for Small Business',
+			'template' => 'page-templates/ai-content-strategy.php',
 		),
 		// Placeholder pages — live until the real destinations ship. The app,
 		// sign-in, and free-scan CTAs all land on a "Coming soon" screen rather
@@ -216,8 +216,8 @@ function rynk_about_document_title( string $title ): string {
 	if ( is_page_template( 'page-templates/local-seo-software.php' ) ) {
 		return 'Local SEO Software for Small Businesses | Rynk AI';
 	}
-	if ( is_page_template( 'page-templates/automated-seo-for-small-business.php' ) ) {
-		return 'Automated SEO for Small Business | Rynk AI';
+	if ( is_page_template( 'page-templates/ai-content-strategy.php' ) ) {
+		return 'AI Content Strategy for Small Business | Rynk AI';
 	}
 	return $title;
 }
@@ -348,8 +348,8 @@ function rynk_meta_description(): void {
 		$desc = 'GEO helps local businesses get cited in AI-generated answers from ChatGPT, Gemini, and Perplexity. Rynk automates GEO alongside SEO so you rank on Google and AI search.';
 	} elseif ( is_page_template( 'page-templates/local-seo-software.php' ) ) {
 		$desc = 'Rynk is local business SEO software that audits your site, fixes technical issues, and publishes optimized content automatically. No agency, no SEO knowledge needed.';
-	} elseif ( is_page_template( 'page-templates/automated-seo-for-small-business.php' ) ) {
-		$desc = 'Rynk is an automated SEO platform for small businesses. It audits your site, fixes issues, and publishes content automatically every month. No expertise or agency needed.';
+	} elseif ( is_page_template( 'page-templates/ai-content-strategy.php' ) ) {
+		$desc = 'Rynk builds and executes an AI content strategy for your small business automatically - keyword research, writing, and publishing included. No time or expertise needed.';
 	}
 	if ( '' === $desc ) {
 		return;
@@ -469,6 +469,7 @@ function rynk_structured_data(): void {
 				'On-page optimization',
 				'Structured data and schema markup',
 				'AI content generation and publishing',
+				'AI content strategy',
 				'Answer Engine Optimization (AEO)',
 				'Generative Engine Optimization (GEO)',
 				'Local SEO and Google Business Profile optimization',
@@ -507,8 +508,8 @@ function rynk_structured_data(): void {
 		array(
 			'@context'    => 'https://schema.org',
 			'@type'       => 'Service',
-			'name'        => 'Structured Data, AI Content Generation, and Answer Engine Optimization',
-			'description' => 'Rynk generates and publishes structured data schema markup, creates AI-optimized content, and implements Answer Engine Optimization (AEO) strategies so your business gets cited in ChatGPT, Perplexity, Google AI Overviews, and other AI assistants.',
+			'name'        => 'AI Content Strategy, Content Generation, and Answer Engine Optimization',
+			'description' => 'Rynk builds and executes a complete AI content strategy for small businesses - researching keywords, writing optimized pages and blog posts, adding schema markup, and publishing content automatically every month so businesses rank on Google and get cited by AI assistants.',
 			'provider'    => array(
 				'@type' => 'Organization',
 				'name'  => 'Rynk AI',
@@ -531,17 +532,6 @@ function rynk_structured_data(): void {
 			'@type'       => 'Service',
 			'name'        => 'Local SEO Software for Small Businesses',
 			'description' => 'Rynk is local business SEO software that audits your site, applies technical fixes automatically, and publishes optimized content every month so small local businesses rank higher on Google Maps and Google Search.',
-			'provider'    => array(
-				'@type' => 'Organization',
-				'name'  => 'Rynk AI',
-				'url'   => 'https://rynk.ai/',
-			),
-		),
-		array(
-			'@context'    => 'https://schema.org',
-			'@type'       => 'Service',
-			'name'        => 'Automated SEO for Small Business',
-			'description' => 'Rynk automates the full SEO cycle for small local businesses: monthly audit, technical fixes, keyword-targeted content publishing, and rank tracking - all without any manual work from the business owner.',
 			'provider'    => array(
 				'@type' => 'Organization',
 				'name'  => 'Rynk AI',
@@ -744,7 +734,7 @@ function rynk_serve_sitemap(): void {
 		array( 'loc' => 'https://rynk.ai/blog/answer-engine-optimization/', 'priority' => '0.7', 'changefreq' => 'monthly' ),
 		array( 'loc' => 'https://rynk.ai/generative-engine-optimization/', 'priority' => '0.8', 'changefreq' => 'monthly' ),
 		array( 'loc' => 'https://rynk.ai/local-seo-software/', 'priority' => '0.8', 'changefreq' => 'monthly' ),
-		array( 'loc' => 'https://rynk.ai/automated-seo-for-small-business/', 'priority' => '0.8', 'changefreq' => 'monthly' ),
+		array( 'loc' => 'https://rynk.ai/ai-content-strategy/', 'priority' => '0.8', 'changefreq' => 'monthly' ),
 	);
 
 	header( 'Content-Type: application/xml; charset=UTF-8', true, 200 );
@@ -800,7 +790,7 @@ function rynk_serve_llms_txt(): void {
 	echo "- [About](https://rynk.ai/about/)\n";
 	echo "- [Generative Engine Optimization](https://rynk.ai/generative-engine-optimization/)\n";
 	echo "- [Local SEO Software for Small Businesses](https://rynk.ai/local-seo-software/)\n";
-	echo "- [Automated SEO for Small Business](https://rynk.ai/automated-seo-for-small-business/)\n\n";
+	echo "- [AI Content Strategy for Small Business](https://rynk.ai/ai-content-strategy/)\n\n";
 	echo "## Blog\n\n";
 	echo "- [Blog](https://rynk.ai/blog/)\n";
 	echo "- [Answer Engine Optimization for Small Business](https://rynk.ai/blog/answer-engine-optimization/)\n";
