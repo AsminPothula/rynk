@@ -63,6 +63,10 @@ function rynk_pages(): array {
 			'title'    => 'AI Content Strategy for Small Business',
 			'template' => 'page-templates/ai-content-strategy.php',
 		),
+		'why-isnt-my-business-showing-up-on-google' => array(
+			'title'    => 'Why Isn\'t My Business Showing Up on Google?',
+			'template' => 'page-templates/why-isnt-my-business-showing-up-on-google.php',
+		),
 		// Placeholder pages — live until the real destinations ship. The app,
 		// sign-in, and free-scan CTAs all land on a "Coming soon" screen rather
 		// than a dead link.
@@ -219,6 +223,9 @@ function rynk_about_document_title( string $title ): string {
 	if ( is_page_template( 'page-templates/ai-content-strategy.php' ) ) {
 		return 'AI Content Strategy for Small Business | Rynk AI';
 	}
+	if ( is_page_template( 'page-templates/why-isnt-my-business-showing-up-on-google.php' ) ) {
+		return 'Why Isn\'t My Business Showing Up on Google? | Rynk AI';
+	}
 	return $title;
 }
 add_filter( 'pre_get_document_title', 'rynk_about_document_title' );
@@ -350,6 +357,8 @@ function rynk_meta_description(): void {
 		$desc = 'Rynk is local business SEO software that audits your site, fixes technical issues, and publishes optimized content automatically. No agency, no SEO knowledge needed.';
 	} elseif ( is_page_template( 'page-templates/ai-content-strategy.php' ) ) {
 		$desc = 'Rynk builds and executes an AI content strategy for your small business automatically - keyword research, writing, and publishing included. No time or expertise needed.';
+	} elseif ( is_page_template( 'page-templates/why-isnt-my-business-showing-up-on-google.php' ) ) {
+		$desc = 'If your business isn\'t showing up on Google, here are the most common reasons why - and how Rynk fixes them automatically for small local businesses.';
 	}
 	if ( '' === $desc ) {
 		return;
@@ -735,6 +744,7 @@ function rynk_serve_sitemap(): void {
 		array( 'loc' => 'https://rynk.ai/generative-engine-optimization/', 'priority' => '0.8', 'changefreq' => 'monthly' ),
 		array( 'loc' => 'https://rynk.ai/local-seo-software/', 'priority' => '0.8', 'changefreq' => 'monthly' ),
 		array( 'loc' => 'https://rynk.ai/ai-content-strategy/', 'priority' => '0.8', 'changefreq' => 'monthly' ),
+		array( 'loc' => 'https://rynk.ai/why-isnt-my-business-showing-up-on-google/', 'priority' => '0.8', 'changefreq' => 'monthly' ),
 	);
 
 	header( 'Content-Type: application/xml; charset=UTF-8', true, 200 );
@@ -790,7 +800,8 @@ function rynk_serve_llms_txt(): void {
 	echo "- [About](https://rynk.ai/about/)\n";
 	echo "- [Generative Engine Optimization](https://rynk.ai/generative-engine-optimization/)\n";
 	echo "- [Local SEO Software for Small Businesses](https://rynk.ai/local-seo-software/)\n";
-	echo "- [AI Content Strategy for Small Business](https://rynk.ai/ai-content-strategy/)\n\n";
+	echo "- [AI Content Strategy for Small Business](https://rynk.ai/ai-content-strategy/)\n";
+	echo "- [Why Isn't My Business Showing Up on Google?](https://rynk.ai/why-isnt-my-business-showing-up-on-google/)\n\n";
 	echo "## Blog\n\n";
 	echo "- [Blog](https://rynk.ai/blog/)\n";
 	echo "- [Answer Engine Optimization for Small Business](https://rynk.ai/blog/answer-engine-optimization/)\n";
@@ -1059,7 +1070,7 @@ function rynk_retire_orphaned_pages(): void {
  * Scaffold version. Bump whenever rynk_pages() gains a page so the new pages
  * are created on the next request without a manual theme re-activation.
  */
-const RYNK_SCAFFOLD_VERSION = '12';
+const RYNK_SCAFFOLD_VERSION = '13';
 
 /**
  * Re-run scaffolding once after a deploy that changed the page set.
