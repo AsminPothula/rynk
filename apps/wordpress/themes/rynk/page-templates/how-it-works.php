@@ -54,7 +54,7 @@ $tint_styles = rynk_tint_styles();
 				class="mt-6 text-[16px] leading-[1.75] text-brand-textMute animate-rise"
 				style="animation-delay: 160ms;"
 			>
-				Rynk runs four steps on autopilot: audit, fix, generate, and monitor. Every month, your site gets stronger on Google and more visible to AI assistants like ChatGPT and Perplexity.
+				Rynk runs four steps on autopilot: audit, fix, generate, and monitor. Every month, your site gets stronger on Google and more visible to AI assistants like ChatGPT and Perplexity, including through <a href="<?php echo esc_url( home_url( '/generative-engine-optimization/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">generative engine optimization</a>.
 				Ready to get started? <a href="<?php echo esc_url( home_url( '/pricing/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">See Rynk pricing plans.</a>
 			</p>
 		</div>
@@ -183,7 +183,7 @@ $tint_styles = rynk_tint_styles();
 							Why Google and AI assistants both matter now.
 						</h2>
 						<p class="mt-5 text-[15px] leading-[1.75] text-brand-textMute">
-							More customers are getting recommendations from ChatGPT, Perplexity, and Google AI Overviews before they ever click a search result. Most SEO tools optimise for one or the other. Rynk optimises for both in every cycle, building the trust signals AI assistants look for alongside the technical signals Google requires.
+							More customers are getting recommendations from ChatGPT, Perplexity, and Google AI Overviews before they ever click a search result. Most SEO tools optimise for one or the other. Rynk optimises for both in every cycle, building the trust signals AI assistants look for alongside the technical signals Google requires. That includes full <a href="<?php echo esc_url( home_url( '/generative-engine-optimization/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">generative engine optimization</a> as part of every monthly workflow.
 						</p>
 					</div>
 					<div class="grid gap-3 sm:grid-cols-2">
@@ -252,7 +252,12 @@ $tint_styles = rynk_tint_styles();
 						href="<?php echo esc_url( home_url( '/blog/answer-engine-optimization/' ) ); ?>"
 						class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors"
 					>answer engine optimization for small businesses</a>
-					to understand how Rynk makes your site visible in ChatGPT and AI Overviews. Or dive into
+					to understand how Rynk makes your site visible in ChatGPT and AI Overviews, or learn about the broader practice of
+					<a
+						href="<?php echo esc_url( home_url( '/generative-engine-optimization/' ) ); ?>"
+						class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors"
+					>generative engine optimization</a>.
+					You can also dive into
 					<a
 						href="<?php echo esc_url( home_url( '/blog/how-to-search-for-a-keyword-on-a-web-page/' ) ); ?>"
 						class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors"
@@ -260,4 +265,15 @@ $tint_styles = rynk_tint_styles();
 					and see how
 					<a
 						href="<?php echo esc_url( home_url( '/blog/ai-powered-content-generation-for-seo/' ) ); ?>"
-						class="text-brand-blueSoft underline underline-
+						class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors"
+					>AI-powered content generation</a>
+					feeds directly into your rankings.
+				</p>
+			</div>
+		</div>
+	</section>
+
+</div>
+
+<?php
+get_footer();

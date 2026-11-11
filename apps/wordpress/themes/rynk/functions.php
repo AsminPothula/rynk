@@ -51,6 +51,10 @@ function rynk_pages(): array {
 			'title'    => 'Answer Engine Optimization for Small Business',
 			'template' => 'page-templates/answer-engine-optimization.php',
 		),
+		'generative-engine-optimization' => array(
+			'title'    => 'Generative Engine Optimization (GEO) for Local Businesses',
+			'template' => 'page-templates/generative-engine-optimization.php',
+		),
 		// Placeholder pages — live until the real destinations ship. The app,
 		// sign-in, and free-scan CTAs all land on a "Coming soon" screen rather
 		// than a dead link.
@@ -198,6 +202,9 @@ function rynk_about_document_title( string $title ): string {
 	if ( is_page_template( 'page-templates/answer-engine-optimization.php' ) ) {
 		return 'Answer Engine Optimization for Small Business | Rynk AI';
 	}
+	if ( is_page_template( 'page-templates/generative-engine-optimization.php' ) ) {
+		return 'Generative Engine Optimization (GEO) for Local Businesses | Rynk AI';
+	}
 	return $title;
 }
 add_filter( 'pre_get_document_title', 'rynk_about_document_title' );
@@ -323,6 +330,8 @@ function rynk_meta_description(): void {
 		$desc = 'AI-powered content generation helps small businesses publish SEO-optimized pages and blog posts automatically. See how Rynk writes and publishes content that ranks on Google and gets cited by AI assistants.';
 	} elseif ( is_page_template( 'page-templates/answer-engine-optimization.php' ) ) {
 		$desc = 'AEO gets your small business cited in ChatGPT, Perplexity, and Google AI Overviews. Rynk automates answer engine optimization for local businesses - no expertise needed.';
+	} elseif ( is_page_template( 'page-templates/generative-engine-optimization.php' ) ) {
+		$desc = 'GEO helps local businesses get cited in AI-generated answers from ChatGPT, Gemini, and Perplexity. Rynk automates GEO alongside SEO so you rank on Google and AI search.';
 	}
 	if ( '' === $desc ) {
 		return;
@@ -482,6 +491,17 @@ function rynk_structured_data(): void {
 			'@type'       => 'Service',
 			'name'        => 'Structured Data, AI Content Generation, and Answer Engine Optimization',
 			'description' => 'Rynk generates and publishes structured data schema markup, creates AI-optimized content, and implements Answer Engine Optimization (AEO) strategies so your business gets cited in ChatGPT, Perplexity, Google AI Overviews, and other AI assistants.',
+			'provider'    => array(
+				'@type' => 'Organization',
+				'name'  => 'Rynk AI',
+				'url'   => 'https://rynk.ai/',
+			),
+		),
+		array(
+			'@context'    => 'https://schema.org',
+			'@type'       => 'Service',
+			'name'        => 'Generative Engine Optimization (GEO)',
+			'description' => 'Rynk automates generative engine optimization for local businesses, building the structured content, schema markup, and credibility signals that AI platforms like ChatGPT, Gemini, and Perplexity use to cite businesses in generated answers.',
 			'provider'    => array(
 				'@type' => 'Organization',
 				'name'  => 'Rynk AI',
@@ -682,6 +702,7 @@ function rynk_serve_sitemap(): void {
 		array( 'loc' => 'https://rynk.ai/blog/how-to-search-for-a-keyword-on-a-web-page/', 'priority' => '0.7', 'changefreq' => 'monthly' ),
 		array( 'loc' => 'https://rynk.ai/blog/ai-powered-content-generation-for-seo/', 'priority' => '0.7', 'changefreq' => 'monthly' ),
 		array( 'loc' => 'https://rynk.ai/blog/answer-engine-optimization/', 'priority' => '0.7', 'changefreq' => 'monthly' ),
+		array( 'loc' => 'https://rynk.ai/generative-engine-optimization/', 'priority' => '0.8', 'changefreq' => 'monthly' ),
 	);
 
 	header( 'Content-Type: application/xml; charset=UTF-8', true, 200 );
@@ -734,7 +755,8 @@ function rynk_serve_llms_txt(): void {
 	echo "- [Home](https://rynk.ai/)\n";
 	echo "- [How it works](https://rynk.ai/how-it-works/)\n";
 	echo "- [Pricing](https://rynk.ai/pricing/)\n";
-	echo "- [About](https://rynk.ai/about/)\n\n";
+	echo "- [About](https://rynk.ai/about/)\n";
+	echo "- [Generative Engine Optimization](https://rynk.ai/generative-engine-optimization/)\n\n";
 	echo "## Blog\n\n";
 	echo "- [Blog](https://rynk.ai/blog/)\n";
 	echo "- [Answer Engine Optimization for Small Business](https://rynk.ai/blog/answer-engine-optimization/)\n";
@@ -1003,7 +1025,7 @@ function rynk_retire_orphaned_pages(): void {
  * Scaffold version. Bump whenever rynk_pages() gains a page so the new pages
  * are created on the next request without a manual theme re-activation.
  */
-const RYNK_SCAFFOLD_VERSION = '9';
+const RYNK_SCAFFOLD_VERSION = '10';
 
 /**
  * Re-run scaffolding once after a deploy that changed the page set.

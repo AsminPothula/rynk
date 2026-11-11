@@ -93,7 +93,7 @@ $image_base = get_theme_file_uri( 'assets/img/rynk/' );
 					Here is the gap that matters: research from the SOCi 2026 Local Visibility Index found that ChatGPT recommends only about 1.2 percent of local business locations. That means 98 percent of local businesses, including most of your competitors, are completely invisible when a customer asks an AI assistant for a recommendation. Rynk is built to put you in the 1.2 percent.
 				</p>
 				<p class="mt-4 text-[16px] leading-[1.8] text-brand-textMute">
-					To understand the full picture of how Rynk handles both traditional rankings and AI visibility, read the <a href="<?php echo esc_url( home_url( '/how-it-works/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">how it works page</a>.
+					AEO sits alongside <a href="<?php echo esc_url( home_url( '/generative-engine-optimization/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">generative engine optimization (GEO)</a>, which is the broader practice of making your content easy for AI systems to find, understand, and include in generated responses. Rynk automates both. To understand the full picture of how Rynk handles both traditional rankings and AI visibility, read the <a href="<?php echo esc_url( home_url( '/how-it-works/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">how it works page</a>.
 				</p>
 			</div>
 		</div>
@@ -187,7 +187,7 @@ $image_base = get_theme_file_uri( 'assets/img/rynk/' );
 					SEO gets your pages ranked in Google's list of links. AEO gets your business cited as the answer. A local business with strong SEO but no AEO will rank on Google but stay invisible in ChatGPT, Perplexity, and AI Overviews. Rynk is one of the few platforms that handles both in a single automated workflow, with no extra tool, no extra agency, and no extra cost.
 				</p>
 				<p class="mt-4 text-[16px] leading-[1.8] text-brand-textMute">
-					See how <a href="<?php echo esc_url( home_url( '/blog/ai-powered-content-generation-for-seo/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">AI-powered content generation</a> feeds directly into your AEO signals, and how the content Rynk publishes each month is formatted specifically to be cited by AI assistants.
+					See how <a href="<?php echo esc_url( home_url( '/blog/ai-powered-content-generation-for-seo/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">AI-powered content generation</a> feeds directly into your AEO signals, and how the content Rynk publishes each month is formatted specifically to be cited by AI assistants. For the broader practice of AI content visibility, also read our guide on <a href="<?php echo esc_url( home_url( '/generative-engine-optimization/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">generative engine optimization</a>.
 				</p>
 
 				<?php // Comparison grid. ?>
