@@ -126,7 +126,7 @@ $image_base = get_theme_file_uri( 'assets/img/rynk/' );
 					Most local SEO tools show you a list of problems and leave you to fix them yourself. Rynk is different: it audits your site, applies the technical fixes directly to your WordPress installation, and publishes the new pages your site needs to rank, all automatically, every month. No dashboard to master, no jargon to decode, no agency to hire.
 				</p>
 				<p class="mt-4 text-[16px] leading-[1.8] text-brand-textMute">
-					Rynk is built specifically for hyperlocal small businesses: salons, spas, restaurants, clinics, auto shops, cleaners, plumbers, and other local service providers with one or a few locations and 1 to 20 employees. If you do great work but your phone is not ringing enough, the gap is almost always online visibility, and Rynk closes it automatically.
+					Rynk is built specifically for hyperlocal small businesses: salons, spas, restaurants, clinics, auto shops, cleaners, plumbers, and other local service providers with one or a few locations and 1 to 20 employees. If you do great work but your phone is not ringing enough, the gap is almost always online visibility, and Rynk closes it automatically. If you run a restaurant, our dedicated guide on <a href="<?php echo esc_url( home_url( '/seo-for-restaurants/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">SEO for restaurants</a> covers the specific signals that get food businesses found on Google and in AI recommendations.
 				</p>
 			</div>
 		</div>
@@ -210,57 +210,54 @@ $image_base = get_theme_file_uri( 'assets/img/rynk/' );
 						Rynk is scoped and priced for a single local business, not an agency managing dozens of clients or an enterprise with a dedicated SEO team. The Gold plan at $149 per month covers everything a local business needs to compete on Google and AI search. The Platinum plan at $299 per month doubles the page output and adds bi-weekly tracking for businesses that want to close the gap on competitors faster.
 					</p>
 					<p class="mt-4 text-[16px] leading-[1.8] text-brand-textMute">
-						Because Rynk automates both traditional SEO and <a href="<?php echo esc_url( home_url( '/generative-engine-optimization/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">generative engine optimization</a>, your business gets found on Google and in AI-generated answers from ChatGPT and Perplexity, in a single platform at a single price. Rynk also handles your full <a href="<?php echo esc_url( home_url( '/ai-content-strategy/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">AI content strategy</a> as part of the same monthly subscription.
-					</p>
-					<p class="mt-4 text-[16px] leading-[1.8] text-brand-textMute">
-						If your site is not showing up on Google at all and you want to understand why, read our guide on <a href="<?php echo esc_url( home_url( '/why-isnt-my-business-showing-up-on-google/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">why your business isn't showing up on Google</a> before you start comparing tools.
+						Because Rynk automates both traditional SEO and <a href="<?php echo esc_url( home_url( '/generative-engine-optimization/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">generative engine optimization</a>, your business gets found on Google and in AI-generated answers from ChatGPT and Perplexity, in a single platform at a single price. Rynk also handles your full <a href="<?php echo esc_url( home_url( '/ai-content-strategy/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">AI content strategy</a>, researching and publishing the pages your site needs every month without you writing a word.
 					</p>
 				</div>
 				<figure class="mt-6 w-full max-w-sm shrink-0 lg:mt-0 lg:w-64 xl:w-72">
 					<div class="aspect-[4/3] w-full overflow-hidden rounded-2xl ring-1 ring-white/10">
 						<img
 							src="<?php echo esc_url( $image_base . 'local-seo-software-2.jpg' ); ?>"
-							alt="A clean nail salon station with a cushioned work surface, organized tool tray, and small potted plant, warm ambient light, no clients or technicians present"
+							alt="A clean barbershop with two leather barber chairs, a mirrored wall with product shelves, warm pendant lighting, no people, shot from the doorway"
 							class="block h-full w-full object-cover"
 							loading="lazy"
 							decoding="async"
 						/>
 					</div>
 					<figcaption class="mt-2 text-center font-mono text-[11px] uppercase tracking-[0.14em] text-brand-textMute">
-						Rynk builds the local SEO signals that put service businesses like nail salons above competitors in Maps and Search.
+						Rynk is priced for one location, one owner, no agency markup.
 					</figcaption>
 				</figure>
 			</div>
 		</div>
 	</section>
 
-	<?php // H2: Rynk vs reporting tools. ?>
+	<?php // H2: Comparison. ?>
 	<section class="px-6 py-8 md:px-10 md:py-10">
 		<div class="mx-auto max-w-screen-xl">
 			<div class="mx-auto max-w-3xl">
 				<h2 class="font-serif text-3xl md:text-4xl font-medium tracking-tight text-brand-text">
-					Rynk vs local SEO reporting tools
+					How Rynk compares to other local SEO tools
 				</h2>
 				<p class="mt-5 text-[16px] leading-[1.8] text-brand-textMute">
-					Most local SEO software tells you what is wrong. Rynk fixes it. That is the core difference.
+					Most tools on the market are built for agencies or marketing teams with the time and expertise to act on a report. Rynk is built for the opposite: a business owner who needs the work done, not just diagnosed.
 				</p>
 
 				<div class="mt-8 grid gap-4 sm:grid-cols-2">
 					<div class="rounded-2xl bg-white/[0.03] ring-1 ring-brand-blue/20 p-6">
 						<div class="flex items-center gap-2 mb-3">
 							<span class="h-2 w-2 shrink-0 rounded-full bg-brand-blue/60" aria-hidden="true"></span>
-							<span class="font-serif text-[16px] font-medium text-brand-blueSoft">Reporting tools</span>
+							<span class="font-serif text-[16px] font-medium text-brand-blueSoft">Other SEO tools</span>
 						</div>
 						<ul class="space-y-2">
 							<?php
-							$reporting = array(
-								'Show you a list of issues to fix',
-								'Leave the technical work to you or a developer',
-								'Require SEO knowledge to interpret',
-								'Do not write or publish content',
-								'Built for agencies, not local owners',
+							$other_points = array(
+								'Show you a report of problems',
+								'Leave the fixing and writing to you',
+								'Require SEO knowledge to use effectively',
+								'Built for agencies, not one local business',
+								'Do not publish content to your site',
 							);
-							foreach ( $reporting as $pt ) :
+							foreach ( $other_points as $pt ) :
 							?>
 								<li class="flex items-start gap-2 text-[13.5px] leading-relaxed text-brand-textMute">
 									<?php echo rynk_icon( 'check', 'mt-0.5 h-4 w-4 shrink-0 text-brand-blueSoft' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -277,11 +274,11 @@ $image_base = get_theme_file_uri( 'assets/img/rynk/' );
 						<ul class="space-y-2">
 							<?php
 							$rynk_points = array(
-								'Applies fixes directly to your WordPress site',
-								'No developer or SEO knowledge needed',
-								'Writes and publishes optimized pages each month',
-								'Flat monthly price starting at $149',
+								'Applies fixes and publishes content automatically',
+								'Requires no SEO knowledge at all',
 								'Built for one local business owner',
+								'Flat monthly price starting at $149',
+								'Optimizes for Google and AI assistants together',
 							);
 							foreach ( $rynk_points as $pt ) :
 							?>
@@ -308,7 +305,7 @@ $image_base = get_theme_file_uri( 'assets/img/rynk/' );
 				<div class="relative flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
 					<div>
 						<h2 class="font-serif text-3xl md:text-4xl font-medium tracking-tight text-brand-text">
-							Connect your site and Rynk handles your local SEO from this month.
+							Connect your site and Rynk starts immediately.
 						</h2>
 						<p class="mt-2 text-[15px] leading-[1.7] text-brand-textMute">
 							No setup calls, no contracts, no waiting. The first audit begins the moment you connect.
@@ -356,12 +353,12 @@ $image_base = get_theme_file_uri( 'assets/img/rynk/' );
 							'a' => 'No. Rynk is built for local business owners with no SEO background. You connect your website, and Rynk handles the auditing, fixing, writing, and publishing. There is nothing to configure and no reports to interpret.',
 						),
 						array(
-							'q' => 'Why isn\'t my local business showing up on Google Maps?',
-							'a' => 'The most common reasons are an incomplete Google Business Profile, missing or inconsistent business information across the web, thin website content, and no schema markup. Rynk audits for all of these gaps and applies fixes automatically. For a full breakdown, see our guide on why your business is not showing up on Google.',
+							'q' => 'Does Rynk work for restaurants and food businesses?',
+							'a' => 'Yes. Rynk works for any local service business, including restaurants, cafes, and food service providers. It adds Restaurant and Menu schema markup, publishes pages targeting cuisine-specific and occasion-based searches, and reinforces your Google Business Profile signals. See our dedicated guide on SEO for restaurants for more detail.',
 						),
 						array(
-							'q' => 'Can local SEO software also help me show up in AI search?',
-							'a' => 'Rynk is one of the few local SEO platforms that also handles AI search visibility alongside traditional Google optimization. It builds the schema markup, structured content, and answer-formatted pages that ChatGPT, Perplexity, and Google AI Overviews use to recommend local businesses. Both are covered in the same monthly subscription.',
+							'q' => 'What is the difference between local SEO and regular SEO?',
+							'a' => 'Local SEO focuses on ranking your business in searches with geographic intent, such as "plumber near me" or "best Thai restaurant in Austin." It includes Google Business Profile optimization, local keyword targeting, and location-specific schema markup. Rynk covers both local SEO and broader on-page SEO in the same monthly cycle.',
 						),
 					);
 					foreach ( $faqs as $faq ) :

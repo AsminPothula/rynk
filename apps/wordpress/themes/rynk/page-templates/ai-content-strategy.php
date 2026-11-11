@@ -143,7 +143,7 @@ $image_base = get_theme_file_uri( 'assets/img/rynk/' );
 					When a customer searches "best Thai restaurant near me" or asks ChatGPT which plumber to call, the businesses that show up have one thing in common: more relevant, well-structured pages than their competitors. An AI content strategy closes that gap by producing those pages automatically, targeting the exact keywords your customers use and formatting them so both Google and AI assistants can easily find and cite them.
 				</p>
 				<p class="mt-4 text-[16px] leading-[1.8] text-brand-textMute">
-					This is the same practice that larger businesses pay agencies tens of thousands of dollars a year to manage. Rynk brings it to a local small business at a flat monthly price, with no writing, no uploading, and no SEO expertise required from you. For more on how the content fits into the broader SEO picture, see the <a href="<?php echo esc_url( home_url( '/how-it-works/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">how it works page</a>.
+					This is the same practice that larger businesses pay agencies tens of thousands of dollars a year to manage. Rynk brings it to a local small business at a flat monthly price, with no writing, no uploading, and no SEO expertise required from you. For more on how the content fits into the broader SEO picture, see the <a href="<?php echo esc_url( home_url( '/how-it-works/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">how it works page</a>. If you run a restaurant, our guide on <a href="<?php echo esc_url( home_url( '/seo-for-restaurants/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">SEO for restaurants</a> shows how Rynk applies content strategy to the specific searches that bring diners through the door.
 				</p>
 			</div>
 		</div>
@@ -246,7 +246,7 @@ $image_base = get_theme_file_uri( 'assets/img/rynk/' );
 					The same content also feeds AI visibility. ChatGPT, Perplexity, and Google AI Overviews cite pages that contain clearly structured, direct answers to real questions. Rynk formats every published page with this in mind: FAQ sections with direct answers, schema markup that tells AI assistants what the page is about, and local keyword signals that anchor your business to your area. This is exactly what powers <a href="<?php echo esc_url( home_url( '/blog/answer-engine-optimization/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">answer engine optimization</a> for local businesses.
 				</p>
 				<p class="mt-4 text-[16px] leading-[1.8] text-brand-textMute">
-					If you are evaluating <a href="<?php echo esc_url( home_url( '/local-seo-software/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">local SEO software</a> options, Rynk is one of the few platforms that includes content strategy, writing, and publishing in the same monthly subscription as technical SEO. Most tools report on what is missing and leave the content work to you.
+					If you are evaluating <a href="<?php echo esc_url( home_url( '/local-seo-software/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">local SEO software</a> options, Rynk is one of the few platforms that includes content strategy, writing, and publishing in the same monthly subscription as technical SEO. Most tools report on what is missing and leave the content work to you. For restaurant owners specifically, Rynk also publishes the pages that answer dining searches, covered in detail in our guide on <a href="<?php echo esc_url( home_url( '/seo-for-restaurants/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">SEO for restaurants</a>.
 				</p>
 			</div>
 		</div>
@@ -291,99 +291,4 @@ $image_base = get_theme_file_uri( 'assets/img/rynk/' );
 					?>
 						<div class="rounded-2xl bg-white/[0.03] ring-1 ring-white/10 p-5">
 							<p class="font-serif text-[15px] font-medium text-brand-text"><?php echo esc_html( $feat['label'] ); ?></p>
-							<p class="mt-1.5 text-[13.5px] leading-relaxed text-brand-textMute"><?php echo esc_html( $feat['body'] ); ?></p>
-						</div>
-					<?php endforeach; ?>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<?php // CTA BANNER. ?>
-	<section class="relative px-6 py-10 md:px-10 md:py-12">
-		<div class="mx-auto max-w-screen-xl">
-			<div class="relative overflow-hidden rounded-[28px] bg-white/[0.02] ring-1 ring-white/8 px-8 py-10 md:px-12 md:py-12">
-				<div
-					aria-hidden="true"
-					class="pointer-events-none absolute -top-20 right-16 h-72 w-72 rounded-full bg-brand-violet/15 blur-3xl animate-float-slow"
-				></div>
-				<div class="relative flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
-					<div>
-						<h2 class="font-serif text-3xl md:text-4xl font-medium tracking-tight text-brand-text">
-							Rynk researches, writes, and publishes your content every month.
-						</h2>
-						<p class="mt-2 text-[15px] leading-[1.7] text-brand-textMute">
-							Enter your site URL to see what it would create for you, no writing or expertise needed.
-						</p>
-					</div>
-					<div class="shrink-0">
-						<a
-							href="<?php echo esc_url( rynk_app_url( '/sign-up' ) ); ?>"
-							class="group inline-flex h-12 items-center gap-2.5 rounded-full bg-white px-7 font-serif text-[16px] font-medium text-brand-ink transition-all hover:shadow-[0_14px_36px_-14px_rgba(255,255,255,0.4)]"
-						>
-							Get started
-							<?php echo rynk_icon( 'arrow-right', 'h-4 w-4 transition-transform group-hover:translate-x-0.5' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-						</a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<?php // FAQ. ?>
-	<section class="relative px-6 py-10 md:px-10 md:py-12">
-		<div
-			aria-hidden="true"
-			class="pointer-events-none absolute -top-10 left-10 h-64 w-64 rounded-full bg-brand-violet/12 blur-3xl animate-float-slow"
-		></div>
-		<div class="relative mx-auto max-w-screen-xl">
-			<div class="mx-auto max-w-3xl">
-				<h2 class="font-serif text-3xl md:text-4xl font-medium tracking-tight text-brand-text">
-					Frequently asked questions
-				</h2>
-				<div class="mt-8 grid gap-4">
-
-					<?php
-					$faqs = array(
-						array(
-							'q' => 'Can AI generate SEO content for my website?',
-							'a' => 'Yes. Rynk uses AI to research keywords, write optimized page content and blog posts, and publish them directly to your WordPress site each month. The content is built around what your customers are searching for and structured to rank on Google and get cited by AI assistants, not generic filler that Google treats as low quality.',
-						),
-						array(
-							'q' => 'How can AI assist in content development for a small business?',
-							'a' => 'AI can handle the research, writing, structuring, and publishing steps that most small businesses skip because of time and cost. Rynk automates all four: it finds the right keywords, writes pages that answer real customer questions, adds the technical signals that help them rank, and publishes them directly to your site.',
-						),
-						array(
-							'q' => 'What is content scaling and how does Rynk help?',
-							'a' => 'Content scaling is the process of publishing more optimized content faster than you could do manually. Rynk publishes five to ten new pages and updates five to ten existing pages every month, far more than a single business owner could produce, without any manual writing or editing on your part.',
-						),
-						array(
-							'q' => 'How is an AI content strategy different from just using ChatGPT?',
-							'a' => 'Pasting a question into ChatGPT and copying the answer to your site produces generic text with no keyword targeting, no local signals, no schema, and no connection to the rest of your site. A proper AI content strategy combines AI writing with real keyword research, your business details, and automated technical optimization. Rynk does all of that in one workflow.',
-						),
-						array(
-							'q' => 'How long does it take for new content to improve my rankings?',
-							'a' => 'Local and long-tail keywords typically begin moving within one to three months of new content being published. The key is consistency: sites that publish multiple optimized pages per month build search momentum significantly faster than those that update occasionally. Rynk publishes new and updated pages every month to keep that momentum going.',
-						),
-					);
-					foreach ( $faqs as $faq ) :
-					?>
-						<div class="rounded-2xl bg-white/[0.03] ring-1 ring-white/10 p-6">
-							<h3 class="font-serif text-[18px] font-medium leading-snug tracking-tight text-brand-text">
-								<?php echo esc_html( $faq['q'] ); ?>
-							</h3>
-							<p class="mt-3 text-[14.5px] leading-[1.75] text-brand-textMute">
-								<?php echo esc_html( $faq['a'] ); ?>
-							</p>
-						</div>
-					<?php endforeach; ?>
-
-				</div>
-			</div>
-		</div>
-	</section>
-
-</div>
-
-<?php
-get_footer();
+							<p class="mt-1.5 text
