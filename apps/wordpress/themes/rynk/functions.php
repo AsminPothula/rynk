@@ -47,6 +47,38 @@ function rynk_pages(): array {
 			'title'    => 'AI-Powered Content Generation for SEO: What It Is and How Small Businesses Use It',
 			'template' => 'page-templates/blog-post-ai-powered-content-generation.php',
 		),
+		'blog/answer-engine-optimization' => array(
+			'title'    => 'Answer Engine Optimization for Small Business',
+			'template' => 'page-templates/answer-engine-optimization.php',
+		),
+		'generative-engine-optimization' => array(
+			'title'    => 'Generative Engine Optimization (GEO) for Local Businesses',
+			'template' => 'page-templates/generative-engine-optimization.php',
+		),
+		'local-seo-software' => array(
+			'title'    => 'Local SEO Software for Small Businesses',
+			'template' => 'page-templates/local-seo-software.php',
+		),
+		'ai-content-strategy' => array(
+			'title'    => 'AI Content Strategy for Small Business',
+			'template' => 'page-templates/ai-content-strategy.php',
+		),
+		'seo-for-restaurants' => array(
+			'title'    => 'SEO for Restaurants: Get Found When Customers Search',
+			'template' => 'page-templates/seo-for-restaurants.php',
+		),
+		'automated-seo-for-small-business' => array(
+			'title'    => 'Automated SEO for Small Business',
+			'template' => 'page-templates/automated-seo-for-small-business.php',
+		),
+		'seo-for-salons' => array(
+			'title'    => 'SEO for Salons and Spas: Rank Higher, Book More',
+			'template' => 'page-templates/seo-for-salons.php',
+		),
+		'why-isnt-my-business-showing-up-on-google' => array(
+			'title'    => 'Why Isn\'t My Business Showing Up on Google?',
+			'template' => 'page-templates/why-isnt-my-business-showing-up-on-google.php',
+		),
 		// Placeholder pages — live until the real destinations ship. The app,
 		// sign-in, and free-scan CTAs all land on a "Coming soon" screen rather
 		// than a dead link.
@@ -95,7 +127,8 @@ function rynk_nav_link_class( string $slug ): string {
 	// Also highlight "Blog" when viewing any blog child page.
 	if ( 'blog' === $slug && (
 		is_page_template( 'page-templates/blog-post-how-to-search-keyword.php' ) ||
-		is_page_template( 'page-templates/blog-post-ai-powered-content-generation.php' )
+		is_page_template( 'page-templates/blog-post-ai-powered-content-generation.php' ) ||
+		is_page_template( 'page-templates/answer-engine-optimization.php' )
 	) ) {
 		$is_active = true;
 	}
@@ -189,6 +222,27 @@ function rynk_about_document_title( string $title ): string {
 	}
 	if ( is_page_template( 'page-templates/blog-post-ai-powered-content-generation.php' ) ) {
 		return 'AI-Powered Content Generation for SEO | Rynk AI';
+	}
+	if ( is_page_template( 'page-templates/answer-engine-optimization.php' ) ) {
+		return 'Answer Engine Optimization for Small Business | Rynk AI';
+	}
+	if ( is_page_template( 'page-templates/generative-engine-optimization.php' ) ) {
+		return 'Generative Engine Optimization (GEO) for Local Businesses | Rynk AI';
+	}
+	if ( is_page_template( 'page-templates/local-seo-software.php' ) ) {
+		return 'Local SEO Software for Small Businesses | Rynk AI';
+	}
+	if ( is_page_template( 'page-templates/ai-content-strategy.php' ) ) {
+		return 'AI Content Strategy for Small Business | Rynk AI';
+	}
+	if ( is_page_template( 'page-templates/seo-for-restaurants.php' ) ) {
+		return 'SEO for Restaurants: Get Found on Google and AI Search | Rynk AI';
+	}
+	if ( is_page_template( 'page-templates/seo-for-salons.php' ) ) {
+		return 'SEO for Salons and Spas: Rank Higher and Book More | Rynk AI';
+	}
+	if ( is_page_template( 'page-templates/why-isnt-my-business-showing-up-on-google.php' ) ) {
+		return 'Why Isn\'t My Business Showing Up on Google? | Rynk AI';
 	}
 	return $title;
 }
@@ -313,6 +367,20 @@ function rynk_meta_description(): void {
 		$desc = 'Practical guides on SEO, AI search visibility, and getting more customers to find your business online - from the team at Rynk.';
 	} elseif ( is_page_template( 'page-templates/blog-post-ai-powered-content-generation.php' ) ) {
 		$desc = 'AI-powered content generation helps small businesses publish SEO-optimized pages and blog posts automatically. See how Rynk writes and publishes content that ranks on Google and gets cited by AI assistants.';
+	} elseif ( is_page_template( 'page-templates/answer-engine-optimization.php' ) ) {
+		$desc = 'AEO gets your small business cited in ChatGPT, Perplexity, and Google AI Overviews. Rynk automates answer engine optimization for local businesses - no expertise needed.';
+	} elseif ( is_page_template( 'page-templates/generative-engine-optimization.php' ) ) {
+		$desc = 'GEO helps local businesses get cited in AI-generated answers from ChatGPT, Gemini, and Perplexity. Rynk automates GEO alongside SEO so you rank on Google and AI search.';
+	} elseif ( is_page_template( 'page-templates/local-seo-software.php' ) ) {
+		$desc = 'Rynk is local business SEO software that audits your site, fixes technical issues, and publishes optimized content automatically. No agency, no SEO knowledge needed.';
+	} elseif ( is_page_template( 'page-templates/ai-content-strategy.php' ) ) {
+		$desc = 'Rynk builds and executes an AI content strategy for your small business automatically - keyword research, writing, and publishing included. No time or expertise needed.';
+	} elseif ( is_page_template( 'page-templates/seo-for-restaurants.php' ) ) {
+		$desc = 'Rynk automates SEO for restaurants - fixing technical issues, publishing optimized pages, and getting your business cited in ChatGPT and Google AI Overviews automatically.';
+	} elseif ( is_page_template( 'page-templates/seo-for-salons.php' ) ) {
+		$desc = 'Rynk automates SEO for salons and spas - fixing technical gaps, publishing optimized pages, and getting your business found on Google Maps and AI search automatically.';
+	} elseif ( is_page_template( 'page-templates/why-isnt-my-business-showing-up-on-google.php' ) ) {
+		$desc = 'If your business isn\'t showing up on Google, here are the most common reasons why - and how Rynk fixes them automatically for small local businesses.';
 	}
 	if ( '' === $desc ) {
 		return;
@@ -432,6 +500,7 @@ function rynk_structured_data(): void {
 				'On-page optimization',
 				'Structured data and schema markup',
 				'AI content generation and publishing',
+				'AI content strategy',
 				'Answer Engine Optimization (AEO)',
 				'Generative Engine Optimization (GEO)',
 				'Local SEO and Google Business Profile optimization',
@@ -470,8 +539,52 @@ function rynk_structured_data(): void {
 		array(
 			'@context'    => 'https://schema.org',
 			'@type'       => 'Service',
-			'name'        => 'Structured Data, AI Content Generation, and Answer Engine Optimization',
-			'description' => 'Rynk generates and publishes structured data schema markup, creates AI-optimized content, and implements Answer Engine Optimization (AEO) strategies so your business gets cited in ChatGPT, Perplexity, Google AI Overviews, and other AI assistants.',
+			'name'        => 'AI Content Strategy, Content Generation, and Answer Engine Optimization',
+			'description' => 'Rynk builds and executes a complete AI content strategy for small businesses - researching keywords, writing optimized pages and blog posts, adding schema markup, and publishing content automatically every month so businesses rank on Google and get cited by AI assistants.',
+			'provider'    => array(
+				'@type' => 'Organization',
+				'name'  => 'Rynk AI',
+				'url'   => 'https://rynk.ai/',
+			),
+		),
+		array(
+			'@context'    => 'https://schema.org',
+			'@type'       => 'Service',
+			'name'        => 'Generative Engine Optimization (GEO)',
+			'description' => 'Rynk automates generative engine optimization for local businesses, building the structured content, schema markup, and credibility signals that AI platforms like ChatGPT, Gemini, and Perplexity use to cite businesses in generated answers.',
+			'provider'    => array(
+				'@type' => 'Organization',
+				'name'  => 'Rynk AI',
+				'url'   => 'https://rynk.ai/',
+			),
+		),
+		array(
+			'@context'    => 'https://schema.org',
+			'@type'       => 'Service',
+			'name'        => 'Local SEO Software for Small Businesses',
+			'description' => 'Rynk is local business SEO software that audits your site, applies technical fixes automatically, and publishes optimized content every month so small local businesses rank higher on Google Maps and Google Search.',
+			'provider'    => array(
+				'@type' => 'Organization',
+				'name'  => 'Rynk AI',
+				'url'   => 'https://rynk.ai/',
+			),
+		),
+		array(
+			'@context'    => 'https://schema.org',
+			'@type'       => 'Service',
+			'name'        => 'SEO for Restaurants',
+			'description' => 'Rynk automates SEO for restaurants, publishing optimized pages targeting local searches, adding Restaurant and Menu schema markup, and building the AI-search signals that get your business cited by ChatGPT and Perplexity.',
+			'provider'    => array(
+				'@type' => 'Organization',
+				'name'  => 'Rynk AI',
+				'url'   => 'https://rynk.ai/',
+			),
+		),
+		array(
+			'@context'    => 'https://schema.org',
+			'@type'       => 'Service',
+			'name'        => 'SEO for Salons and Spas',
+			'description' => 'Rynk automates SEO for salons and spas, publishing service-specific pages, adding LocalBusiness and Service schema markup, and building the signals that get your business found on Google Maps and cited by AI assistants.',
 			'provider'    => array(
 				'@type' => 'Organization',
 				'name'  => 'Rynk AI',
@@ -671,6 +784,14 @@ function rynk_serve_sitemap(): void {
 		array( 'loc' => 'https://rynk.ai/blog/', 'priority' => '0.8', 'changefreq' => 'weekly' ),
 		array( 'loc' => 'https://rynk.ai/blog/how-to-search-for-a-keyword-on-a-web-page/', 'priority' => '0.7', 'changefreq' => 'monthly' ),
 		array( 'loc' => 'https://rynk.ai/blog/ai-powered-content-generation-for-seo/', 'priority' => '0.7', 'changefreq' => 'monthly' ),
+		array( 'loc' => 'https://rynk.ai/blog/answer-engine-optimization/', 'priority' => '0.7', 'changefreq' => 'monthly' ),
+		array( 'loc' => 'https://rynk.ai/generative-engine-optimization/', 'priority' => '0.8', 'changefreq' => 'monthly' ),
+		array( 'loc' => 'https://rynk.ai/local-seo-software/', 'priority' => '0.8', 'changefreq' => 'monthly' ),
+		array( 'loc' => 'https://rynk.ai/ai-content-strategy/', 'priority' => '0.8', 'changefreq' => 'monthly' ),
+		array( 'loc' => 'https://rynk.ai/seo-for-restaurants/', 'priority' => '0.8', 'changefreq' => 'monthly' ),
+		array( 'loc' => 'https://rynk.ai/seo-for-salons/', 'priority' => '0.8', 'changefreq' => 'monthly' ),
+		array( 'loc' => 'https://rynk.ai/why-isnt-my-business-showing-up-on-google/', 'priority' => '0.7', 'changefreq' => 'monthly' ),
+		array( 'loc' => 'https://rynk.ai/automated-seo-for-small-business/', 'priority' => '0.7', 'changefreq' => 'monthly' ),
 	);
 
 	header( 'Content-Type: application/xml; charset=UTF-8', true, 200 );
@@ -723,7 +844,19 @@ function rynk_serve_llms_txt(): void {
 	echo "- [Home](https://rynk.ai/)\n";
 	echo "- [How it works](https://rynk.ai/how-it-works/)\n";
 	echo "- [Pricing](https://rynk.ai/pricing/)\n";
-	echo "- [About](https://rynk.ai/about/)\n\n";
+	echo "- [About](https://rynk.ai/about/)\n";
+	echo "- [Generative Engine Optimization](https://rynk.ai/generative-engine-optimization/)\n";
+	echo "- [Local SEO Software for Small Businesses](https://rynk.ai/local-seo-software/)\n";
+	echo "- [AI Content Strategy for Small Business](https://rynk.ai/ai-content-strategy/)\n";
+	echo "- [SEO for Restaurants](https://rynk.ai/seo-for-restaurants/)\n";
+	echo "- [SEO for Salons and Spas](https://rynk.ai/seo-for-salons/)\n";
+	echo "- [Why Isn't My Business Showing Up on Google?](https://rynk.ai/why-isnt-my-business-showing-up-on-google/)\n";
+	echo "- [Automated SEO for Small Business](https://rynk.ai/automated-seo-for-small-business/)\n\n";
+	echo "## Blog\n\n";
+	echo "- [Blog](https://rynk.ai/blog/)\n";
+	echo "- [Answer Engine Optimization for Small Business](https://rynk.ai/blog/answer-engine-optimization/)\n";
+	echo "- [AI-Powered Content Generation for SEO](https://rynk.ai/blog/ai-powered-content-generation-for-seo/)\n";
+	echo "- [How to Search for a Keyword on a Web Page](https://rynk.ai/blog/how-to-search-for-a-keyword-on-a-web-page/)\n\n";
 	echo "## Optional\n\n";
 	echo "- [Privacy Policy](https://rynk.ai/privacy-policy/)\n";
 
@@ -796,6 +929,28 @@ function rynk_redirect_retired_blog_post(): void {
 	}
 }
 add_action( 'template_redirect', 'rynk_redirect_retired_blog_post' );
+
+/**
+ * 301 redirect /answer-engine-optimization/ to the canonical blog child URL.
+ *
+ * The page was registered under /blog/answer-engine-optimization/. Any traffic
+ * arriving at the root-level path is redirected there permanently.
+ *
+ * @return void
+ */
+function rynk_redirect_aeo_root(): void {
+	if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+		return;
+	}
+
+	$uri = strtok( (string) $_SERVER['REQUEST_URI'], '?' );
+
+	if ( '/answer-engine-optimization/' === $uri ) {
+		wp_redirect( home_url( '/blog/answer-engine-optimization/' ), 301 );
+		exit;
+	}
+}
+add_action( 'template_redirect', 'rynk_redirect_aeo_root' );
 
 /**
  * Inject internal links into blog post content at render time.
@@ -965,7 +1120,7 @@ function rynk_retire_orphaned_pages(): void {
  * Scaffold version. Bump whenever rynk_pages() gains a page so the new pages
  * are created on the next request without a manual theme re-activation.
  */
-const RYNK_SCAFFOLD_VERSION = '8';
+const RYNK_SCAFFOLD_VERSION = '14';
 
 /**
  * Re-run scaffolding once after a deploy that changed the page set.
@@ -1003,6 +1158,14 @@ add_action( 'init', 'rynk_maybe_scaffold_pages' );
  */
 function rynk_blog_articles(): array {
 	return array(
+		array(
+			'path'     => '/blog/answer-engine-optimization/',
+			'title'    => 'Answer Engine Optimization for Small Business',
+			'intro'    => 'For the salon owner, restaurateur, or local service provider who just found out customers are asking ChatGPT for recommendations instead of searching Google.',
+			'label'    => 'Guide',
+			'image'    => 'answer-engine-optimization-1.jpg',
+			'imageAlt' => 'A small restaurant dining room with warm pendant lighting, neatly set tables, no customers yet, calm early-evening atmosphere, shot from just inside the entrance looking in',
+		),
 		array(
 			'path'     => '/blog/how-to-search-for-a-keyword-on-a-web-page/',
 			'title'    => 'How to Search for a Keyword on a Web Page (And What It Tells You About Your SEO)',
