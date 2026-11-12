@@ -143,7 +143,7 @@ $image_base = get_theme_file_uri( 'assets/img/rynk/' );
 					The same gap exists on Google Maps. The restaurants that appear at the top of a local search are not necessarily better than yours. They have more pages, more structured information, and more consistent signals across their website and Google Business Profile. Rynk builds those signals automatically, every month, without you writing a single word or logging into a dashboard.
 				</p>
 				<p class="mt-4 text-[16px] leading-[1.8] text-brand-textMute">
-					This is the same visibility problem that affects every local service business, and it is covered in depth in our guide on <a href="<?php echo esc_url( home_url( '/local-seo-software/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">local SEO software for small businesses</a>. For restaurants specifically, the fastest path is an automated platform that handles the SEO work for you.
+					This is the same visibility problem that affects every local service business, and it is covered in depth in our guide on <a href="<?php echo esc_url( home_url( '/local-seo-software/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">local SEO software for small businesses</a>. For restaurants specifically, the fastest path is an automated platform that handles the SEO work for you. If you run a salon or spa, we also have a dedicated guide on <a href="<?php echo esc_url( home_url( '/seo-for-salons/' ) ); ?>" class="text-brand-blueSoft underline underline-offset-2 hover:text-brand-text transition-colors">SEO for salons and spas</a> that covers the same approach for beauty businesses.
 				</p>
 			</div>
 		</div>

@@ -71,6 +71,14 @@ function rynk_pages(): array {
 			'title'    => 'Automated SEO for Small Business',
 			'template' => 'page-templates/automated-seo-for-small-business.php',
 		),
+		'seo-for-salons' => array(
+			'title'    => 'SEO for Salons and Spas: Rank Higher, Book More',
+			'template' => 'page-templates/seo-for-salons.php',
+		),
+		'why-isnt-my-business-showing-up-on-google' => array(
+			'title'    => 'Why Isn\'t My Business Showing Up on Google?',
+			'template' => 'page-templates/why-isnt-my-business-showing-up-on-google.php',
+		),
 		// Placeholder pages — live until the real destinations ship. The app,
 		// sign-in, and free-scan CTAs all land on a "Coming soon" screen rather
 		// than a dead link.
@@ -230,6 +238,12 @@ function rynk_about_document_title( string $title ): string {
 	if ( is_page_template( 'page-templates/seo-for-restaurants.php' ) ) {
 		return 'SEO for Restaurants: Get Found on Google and AI Search | Rynk AI';
 	}
+	if ( is_page_template( 'page-templates/seo-for-salons.php' ) ) {
+		return 'SEO for Salons and Spas: Rank Higher and Book More | Rynk AI';
+	}
+	if ( is_page_template( 'page-templates/why-isnt-my-business-showing-up-on-google.php' ) ) {
+		return 'Why Isn\'t My Business Showing Up on Google? | Rynk AI';
+	}
 	return $title;
 }
 add_filter( 'pre_get_document_title', 'rynk_about_document_title' );
@@ -363,6 +377,10 @@ function rynk_meta_description(): void {
 		$desc = 'Rynk builds and executes an AI content strategy for your small business automatically - keyword research, writing, and publishing included. No time or expertise needed.';
 	} elseif ( is_page_template( 'page-templates/seo-for-restaurants.php' ) ) {
 		$desc = 'Rynk automates SEO for restaurants - fixing technical issues, publishing optimized pages, and getting your business cited in ChatGPT and Google AI Overviews automatically.';
+	} elseif ( is_page_template( 'page-templates/seo-for-salons.php' ) ) {
+		$desc = 'Rynk automates SEO for salons and spas - fixing technical gaps, publishing optimized pages, and getting your business found on Google Maps and AI search automatically.';
+	} elseif ( is_page_template( 'page-templates/why-isnt-my-business-showing-up-on-google.php' ) ) {
+		$desc = 'If your business isn\'t showing up on Google, here are the most common reasons why - and how Rynk fixes them automatically for small local businesses.';
 	}
 	if ( '' === $desc ) {
 		return;
@@ -556,6 +574,17 @@ function rynk_structured_data(): void {
 			'@type'       => 'Service',
 			'name'        => 'SEO for Restaurants',
 			'description' => 'Rynk automates SEO for restaurants, publishing optimized pages targeting local searches, adding Restaurant and Menu schema markup, and building the AI-search signals that get your business cited by ChatGPT and Perplexity.',
+			'provider'    => array(
+				'@type' => 'Organization',
+				'name'  => 'Rynk AI',
+				'url'   => 'https://rynk.ai/',
+			),
+		),
+		array(
+			'@context'    => 'https://schema.org',
+			'@type'       => 'Service',
+			'name'        => 'SEO for Salons and Spas',
+			'description' => 'Rynk automates SEO for salons and spas, publishing service-specific pages, adding LocalBusiness and Service schema markup, and building the signals that get your business found on Google Maps and cited by AI assistants.',
 			'provider'    => array(
 				'@type' => 'Organization',
 				'name'  => 'Rynk AI',
@@ -760,6 +789,9 @@ function rynk_serve_sitemap(): void {
 		array( 'loc' => 'https://rynk.ai/local-seo-software/', 'priority' => '0.8', 'changefreq' => 'monthly' ),
 		array( 'loc' => 'https://rynk.ai/ai-content-strategy/', 'priority' => '0.8', 'changefreq' => 'monthly' ),
 		array( 'loc' => 'https://rynk.ai/seo-for-restaurants/', 'priority' => '0.8', 'changefreq' => 'monthly' ),
+		array( 'loc' => 'https://rynk.ai/seo-for-salons/', 'priority' => '0.8', 'changefreq' => 'monthly' ),
+		array( 'loc' => 'https://rynk.ai/why-isnt-my-business-showing-up-on-google/', 'priority' => '0.7', 'changefreq' => 'monthly' ),
+		array( 'loc' => 'https://rynk.ai/automated-seo-for-small-business/', 'priority' => '0.7', 'changefreq' => 'monthly' ),
 	);
 
 	header( 'Content-Type: application/xml; charset=UTF-8', true, 200 );
@@ -816,7 +848,10 @@ function rynk_serve_llms_txt(): void {
 	echo "- [Generative Engine Optimization](https://rynk.ai/generative-engine-optimization/)\n";
 	echo "- [Local SEO Software for Small Businesses](https://rynk.ai/local-seo-software/)\n";
 	echo "- [AI Content Strategy for Small Business](https://rynk.ai/ai-content-strategy/)\n";
-	echo "- [SEO for Restaurants](https://rynk.ai/seo-for-restaurants/)\n\n";
+	echo "- [SEO for Restaurants](https://rynk.ai/seo-for-restaurants/)\n";
+	echo "- [SEO for Salons and Spas](https://rynk.ai/seo-for-salons/)\n";
+	echo "- [Why Isn't My Business Showing Up on Google?](https://rynk.ai/why-isnt-my-business-showing-up-on-google/)\n";
+	echo "- [Automated SEO for Small Business](https://rynk.ai/automated-seo-for-small-business/)\n\n";
 	echo "## Blog\n\n";
 	echo "- [Blog](https://rynk.ai/blog/)\n";
 	echo "- [Answer Engine Optimization for Small Business](https://rynk.ai/blog/answer-engine-optimization/)\n";
@@ -1085,7 +1120,7 @@ function rynk_retire_orphaned_pages(): void {
  * Scaffold version. Bump whenever rynk_pages() gains a page so the new pages
  * are created on the next request without a manual theme re-activation.
  */
-const RYNK_SCAFFOLD_VERSION = '13';
+const RYNK_SCAFFOLD_VERSION = '14';
 
 /**
  * Re-run scaffolding once after a deploy that changed the page set.
